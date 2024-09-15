@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerSword : MonoBehaviour
 {
+    [Header("General")]
+
     Vector2 mousePos;
     [SerializeField] Camera cam;
 
@@ -14,13 +16,23 @@ public class PlayerSword : MonoBehaviour
 
     #region Float
 
-    float timeUntilAttack = 0.4f;
+    [Header("Attack")]
+
+    float timeUntilAttack;
+    [SerializeField] float maxtTimeUntilAttack = 1f;
     float maxDisatnceBetweenPlayerAndSword = 1.3f;
-    float attackRange = 2;
+    float speed;
+
+    [SerializeField] float attackRange = 2;
+    float attackDistance;
+    float howFastAttack;
+    [SerializeField] float maxHowFastAttack = 0.2f;
 
     [SerializeField] float maxDisatnceBetweenPlayerAndSwordUnsheathed = 1.3f;
 
     #endregion
+
+    [Header("Check If Object")]
 
     [SerializeField] GameObject checkToLeaveObject;
     Collider2D checkToLeaveObjectCollider;
@@ -29,6 +41,7 @@ public class PlayerSword : MonoBehaviour
 
     public bool stayUnsheathed = true;
 
+    bool startCharge = false;
     bool startAttack = false;
 
     #endregion
@@ -36,19 +49,42 @@ public class PlayerSword : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-    }
 
-    // Fixa Atack
+        timeUntilAttack = maxtTimeUntilAttack;
+        howFastAttack = maxHowFastAttack;
+    }
 
     void Update()
     {
-        if (startAttack)
+        if (startCharge)
         {
             timeUntilAttack -= Time.deltaTime;
+            maxDisatnceBetweenPlayerAndSword -= speed * Time.deltaTime;
 
             if (timeUntilAttack <= 0)
             {
+                startAttack = true;
+                startCharge = false;
+                timeUntilAttack = maxtTimeUntilAttack;
+
+                attackDistance = attackRange + maxDisatnceBetweenPlayerAndSwordUnsheathed;
+
+                speed = attackDistance/ howFastAttack;
+
+            }
+        }
+
+        if (startAttack)
+        {
+            howFastAttack -= Time.deltaTime;
+            maxDisatnceBetweenPlayerAndSword += speed * Time.deltaTime;
+
+            if (howFastAttack <= 0)
+            {
                 startAttack = false;
+
+                howFastAttack = maxtTimeUntilAttack;
+                howFastAttack = maxHowFastAttack;
 
             }
         }
@@ -63,7 +99,6 @@ public class PlayerSword : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //rb.AddForce(transform.right * 10 * Time.deltaTime);
 
         Vector3 tr = parentTransform.position - transform.position;
 
@@ -73,7 +108,8 @@ public class PlayerSword : MonoBehaviour
         {
             maxDisatnceBetweenPlayerAndSword = 0.1f;
         }
-        else
+
+        if(stayUnsheathed && !startCharge && !startAttack)
         {
             maxDisatnceBetweenPlayerAndSword = maxDisatnceBetweenPlayerAndSwordUnsheathed;
         }
@@ -87,8 +123,9 @@ public class PlayerSword : MonoBehaviour
 
     void Attack()
     {
+        speed = maxDisatnceBetweenPlayerAndSwordUnsheathed / timeUntilAttack;
 
-        startAttack = true;
+        startCharge = true;
 
         
     }
