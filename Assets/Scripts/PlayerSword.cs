@@ -27,6 +27,8 @@ public class PlayerSword : MonoBehaviour
     float attackDistance;
     float howFastAttack;
     [SerializeField] float maxHowFastAttack = 0.2f;
+    float howFastGoBack;
+    [SerializeField] float maxHowFastGoBack = 0.3f;
 
     [SerializeField] float maxDisatnceBetweenPlayerAndSwordUnsheathed = 1.3f;
 
@@ -43,6 +45,8 @@ public class PlayerSword : MonoBehaviour
 
     bool startCharge = false;
     bool startAttack = false;
+    bool startGoingBack = false;
+    bool attacking = false;
 
     #endregion
 
@@ -52,11 +56,12 @@ public class PlayerSword : MonoBehaviour
 
         timeUntilAttack = maxtTimeUntilAttack;
         howFastAttack = maxHowFastAttack;
+        howFastGoBack = maxHowFastGoBack;
     }
 
     void Update()
     {
-        if (startCharge)
+        if (startCharge && stayUnsheathed)
         {
             timeUntilAttack -= Time.deltaTime;
             maxDisatnceBetweenPlayerAndSword -= speed * Time.deltaTime;
@@ -65,6 +70,7 @@ public class PlayerSword : MonoBehaviour
             {
                 startAttack = true;
                 startCharge = false;
+                attacking = true;
                 timeUntilAttack = maxtTimeUntilAttack;
 
                 attackDistance = attackRange + maxDisatnceBetweenPlayerAndSwordUnsheathed;
@@ -74,7 +80,7 @@ public class PlayerSword : MonoBehaviour
             }
         }
 
-        if (startAttack)
+        if (startAttack && stayUnsheathed)
         {
             howFastAttack -= Time.deltaTime;
             maxDisatnceBetweenPlayerAndSword += speed * Time.deltaTime;
@@ -82,14 +88,33 @@ public class PlayerSword : MonoBehaviour
             if (howFastAttack <= 0)
             {
                 startAttack = false;
+                startGoingBack = true;
 
-                howFastAttack = maxtTimeUntilAttack;
                 howFastAttack = maxHowFastAttack;
+
+                attackDistance = attackRange;
+
+                speed = attackDistance / howFastGoBack;
 
             }
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (startGoingBack && stayUnsheathed)
+        {
+            howFastGoBack -= Time.deltaTime;
+            maxDisatnceBetweenPlayerAndSword -= speed * Time.deltaTime;
+
+            if (howFastGoBack <= 0)
+            {
+                startGoingBack = false;
+                attacking = false;
+
+                howFastGoBack = maxHowFastGoBack;
+
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0) && stayUnsheathed && !attacking)
         {
 
             Attack();
@@ -107,9 +132,18 @@ public class PlayerSword : MonoBehaviour
         if (!stayUnsheathed)
         {
             maxDisatnceBetweenPlayerAndSword = 0.1f;
+
+            startGoingBack = false;
+            startAttack = false;    
+            startCharge = false;
+            attacking = false;
+
+            timeUntilAttack = maxtTimeUntilAttack;
+            howFastAttack = maxHowFastAttack;
+            howFastGoBack = maxHowFastGoBack;
         }
 
-        if(stayUnsheathed && !startCharge && !startAttack)
+        if(stayUnsheathed && !attacking)
         {
             maxDisatnceBetweenPlayerAndSword = maxDisatnceBetweenPlayerAndSwordUnsheathed;
         }
@@ -124,7 +158,7 @@ public class PlayerSword : MonoBehaviour
     void Attack()
     {
         speed = maxDisatnceBetweenPlayerAndSwordUnsheathed / timeUntilAttack;
-
+        attacking = true;
         startCharge = true;
 
         
