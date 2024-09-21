@@ -61,6 +61,8 @@ public class PlayerSword : MonoBehaviour
 
     void Update()
     {
+        #region Attack
+
         if (startCharge && stayUnsheathed)
         {
             timeUntilAttack -= Time.deltaTime;
@@ -113,6 +115,8 @@ public class PlayerSword : MonoBehaviour
 
             }
         }
+
+        #endregion
 
         if (Input.GetMouseButtonDown(0) && stayUnsheathed && !attacking)
         {
