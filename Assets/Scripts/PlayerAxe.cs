@@ -1,7 +1,6 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerSword : MonoBehaviour
+public class PlayerAxe : MonoBehaviour
 {
     [Header("General")]
 
@@ -14,23 +13,32 @@ public class PlayerSword : MonoBehaviour
 
     [SerializeField] Transform parentTransform;
 
+    PlayerWeaponBase playerWeaponBase;
+
     #region Float
 
     [Header("Attack")]
 
-    float timeUntilAttack;
-    [SerializeField] float maxtTimeUntilAttack = 1f;
     float maxDisatnceBetweenPlayerAndSword = 1.3f;
     float speed;
+    float howFastToChangeWhereAiming;
 
     [SerializeField] float attackRange = 2;
     float attackDistance;
+
+    float timeUntilAttack;
+    [SerializeField] float maxtTimeUntilAttack = 1f;
     float howFastAttack;
     [SerializeField] float maxHowFastAttack = 0.2f;
+    float timeToSwingDown;
+    [SerializeField] float maxTimeToSwingDown = 0.2f;
     float howFastGoBack;
     [SerializeField] float maxHowFastGoBack = 0.3f;
 
     [SerializeField] float maxDisatnceBetweenPlayerAndSwordUnsheathed = 1.3f;
+
+    [SerializeField] float maxDistanceToLookUpWhenAiming = 10f;
+    [SerializeField] float maxDistanceToLookDownInSwing = 10f;
 
     #endregion
 
@@ -46,6 +54,7 @@ public class PlayerSword : MonoBehaviour
     bool startCharge = false;
     bool startAttack = false;
     bool startGoingBack = false;
+    bool startSwingDown = false;
     bool attacking = false;
 
     public bool testBool = false;
@@ -56,8 +65,11 @@ public class PlayerSword : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
+        playerWeaponBase = FindFirstObjectByType<PlayerWeaponBase>();
+
         timeUntilAttack = maxtTimeUntilAttack;
         howFastAttack = maxHowFastAttack;
+        timeToSwingDown = maxTimeToSwingDown;
         howFastGoBack = maxHowFastGoBack;
     }
 
@@ -69,17 +81,19 @@ public class PlayerSword : MonoBehaviour
         {
             timeUntilAttack -= Time.deltaTime;
             maxDisatnceBetweenPlayerAndSword -= speed * Time.deltaTime;
+            playerWeaponBase.WhereToLookOfset += howFastToChangeWhereAiming * Time.deltaTime;
 
             if (timeUntilAttack <= 0)
             {
                 startAttack = true;
                 startCharge = false;
-                attacking = true;
+
                 timeUntilAttack = maxtTimeUntilAttack;
 
                 attackDistance = attackRange + maxDisatnceBetweenPlayerAndSwordUnsheathed;
 
-                speed = attackDistance/ howFastAttack;
+                speed = attackDistance / howFastAttack;
+
 
             }
         }
@@ -93,14 +107,33 @@ public class PlayerSword : MonoBehaviour
             if (howFastAttack <= 0)
             {
                 startAttack = false;
-                startGoingBack = true;
-
-                howFastAttack = maxHowFastAttack;
+                startSwingDown = true;
 
                 attackDistance = attackRange;
 
+                float distanceToSwingDown = maxDistanceToLookUpWhenAiming + maxDistanceToLookDownInSwing;
+
+                howFastToChangeWhereAiming = distanceToSwingDown/ timeToSwingDown;
+
+            }
+        }
+
+        if (startSwingDown && stayUnsheathed)
+        {
+            timeToSwingDown -= Time.deltaTime;
+            playerWeaponBase.WhereToLookOfset -= howFastToChangeWhereAiming * Time.deltaTime;
+
+
+            if (timeToSwingDown <= 0)
+            {
+                startGoingBack = true;
+                startSwingDown = false;
+
+                timeToSwingDown = maxTimeToSwingDown;
+
 
                 speed = attackDistance / howFastGoBack;
+                howFastToChangeWhereAiming = maxDistanceToLookDownInSwing / howFastGoBack;
 
             }
         }
@@ -109,7 +142,7 @@ public class PlayerSword : MonoBehaviour
         {
             howFastGoBack -= Time.deltaTime;
             maxDisatnceBetweenPlayerAndSword -= speed * Time.deltaTime;
-
+            playerWeaponBase.WhereToLookOfset += howFastToChangeWhereAiming * Time.deltaTime;
 
             if (howFastGoBack <= 0)
             {
@@ -144,7 +177,7 @@ public class PlayerSword : MonoBehaviour
             maxDisatnceBetweenPlayerAndSword = 0.1f;
 
             startGoingBack = false;
-            startAttack = false;    
+            startAttack = false;
             startCharge = false;
             attacking = false;
 
@@ -153,7 +186,7 @@ public class PlayerSword : MonoBehaviour
             howFastGoBack = maxHowFastGoBack;
         }
 
-        if(stayUnsheathed && !attacking && !testBool)
+        if (stayUnsheathed && !attacking && !testBool)
         {
             maxDisatnceBetweenPlayerAndSword = maxDisatnceBetweenPlayerAndSwordUnsheathed;
         }
@@ -171,13 +204,7 @@ public class PlayerSword : MonoBehaviour
         attacking = true;
         startCharge = true;
         testBool = true;
+        howFastToChangeWhereAiming = maxDistanceToLookUpWhenAiming / timeUntilAttack;
 
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        
-
-    }
-
 }

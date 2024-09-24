@@ -15,6 +15,8 @@ public class PlayerWeaponBase : MonoBehaviour
 
     bool testBool = true;
 
+    public float WhereToLookOfset = 0;
+
     #endregion
 
 
@@ -40,7 +42,7 @@ public class PlayerWeaponBase : MonoBehaviour
 
         if(Input.GetMouseButtonDown(1))
         {
-            playerTransform.position += new Vector3(1,0,0);
+            WhereToLookOfset++;
         }
 
         if (Input.GetMouseButtonDown(2))
@@ -58,7 +60,7 @@ public class PlayerWeaponBase : MonoBehaviour
             Vector2 lookDirection = mousePos - rb.position;
             float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
 
-            transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            transform.rotation = Quaternion.Euler(0f, 0f, angle + WhereToLookOfset);
         }
 
     }

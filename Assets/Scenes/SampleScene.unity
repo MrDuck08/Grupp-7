@@ -536,6 +536,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
   playerTransform: {fileID: 1034232063}
+  WhereToLookOfset: 0
 --- !u!212 &752407222
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -852,7 +853,7 @@ GameObject:
   - component: {fileID: 1296800051}
   - component: {fileID: 1296800050}
   - component: {fileID: 1296800049}
-  - component: {fileID: 1296800048}
+  - component: {fileID: 1296800052}
   m_Layer: 0
   m_Name: PlayerAxe
   m_TagString: Untagged
@@ -876,27 +877,6 @@ Transform:
   - {fileID: 836805959}
   m_Father: {fileID: 1599132489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1296800048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1296800046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa1021313db34c3449a3d312dc849ac7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 519420031}
-  parentTransform: {fileID: 1034232063}
-  maxtTimeUntilAttack: 1
-  attackRange: 2
-  maxHowFastAttack: 0.2
-  maxHowFastGoBack: 0.3
-  maxDisatnceBetweenPlayerAndSwordUnsheathed: 1.3
-  checkToLeaveObject: {fileID: 0}
-  stayUnsheathed: 1
 --- !u!50 &1296800049
 Rigidbody2D:
   serializedVersion: 5
@@ -1025,6 +1005,30 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1296800052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296800046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0565d000980b38340addef9f52c18e50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 519420031}
+  parentTransform: {fileID: 752407219}
+  attackRange: 2
+  maxtTimeUntilAttack: 1
+  maxHowFastAttack: 0.2
+  maxTimeToSwingDown: 0.1
+  maxHowFastGoBack: 0.3
+  maxDisatnceBetweenPlayerAndSwordUnsheathed: 1.3
+  maxDistanceToLookUpWhenAiming: 10
+  checkToLeaveObject: {fileID: 510598233}
+  stayUnsheathed: 1
+  testBool: 0
 --- !u!1 &1359812761
 GameObject:
   m_ObjectHideFlags: 0
@@ -1329,6 +1333,7 @@ MonoBehaviour:
   maxDisatnceBetweenPlayerAndSwordUnsheathed: 1.3
   checkToLeaveObject: {fileID: 0}
   stayUnsheathed: 1
+  testBool: 0
 --- !u!1 &1578184213
 GameObject:
   m_ObjectHideFlags: 0

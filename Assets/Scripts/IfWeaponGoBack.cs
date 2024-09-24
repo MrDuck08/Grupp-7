@@ -8,10 +8,12 @@ public class IfWeaponGoBack : MonoBehaviour
     float maxDisatnceBetweenPlayerAndSword = 1.3f;
 
     PlayerSword playerSword;
+    PlayerAxe playerAxe;
 
     private void Start()
     {
         playerSword = FindFirstObjectByType<PlayerSword>();
+        playerAxe = FindFirstObjectByType<PlayerAxe>();
     }
 
 
@@ -34,7 +36,8 @@ public class IfWeaponGoBack : MonoBehaviour
     {
         if(collision.gameObject.tag == "Ground")
         {
-            playerSword.stayUnsheathed = false;
+            //playerSword.stayUnsheathed = false;
+            playerAxe.stayUnsheathed = false;
         }
     }
 
@@ -42,7 +45,8 @@ public class IfWeaponGoBack : MonoBehaviour
     {
         if (collision.gameObject.tag == "Ground")
         {
-            playerSword.stayUnsheathed = true;
+            //playerSword.stayUnsheathed = true;
+            playerAxe.stayUnsheathed = true;
         }
     }
 }
