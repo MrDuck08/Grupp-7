@@ -1,7 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerSword : MonoBehaviour
+public class PlayerSword : WeaponBase
 {
     [Header("General")]
 
@@ -52,8 +52,10 @@ public class PlayerSword : MonoBehaviour
 
     #endregion
 
-    private void Start()
+    public override void Start()
     {
+        base.Start();
+
         rb = GetComponent<Rigidbody2D>();
 
         timeUntilAttack = maxtTimeUntilAttack;
@@ -61,8 +63,9 @@ public class PlayerSword : MonoBehaviour
         howFastGoBack = maxHowFastGoBack;
     }
 
-    void Update()
+    public override void Update()
     {
+        base.Update();
         #region Attack
 
         if (startCharge && stayUnsheathed)
@@ -132,10 +135,9 @@ public class PlayerSword : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    public override void FixedUpdate()
     {
-
-        Vector3 tr = parentTransform.position - transform.position;
+        base.FixedUpdate();
 
         float dis = Vector3.Distance(transform.position, parentTransform.position);
 
@@ -147,6 +149,8 @@ public class PlayerSword : MonoBehaviour
             startAttack = false;    
             startCharge = false;
             attacking = false;
+
+            testBool = false;
 
             timeUntilAttack = maxtTimeUntilAttack;
             howFastAttack = maxHowFastAttack;
@@ -171,12 +175,6 @@ public class PlayerSword : MonoBehaviour
         attacking = true;
         startCharge = true;
         testBool = true;
-
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        
 
     }
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerAxe : MonoBehaviour
+public class PlayerAxe : WeaponBase
 {
     [Header("General")]
 
@@ -56,13 +56,19 @@ public class PlayerAxe : MonoBehaviour
     bool startGoingBack = false;
     bool startSwingDown = false;
     bool attacking = false;
+    bool switchedToRight = false;
+    bool switchedToLeft = false;
+    bool firstTimeSwitching = true;
 
-    public bool testBool = false;
+    public bool rightSideAxe = true;
+
 
     #endregion
 
-    private void Start()
+    public override void Start()
     {
+        base.Start();
+
         rb = GetComponent<Rigidbody2D>();
 
         playerWeaponBase = FindFirstObjectByType<PlayerWeaponBase>();
@@ -73,8 +79,10 @@ public class PlayerAxe : MonoBehaviour
         howFastGoBack = maxHowFastGoBack;
     }
 
-    void Update()
+    public override void Update()
     {
+        base.Update();
+
         #region Attack
 
         if (startCharge && stayUnsheathed)
@@ -109,7 +117,7 @@ public class PlayerAxe : MonoBehaviour
                 startAttack = false;
                 startSwingDown = true;
 
-                attackDistance = attackRange;
+                howFastAttack = maxHowFastAttack;
 
                 float distanceToSwingDown = maxDistanceToLookUpWhenAiming + maxDistanceToLookDownInSwing;
 
@@ -131,6 +139,7 @@ public class PlayerAxe : MonoBehaviour
 
                 timeToSwingDown = maxTimeToSwingDown;
 
+                attackDistance = attackRange;
 
                 speed = attackDistance / howFastGoBack;
                 howFastToChangeWhereAiming = maxDistanceToLookDownInSwing / howFastGoBack;
@@ -148,7 +157,6 @@ public class PlayerAxe : MonoBehaviour
             {
                 startGoingBack = false;
                 attacking = false;
-                testBool = false;
 
                 howFastGoBack = maxHowFastGoBack;
 
@@ -165,10 +173,9 @@ public class PlayerAxe : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    public override void FixedUpdate()
     {
-
-        Vector3 tr = parentTransform.position - transform.position;
+        base.FixedUpdate();
 
         float dis = Vector3.Distance(transform.position, parentTransform.position);
 
@@ -178,15 +185,19 @@ public class PlayerAxe : MonoBehaviour
 
             startGoingBack = false;
             startAttack = false;
+            startSwingDown = false;
             startCharge = false;
             attacking = false;
 
+
             timeUntilAttack = maxtTimeUntilAttack;
             howFastAttack = maxHowFastAttack;
+            timeToSwingDown = maxTimeToSwingDown;
             howFastGoBack = maxHowFastGoBack;
+            howFastAttack = maxHowFastAttack;
         }
 
-        if (stayUnsheathed && !attacking && !testBool)
+        if (stayUnsheathed && !attacking)
         {
             maxDisatnceBetweenPlayerAndSword = maxDisatnceBetweenPlayerAndSwordUnsheathed;
         }
@@ -203,8 +214,48 @@ public class PlayerAxe : MonoBehaviour
         speed = maxDisatnceBetweenPlayerAndSwordUnsheathed / timeUntilAttack;
         attacking = true;
         startCharge = true;
-        testBool = true;
+
         howFastToChangeWhereAiming = maxDistanceToLookUpWhenAiming / timeUntilAttack;
 
+    }
+
+    public void SideSwitch()
+    {
+        if (!attacking)
+        {
+            if (rightSideAxe && !switchedToRight)
+            {
+
+                switchedToRight = true;
+                switchedToLeft = false;
+
+                if (firstTimeSwitching)
+                {
+                    maxDistanceToLookUpWhenAiming *= 1;
+                    maxDistanceToLookDownInSwing *= 1;
+
+                }
+                else
+                {
+
+                    maxDistanceToLookUpWhenAiming *= -1;
+                    maxDistanceToLookDownInSwing *= -1;
+                }
+
+                firstTimeSwitching = false;
+            }
+
+            if(!rightSideAxe && !switchedToLeft)
+            {
+
+                switchedToLeft = true;
+                switchedToRight = false;
+                maxDistanceToLookUpWhenAiming *= -1;
+                maxDistanceToLookDownInSwing *= -1;
+
+                firstTimeSwitching = false;
+
+            }
+        }
     }
 }

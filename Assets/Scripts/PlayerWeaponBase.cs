@@ -1,6 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
+public enum WeaponState
+{
+    Sword = 0,
+    Axe = 1,
+    Total
+}
+
 public class PlayerWeaponBase : MonoBehaviour
 {
     #region Mouse
@@ -13,25 +21,20 @@ public class PlayerWeaponBase : MonoBehaviour
 
     [SerializeField] Transform playerTransform;
 
-    bool testBool = true;
-
     public float WhereToLookOfset = 0;
 
     #endregion
 
-
-    // Skit att fixa:
-
-    // Ground
-
-
-
+    PlayerAxe playerAxe;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
+        playerAxe = FindAnyObjectByType<PlayerAxe>();
 
+        int currentWeaponIndex = (int)currentWeapon.weaponType;
+        WeaponSwapAnimation(currentWeaponIndex);
 
     }
 
@@ -40,46 +43,44 @@ public class PlayerWeaponBase : MonoBehaviour
 
         mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
 
-        if(Input.GetMouseButtonDown(1))
-        {
-            WhereToLookOfset++;
-        }
 
         if (Input.GetMouseButtonDown(2))
         {
             ReloadScene();
         }
+
+
+        HandleWeaponSwap();
+
+        foreach (WeaponBase weapon in avilableWeapons)
+        {
+            if(weapon != currentWeapon)
+            {
+                weapon.gameObject.SetActive(false);
+            }
+
+        }
+
+        currentWeapon.gameObject.SetActive(true);
     }
 
     private void FixedUpdate()
     {
 
-
-        if (testBool)
+        int CurrenWeaponIndex = (int)currentWeapon.weaponType;
+        Vector2 lookDirection = mousePos - rb.position;
+        float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
+        if(angle > 90 && angle < 180 || angle < -90 && angle > -180 && CurrenWeaponIndex == (int)WeaponState.Axe)
         {
-            Vector2 lookDirection = mousePos - rb.position;
-            float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
-
-            transform.rotation = Quaternion.Euler(0f, 0f, angle + WhereToLookOfset);
+            playerAxe.rightSideAxe = false;
+            playerAxe.SideSwitch();
+        }
+        if (angle < 90 && angle > -90 && CurrenWeaponIndex == (int)WeaponState.Axe)
+        {
+            playerAxe.rightSideAxe = true;
+            playerAxe.SideSwitch();
         }
 
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(collision.gameObject.tag == "Ground")
-        {
-            Debug.Log("TEst");
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        Debug.Log("TEST 1");
-        if (collision.gameObject.tag == "Ground")
-        {
-            Debug.Log("TEst");
-        }
     }
 
     #region Change Scenes
@@ -114,6 +115,57 @@ public class PlayerWeaponBase : MonoBehaviour
         }
 
         return buildIndex;
+    }
+
+    #endregion
+
+    #region Change Weapon
+
+
+    public WeaponBase[] avilableWeapons = new WeaponBase[(int)WeaponState.Total];
+    public WeaponBase currentWeapon = null;
+
+
+    float mouseAxisBreakpoin = 1.0f;
+    float ScollWhellDelta = 0.0f;
+
+
+    private void HandleWeaponSwap()
+    {
+
+        ScollWhellDelta += Input.mouseScrollDelta.y;
+        if (Mathf.Abs(ScollWhellDelta) > mouseAxisBreakpoin)
+        {
+            int SwapDirection = (int)Mathf.Sign(ScollWhellDelta);
+            ScollWhellDelta -= SwapDirection * mouseAxisBreakpoin;
+
+            int CurrenWeaponIndex = (int)currentWeapon.weaponType;
+            CurrenWeaponIndex += SwapDirection;
+
+            if (CurrenWeaponIndex < 0)
+            {
+                CurrenWeaponIndex = (int)WeaponState.Total + CurrenWeaponIndex;
+                // Byter Till Första Vapnet Om Den går -1
+            }
+            if (CurrenWeaponIndex >= (int)WeaponState.Total)
+            {
+                CurrenWeaponIndex = 0;
+                // Byter Tillbacka Till Första Vapnet Om Du Går Över Max Antal Vapen
+            }
+            WeaponSwapAnimation(CurrenWeaponIndex);
+
+        }
+    }
+
+    private void WeaponSwapAnimation(int currentWeaponIndex)
+    {
+        foreach (var weapon in avilableWeapons)
+        {
+            weapon.gameObject.SetActive(false);
+        }
+        Debug.Log(currentWeaponIndex);
+        currentWeapon = avilableWeapons[currentWeaponIndex];
+        currentWeapon.gameObject.SetActive(true);
     }
 
     #endregion

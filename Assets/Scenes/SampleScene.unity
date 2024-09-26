@@ -146,11 +146,11 @@ Transform:
   m_GameObject: {fileID: 510598233}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.3, y: 0, z: 0}
-  m_LocalScale: {x: 1.05, y: 0.29999998, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1599132489}
+  m_Father: {fileID: 1296800047}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &510598235
 MonoBehaviour:
@@ -491,8 +491,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1992757973}
-  - {fileID: 1599132489}
+  - {fileID: 1385713599}
+  - {fileID: 1296800047}
   m_Father: {fileID: 1034232063}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &752407220
@@ -537,6 +537,10 @@ MonoBehaviour:
   cam: {fileID: 519420031}
   playerTransform: {fileID: 1034232063}
   WhereToLookOfset: 0
+  avilableWeapons:
+  - {fileID: 1385713604}
+  - {fileID: 1296800052}
+  currentWeapon: {fileID: 1296800052}
 --- !u!212 &752407222
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -855,7 +859,7 @@ GameObject:
   - component: {fileID: 1296800049}
   - component: {fileID: 1296800052}
   m_Layer: 0
-  m_Name: PlayerAxe
+  m_Name: Axe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -875,7 +879,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 836805959}
-  m_Father: {fileID: 1599132489}
+  - {fileID: 510598234}
+  m_Father: {fileID: 752407219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1296800049
 Rigidbody2D:
@@ -1017,18 +1022,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0565d000980b38340addef9f52c18e50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponType: 1
   cam: {fileID: 519420031}
-  parentTransform: {fileID: 752407219}
+  parentTransform: {fileID: 1034232063}
   attackRange: 2
   maxtTimeUntilAttack: 1
   maxHowFastAttack: 0.2
-  maxTimeToSwingDown: 0.1
+  maxTimeToSwingDown: 0.2
   maxHowFastGoBack: 0.3
   maxDisatnceBetweenPlayerAndSwordUnsheathed: 1.3
   maxDistanceToLookUpWhenAiming: 10
+  maxDistanceToLookDownInSwing: 10
   checkToLeaveObject: {fileID: 510598233}
   stayUnsheathed: 1
-  testBool: 0
+  rightSideAxe: 1
 --- !u!1 &1359812761
 GameObject:
   m_ObjectHideFlags: 0
@@ -1057,11 +1064,11 @@ Transform:
   m_GameObject: {fileID: 1359812761}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.3, y: 0, z: 0}
-  m_LocalScale: {x: 1.05, y: 0.3, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1992757973}
+  m_Father: {fileID: 1385713599}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1359812764
 Rigidbody2D:
@@ -1163,12 +1170,12 @@ GameObject:
   - component: {fileID: 1385713602}
   - component: {fileID: 1385713604}
   m_Layer: 0
-  m_Name: PlayerWeapon
+  m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1385713599
 Transform:
   m_ObjectHideFlags: 0
@@ -1181,8 +1188,9 @@ Transform:
   m_LocalPosition: {x: 1.3, y: 0, z: 0}
   m_LocalScale: {x: 1.05, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1992757973}
+  m_Children:
+  - {fileID: 1359812762}
+  m_Father: {fileID: 752407219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1385713601
 SpriteRenderer:
@@ -1324,6 +1332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1021313db34c3449a3d312dc849ac7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponType: 0
   cam: {fileID: 519420031}
   parentTransform: {fileID: 1034232063}
   maxtTimeUntilAttack: 1
@@ -1331,7 +1340,7 @@ MonoBehaviour:
   maxHowFastAttack: 0.2
   maxHowFastGoBack: 0.3
   maxDisatnceBetweenPlayerAndSwordUnsheathed: 1.3
-  checkToLeaveObject: {fileID: 0}
+  checkToLeaveObject: {fileID: 1359812761}
   stayUnsheathed: 1
   testBool: 0
 --- !u!1 &1578184213
@@ -1467,72 +1476,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1599132488
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1599132489}
-  m_Layer: 0
-  m_Name: Axe
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1599132489
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1599132488}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1296800047}
-  - {fileID: 510598234}
-  m_Father: {fileID: 752407219}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1992757972
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1992757973}
-  m_Layer: 0
-  m_Name: Sword
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1992757973
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1992757972}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1385713599}
-  - {fileID: 1359812762}
-  m_Father: {fileID: 752407219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
