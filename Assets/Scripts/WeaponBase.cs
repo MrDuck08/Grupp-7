@@ -4,6 +4,7 @@ public class WeaponBase : MonoBehaviour
 {
 
     public WeaponState weaponType = WeaponState.Total;
+    public bool stopAttacking = false;
 
     public virtual void Start()
     {
@@ -21,4 +22,5 @@ public class WeaponBase : MonoBehaviour
     {
         
     }
+
 }

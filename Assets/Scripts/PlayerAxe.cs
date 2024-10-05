@@ -83,9 +83,10 @@ public class PlayerAxe : WeaponBase
     {
         base.Update();
 
+
         #region Attack
 
-        if (startCharge && stayUnsheathed)
+        if (startCharge && stayUnsheathed && attacking)
         {
             timeUntilAttack -= Time.deltaTime;
             maxDisatnceBetweenPlayerAndSword -= speed * Time.deltaTime;
@@ -106,7 +107,7 @@ public class PlayerAxe : WeaponBase
             }
         }
 
-        if (startAttack && stayUnsheathed)
+        if (startAttack && stayUnsheathed && attacking)
         {
             howFastAttack -= Time.deltaTime;
             maxDisatnceBetweenPlayerAndSword += speed * Time.deltaTime;
@@ -126,7 +127,7 @@ public class PlayerAxe : WeaponBase
             }
         }
 
-        if (startSwingDown && stayUnsheathed)
+        if (startSwingDown && stayUnsheathed && attacking)
         {
             timeToSwingDown -= Time.deltaTime;
             playerWeaponBase.WhereToLookOfset -= howFastToChangeWhereAiming * Time.deltaTime;
@@ -147,7 +148,7 @@ public class PlayerAxe : WeaponBase
             }
         }
 
-        if (startGoingBack && stayUnsheathed)
+        if (startGoingBack && stayUnsheathed && attacking)
         {
             howFastGoBack -= Time.deltaTime;
             maxDisatnceBetweenPlayerAndSword -= speed * Time.deltaTime;
@@ -171,6 +172,8 @@ public class PlayerAxe : WeaponBase
             Attack();
 
         }
+
+        stopAttacking = false;
     }
 
     public override void FixedUpdate()
@@ -183,18 +186,7 @@ public class PlayerAxe : WeaponBase
         {
             maxDisatnceBetweenPlayerAndSword = 0.1f;
 
-            startGoingBack = false;
-            startAttack = false;
-            startSwingDown = false;
-            startCharge = false;
-            attacking = false;
-
-
-            timeUntilAttack = maxtTimeUntilAttack;
-            howFastAttack = maxHowFastAttack;
-            timeToSwingDown = maxTimeToSwingDown;
-            howFastGoBack = maxHowFastGoBack;
-            howFastAttack = maxHowFastAttack;
+            ResetAttack();
         }
 
         if (stayUnsheathed && !attacking)
@@ -257,5 +249,28 @@ public class PlayerAxe : WeaponBase
 
             }
         }
+    }
+
+    public void ResetAttack()
+    {
+
+        startGoingBack = false;
+        startAttack = false;
+        startSwingDown = false;
+        startCharge = false;
+        attacking = false;
+
+
+
+        timeUntilAttack = maxtTimeUntilAttack;
+        howFastAttack = maxHowFastAttack;
+        timeToSwingDown = maxTimeToSwingDown;
+        howFastGoBack = maxHowFastGoBack;
+        howFastAttack = maxHowFastAttack;
+
+        playerWeaponBase = FindFirstObjectByType<PlayerWeaponBase>();
+
+        playerWeaponBase.WhereToLookOfset = 0;
+
     }
 }

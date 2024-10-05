@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,18 +26,37 @@ public class PlayerWeaponBase : MonoBehaviour
 
     #endregion
 
+    #region Change Weapon
+
+    public WeaponBase[] avilableWeapons = new WeaponBase[(int)WeaponState.Total];
+    public WeaponBase currentWeapon = null;
+
+
+    float mouseAxisBreakpoin = 1.0f;
+    float ScollWhellDelta = 0.0f;
+
+
+    public bool swordActive = false;
+    public bool axeActive = false;
+
+    #endregion
+
+
     PlayerAxe playerAxe;
+    PlayerSword playerSword;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
         playerAxe = FindAnyObjectByType<PlayerAxe>();
+        playerSword = FindAnyObjectByType<PlayerSword>();
 
         int currentWeaponIndex = (int)currentWeapon.weaponType;
         WeaponSwapAnimation(currentWeaponIndex);
 
     }
+
 
     void Update()
     {
@@ -62,14 +82,30 @@ public class PlayerWeaponBase : MonoBehaviour
         }
 
         currentWeapon.gameObject.SetActive(true);
+
+        if (currentWeapon.weaponType == WeaponState.Axe)
+        {
+            axeActive = true;
+
+            swordActive = false;
+        }
+
+        if (currentWeapon.weaponType == WeaponState.Sword)
+        {
+            swordActive = true;
+
+            axeActive = false;
+        }
     }
 
     private void FixedUpdate()
     {
 
         int CurrenWeaponIndex = (int)currentWeapon.weaponType;
+
         Vector2 lookDirection = mousePos - rb.position;
         float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
+
         if(angle > 90 && angle < 180 || angle < -90 && angle > -180 && CurrenWeaponIndex == (int)WeaponState.Axe)
         {
             playerAxe.rightSideAxe = false;
@@ -81,6 +117,8 @@ public class PlayerWeaponBase : MonoBehaviour
             playerAxe.SideSwitch();
         }
 
+
+        transform.rotation = Quaternion.Euler(0f, 0f, angle + WhereToLookOfset);
     }
 
     #region Change Scenes
@@ -122,14 +160,6 @@ public class PlayerWeaponBase : MonoBehaviour
     #region Change Weapon
 
 
-    public WeaponBase[] avilableWeapons = new WeaponBase[(int)WeaponState.Total];
-    public WeaponBase currentWeapon = null;
-
-
-    float mouseAxisBreakpoin = 1.0f;
-    float ScollWhellDelta = 0.0f;
-
-
     private void HandleWeaponSwap()
     {
 
@@ -162,10 +192,25 @@ public class PlayerWeaponBase : MonoBehaviour
         foreach (var weapon in avilableWeapons)
         {
             weapon.gameObject.SetActive(false);
+            
         }
-        Debug.Log(currentWeaponIndex);
+        currentWeapon.stopAttacking = true;
         currentWeapon = avilableWeapons[currentWeaponIndex];
         currentWeapon.gameObject.SetActive(true);
+
+        if(currentWeaponIndex == (int)WeaponState.Axe)
+        {
+            playerAxe = FindAnyObjectByType<PlayerAxe>();
+
+            playerAxe.ResetAttack();
+        }
+
+        if (currentWeaponIndex == (int)WeaponState.Sword)
+        {
+            playerSword = FindAnyObjectByType<PlayerSword>();
+
+            playerSword.ResetAttack();
+        }
     }
 
     #endregion

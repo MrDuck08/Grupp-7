@@ -48,8 +48,6 @@ public class PlayerSword : WeaponBase
     bool startGoingBack = false;
     bool attacking = false;
 
-    public bool testBool = false;
-
     #endregion
 
     public override void Start()
@@ -118,7 +116,6 @@ public class PlayerSword : WeaponBase
             {
                 startGoingBack = false;
                 attacking = false;
-                testBool = false;
 
                 howFastGoBack = maxHowFastGoBack;
 
@@ -145,19 +142,10 @@ public class PlayerSword : WeaponBase
         {
             maxDisatnceBetweenPlayerAndSword = 0.1f;
 
-            startGoingBack = false;
-            startAttack = false;    
-            startCharge = false;
-            attacking = false;
-
-            testBool = false;
-
-            timeUntilAttack = maxtTimeUntilAttack;
-            howFastAttack = maxHowFastAttack;
-            howFastGoBack = maxHowFastGoBack;
+            ResetAttack();
         }
 
-        if(stayUnsheathed && !attacking && !testBool)
+        if(stayUnsheathed && !attacking)
         {
             maxDisatnceBetweenPlayerAndSword = maxDisatnceBetweenPlayerAndSwordUnsheathed;
         }
@@ -174,7 +162,23 @@ public class PlayerSword : WeaponBase
         speed = maxDisatnceBetweenPlayerAndSwordUnsheathed / timeUntilAttack;
         attacking = true;
         startCharge = true;
-        testBool = true;
+
+    }
+
+    public void ResetAttack()
+    {
+
+        startGoingBack = false;
+        startAttack = false;
+        startCharge = false;
+        attacking = false;
+
+
+
+        timeUntilAttack = maxtTimeUntilAttack;
+        howFastAttack = maxHowFastAttack;
+        howFastGoBack = maxHowFastGoBack;
+        howFastAttack = maxHowFastAttack;
 
     }
 
