@@ -134,7 +134,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &48418395
 Transform:
   m_ObjectHideFlags: 0
@@ -576,8 +576,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whatAttackInt: 00000000
   maxtTimeUntilAttack: 1
+  speed: 2
   maxHowFastAttack: 3
+  maxHowLongStayAfterAttack: 1
   maxHowFastGoBack: 0.3
+  stopLayers:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &1034232057
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,7 +761,7 @@ GameObject:
   - component: {fileID: 1578184216}
   - component: {fileID: 1578184215}
   - component: {fileID: 1578184214}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -939,6 +944,10 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 2035347481695174621, guid: 63e8c48f264520b41ac1aa5ef5f05510, type: 3}
+      propertyPath: TestObject
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2035347481695174621, guid: 63e8c48f264520b41ac1aa5ef5f05510, type: 3}
       propertyPath: playerTransform
       value: 

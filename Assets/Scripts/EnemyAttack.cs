@@ -17,18 +17,23 @@ public class EnemyAttack : MonoBehaviour
 
     float timeUntilAttack;
     [SerializeField] float maxtTimeUntilAttack = 1f;
-    float maxDisatnceBetweenPlayerAndSword = 1.3f;
-    float speed;
+    [SerializeField] float speed;
 
     float attackDistance;
     float howFastAttack;
     [SerializeField] float maxHowFastAttack = 0.2f;
+    float howLongStayAfterAttack;
+    [SerializeField] float maxHowLongStayAfterAttack = 0.2f;
     float howFastGoBack;
     [SerializeField] float maxHowFastGoBack = 0.3f;
 
-    bool startCharge = false;
     bool startAttack = false;
+    bool startWaitingToGoBack = false;
     bool startGoingBack = false;
+
+    RaycastHit2D attackRayHit;
+
+    [SerializeField] LayerMask stopLayers;
 
     void Start()
     {
@@ -40,14 +45,15 @@ public class EnemyAttack : MonoBehaviour
 
         }
 
-        timeUntilAttack = maxtTimeUntilAttack;
         howFastAttack = maxHowFastAttack;
+        howLongStayAfterAttack = maxHowLongStayAfterAttack;
         howFastGoBack = maxHowFastGoBack;
 
     }
 
     void Update()
     {
+
         if (ifEnemyInRange && !currentlyAttacking)
         {
             currentlyAttacking = true;
@@ -61,28 +67,40 @@ public class EnemyAttack : MonoBehaviour
         if (startAttack)
         {
             howFastAttack -= Time.deltaTime;
-            allAttacksObjects[whatAttackForAttack].transform.position += attackRotation.position * speed * Time.deltaTime;
-            //allAttacksObjects[whatAttackForAttack].transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
+
+            allAttacksObjects[whatAttackForAttack].transform.position += allAttacksObjects[whatAttackForAttack].transform.right  * speed * Time.deltaTime;
+
             allAttacksObjects[whatAttackForAttack].transform.localScale += new Vector3(speed * Time.deltaTime, 0, 0);
-            Debug.Log(howFastAttack + " Time Left");
+
             if (howFastAttack <= 0)
             {
                 startAttack = false;
-                startGoingBack = true;
+                startWaitingToGoBack = true;
 
                 howFastAttack = maxHowFastAttack;
+            }
+        }
 
+        if (startWaitingToGoBack)
+        {
+            howLongStayAfterAttack -= Time.deltaTime;
 
-                speed = attackDistance / howFastGoBack;
+            if (howLongStayAfterAttack <= 0)
+            {
+                startWaitingToGoBack = false;
+                startGoingBack = true;
 
+                howLongStayAfterAttack = maxHowLongStayAfterAttack;
+                howFastGoBack = maxHowFastAttack;
             }
         }
 
         if (startGoingBack)
         {
             howFastGoBack -= Time.deltaTime;
-            allAttacksObjects[whatAttackForAttack].transform.position -= attackRotation.position * speed * Time.deltaTime;
-            //allAttacksObjects[whatAttackForAttack].transform.forward -= new Vector3(speed * Time.deltaTime, 0, 0);
+
+            allAttacksObjects[whatAttackForAttack].transform.position -= allAttacksObjects[whatAttackForAttack].transform.right * speed * Time.deltaTime;
+
             allAttacksObjects[whatAttackForAttack].transform.localScale -= new Vector3(speed * Time.deltaTime, 0);
 
             if (howFastGoBack <= 0)
@@ -117,7 +135,14 @@ public class EnemyAttack : MonoBehaviour
 
                 attackDistance = Vector2.Distance(Player.transform.position, allAttacksObjects[whatAttack].transform.position);
 
-                speed = attackDistance / howFastAttack;
+                attackRayHit = Physics2D.Raycast(allAttacksObjects[whatAttack].transform.position, Player.transform.position, 1000f, stopLayers);
+
+                if (attackRayHit.collider != null)
+                {
+                    Debug.Log(attackRayHit.distance);
+                    maxHowFastAttack = attackRayHit.distance/speed;
+                    howFastAttack = maxHowFastAttack;
+                }
 
                 startAttack = true;
 

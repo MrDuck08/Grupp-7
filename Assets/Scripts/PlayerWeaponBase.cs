@@ -64,12 +64,6 @@ public class PlayerWeaponBase : MonoBehaviour
         mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
 
 
-        if (Input.GetMouseButtonDown(2))
-        {
-            ReloadScene();
-        }
-
-
         HandleWeaponSwap();
 
         foreach (WeaponBase weapon in avilableWeapons)
