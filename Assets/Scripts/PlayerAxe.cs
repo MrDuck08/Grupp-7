@@ -124,6 +124,8 @@ public class PlayerAxe : WeaponBase
 
                 howFastToChangeWhereAiming = distanceToSwingDown/ timeToSwingDown;
 
+                // Aktivera Attack Hitbox
+
             }
         }
 
@@ -144,6 +146,8 @@ public class PlayerAxe : WeaponBase
 
                 speed = attackDistance / howFastGoBack;
                 howFastToChangeWhereAiming = maxDistanceToLookDownInSwing / howFastGoBack;
+
+                // Stäng Av Attack Hitbox
 
             }
         }
@@ -211,6 +215,8 @@ public class PlayerAxe : WeaponBase
 
     }
 
+    #region Side Switch
+
     public void SideSwitch()
     {
         if (!attacking)
@@ -221,17 +227,15 @@ public class PlayerAxe : WeaponBase
                 switchedToRight = true;
                 switchedToLeft = false;
 
-                if (firstTimeSwitching)
-                {
-                    maxDistanceToLookUpWhenAiming *= 1;
-                    maxDistanceToLookDownInSwing *= 1;
-
-                }
-                else
+                if (!firstTimeSwitching)
                 {
 
                     maxDistanceToLookUpWhenAiming *= -1;
                     maxDistanceToLookDownInSwing *= -1;
+
+                    Vector3 scaler = transform.localScale; // Vänd Grafiken
+                    scaler.y *= -1; // Vänd Grafiken
+                    transform.localScale = scaler; // Vänd Grafiken
                 }
 
                 firstTimeSwitching = false;
@@ -239,17 +243,23 @@ public class PlayerAxe : WeaponBase
 
             if(!rightSideAxe && !switchedToLeft)
             {
-
+                 
                 switchedToLeft = true;
                 switchedToRight = false;
                 maxDistanceToLookUpWhenAiming *= -1;
                 maxDistanceToLookDownInSwing *= -1;
+
+                Vector3 scaler = transform.localScale; // Vänd Grafiken
+                scaler.y *= -1; // Vänd Grafiken
+                transform.localScale = scaler; // Vänd Grafiken
 
                 firstTimeSwitching = false;
 
             }
         }
     }
+
+    #endregion
 
     public void ResetAttack()
     {

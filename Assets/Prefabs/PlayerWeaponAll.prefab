@@ -181,7 +181,7 @@ MonoBehaviour:
   parentTransform: {fileID: 0}
   maxtTimeUntilAttack: 1
   attackRange: 2
-  maxHowFastAttack: 0.2
+  maxHowFastAttack: 0.15
   maxHowFastGoBack: 0.3
   maxDisatnceBetweenPlayerAndSwordUnsheathed: 1.3
   checkToLeaveObject: {fileID: 0}

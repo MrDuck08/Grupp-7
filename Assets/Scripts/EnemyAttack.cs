@@ -1,39 +1,53 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
+    [SerializeField] Transform playerLocation;
+
     bool ifEnemyInRange = true;
     bool currentlyAttacking = false;
 
     List<GameObject> allAttacksObjects = new List<GameObject>();
+    List<GameObject> weakPointList = new List<GameObject>();
+    GameObject attackObject;
 
     [SerializeField] int[] whatAttackInt;
 
     int whatAttackForAttack;
 
-    Transform attackRotation;
+    [Header("Attacks")]
 
-    float timeUntilAttack;
-    [SerializeField] float maxtTimeUntilAttack = 1f;
+    #region Attacks
+
+    #region Stretch Attack
+
+    [Header("Stretch Attacks")]
+
     [SerializeField] float speed;
 
-    float attackDistance;
     float howFastAttack;
-    [SerializeField] float maxHowFastAttack = 0.2f;
-    float howLongStayAfterAttack;
-    [SerializeField] float maxHowLongStayAfterAttack = 0.2f;
+    [SerializeField] float maxHowFastStretchAttack = 0.2f;
+    float howLongStayAfterStretchAttack;
+    [SerializeField] float maxHowLongStayAfterStretchAttack = 0.2f;
     float howFastGoBack;
     [SerializeField] float maxHowFastGoBack = 0.3f;
 
-    bool startAttack = false;
+    [SerializeField] float stretchAttackRange = 2f;
+
+    bool startStretchAttack = false;
     bool startWaitingToGoBack = false;
     bool startGoingBack = false;
 
     RaycastHit2D attackRayHit;
 
     [SerializeField] LayerMask stopLayers;
+
+    #endregion
+
+    #endregion
+
+
 
     void Start()
     {
@@ -44,10 +58,6 @@ public class EnemyAttack : MonoBehaviour
             allAttacksObjects.Add(child.gameObject);
 
         }
-
-        howFastAttack = maxHowFastAttack;
-        howLongStayAfterAttack = maxHowLongStayAfterAttack;
-        howFastGoBack = maxHowFastGoBack;
 
     }
 
@@ -64,34 +74,45 @@ public class EnemyAttack : MonoBehaviour
 
         }
 
-        if (startAttack)
+        #region Stretch Attack
+
+        if (startStretchAttack)
         {
             howFastAttack -= Time.deltaTime;
 
-            allAttacksObjects[whatAttackForAttack].transform.position += allAttacksObjects[whatAttackForAttack].transform.right  * speed * Time.deltaTime;
+            attackObject.transform.position += attackObject.transform.right  * speed * Time.deltaTime;
 
-            allAttacksObjects[whatAttackForAttack].transform.localScale += new Vector3(speed * Time.deltaTime, 0, 0);
+            attackObject.transform.localScale += new Vector3(speed * Time.deltaTime, 0, 0);
+
+            foreach (GameObject weakPoints in weakPointList)
+            {
+
+                weakPoints.transform.localScale -= new Vector3(speed * Time.deltaTime, 0, 0);
+                //weakPoints.transform.localScale -= attackObject.transform.localScale * Time.deltaTime;
+
+            }
 
             if (howFastAttack <= 0)
             {
-                startAttack = false;
+                startStretchAttack = false;
                 startWaitingToGoBack = true;
 
-                howFastAttack = maxHowFastAttack;
+                howFastAttack = maxHowFastStretchAttack;
+                howLongStayAfterStretchAttack = maxHowLongStayAfterStretchAttack;
             }
         }
 
         if (startWaitingToGoBack)
         {
-            howLongStayAfterAttack -= Time.deltaTime;
+            howLongStayAfterStretchAttack -= Time.deltaTime;
 
-            if (howLongStayAfterAttack <= 0)
+            if (howLongStayAfterStretchAttack <= 0)
             {
                 startWaitingToGoBack = false;
                 startGoingBack = true;
 
-                howLongStayAfterAttack = maxHowLongStayAfterAttack;
-                howFastGoBack = maxHowFastAttack;
+                howLongStayAfterStretchAttack = maxHowLongStayAfterStretchAttack;
+                howFastGoBack = maxHowFastStretchAttack;
             }
         }
 
@@ -99,9 +120,16 @@ public class EnemyAttack : MonoBehaviour
         {
             howFastGoBack -= Time.deltaTime;
 
-            allAttacksObjects[whatAttackForAttack].transform.position -= allAttacksObjects[whatAttackForAttack].transform.right * speed * Time.deltaTime;
+            attackObject.transform.position -= attackObject.transform.right * speed * Time.deltaTime;
 
-            allAttacksObjects[whatAttackForAttack].transform.localScale -= new Vector3(speed * Time.deltaTime, 0);
+            attackObject.transform.localScale -= new Vector3(speed * Time.deltaTime, 0);
+
+            foreach (GameObject weakPoints in weakPointList)
+            {
+
+                weakPoints.transform.localScale += new Vector3(speed * Time.deltaTime, 0);
+
+            }
 
             if (howFastGoBack <= 0)
             {
@@ -109,51 +137,77 @@ public class EnemyAttack : MonoBehaviour
 
                 howFastGoBack = maxHowFastGoBack;
 
+                attackObject.SetActive(false);
             }
         }
+
+        #endregion
     }
 
     void Attack()
     {
-        GameObject Player = GameObject.FindGameObjectWithTag("Player");
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         int whatAttack = Random.Range(0, allAttacksObjects.Count);
         whatAttackForAttack = whatAttack;
-        allAttacksObjects[whatAttack].SetActive(true);
 
-        attackRotation = allAttacksObjects[whatAttack].transform;
+        attackObject = allAttacksObjects[whatAttack];
 
         switch (whatAttackInt[whatAttack])
         {
-            case 0:
-                // Stretch Attack
+            case 0: // Stretch Attack
 
-                Vector3 whereToLook = Player.transform.position - allAttacksObjects[whatAttack].transform.position;
-                float angle = Mathf.Atan2(whereToLook.y, whereToLook.x) * Mathf.Rad2Deg;
-                allAttacksObjects[whatAttack].transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-                attackRotation.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                Vector3 whereToLook = player.transform.position - attackObject.transform.position; // Får Vart Den Ska Titta
+                float angle = Mathf.Atan2(whereToLook.y, whereToLook.x) * Mathf.Rad2Deg; // Får Vinkeln Där Den Ska Titta
+                attackObject.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward); // Sätter Rotationen
 
-                attackDistance = Vector2.Distance(Player.transform.position, allAttacksObjects[whatAttack].transform.position);
 
-                attackRayHit = Physics2D.Raycast(allAttacksObjects[whatAttack].transform.position, Player.transform.position, 1000f, stopLayers);
+                attackRayHit = Physics2D.Raycast(attackObject.transform.position, whereToLook, Mathf.Infinity, stopLayers);
 
                 if (attackRayHit.collider != null)
                 {
-                    Debug.Log(attackRayHit.distance);
-                    maxHowFastAttack = attackRayHit.distance/speed;
-                    howFastAttack = maxHowFastAttack;
+
+                    if(attackRayHit.distance/2 <= stretchAttackRange)
+                    {
+
+                        allAttacksObjects[whatAttack].SetActive(true);
+
+                        maxHowFastStretchAttack = (attackRayHit.distance / 2) / speed; // Dividera Med 2 För Att Tänka På Att Skalan Ökas Också
+                        howFastAttack = maxHowFastStretchAttack;
+
+                        Transform AttackObject = allAttacksObjects[whatAttack].transform.Find("WeakPointCollection");
+                        foreach (Transform child in AttackObject.transform)
+                        {
+
+                            weakPointList.Add(child.gameObject);
+
+                        }
+
+                        startStretchAttack = true;
+                    }
+                    else
+                    {
+
+                        startStretchAttack = false;
+                        // Not In Range
+                        // Check If Enemy Attack Again
+                    }
+
                 }
 
-                startAttack = true;
-
-
-
-                break;
+            break;
 
             case 1:
 
             break;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Vector2 direction = playerLocation.position - transform.position;
+        Gizmos.DrawRay(transform.position, direction);
     }
 
 }

@@ -82,6 +82,8 @@ public class PlayerSword : WeaponBase
 
                 speed = attackDistance/ howFastAttack;
 
+                // Aktivera Attack Hitbox
+
             }
         }
 
@@ -102,6 +104,8 @@ public class PlayerSword : WeaponBase
 
 
                 speed = attackDistance / howFastGoBack;
+
+                // Stäng Av Attack Hitbox
 
             }
         }

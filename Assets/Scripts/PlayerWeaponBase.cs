@@ -100,17 +100,21 @@ public class PlayerWeaponBase : MonoBehaviour
         Vector2 lookDirection = mousePos - rb.position;
         float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
 
-        if(angle > 90 && angle < 180 || angle < -90 && angle > -180 && CurrenWeaponIndex == (int)WeaponState.Axe)
+        if(angle > 90 && angle < 180 || angle < -90 && angle > -180 && CurrenWeaponIndex == (int)WeaponState.Axe) // Kollar Om Yxan Är På Höger Sida
         {
             playerAxe.rightSideAxe = false;
             playerAxe.SideSwitch();
         }
-        if (angle < 90 && angle > -90 && CurrenWeaponIndex == (int)WeaponState.Axe)
+        if (angle < 90 && angle > -90 && CurrenWeaponIndex == (int)WeaponState.Axe) // Kollar Om Yxan Är På Vänster Sida
         {
             playerAxe.rightSideAxe = true;
             playerAxe.SideSwitch();
         }
 
+        if(CurrenWeaponIndex == (int)WeaponState.Sword)
+        {
+            WhereToLookOfset = 0;
+        }
 
         transform.rotation = Quaternion.Euler(0f, 0f, angle + WhereToLookOfset);
     }
