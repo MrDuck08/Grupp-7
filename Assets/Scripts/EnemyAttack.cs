@@ -12,6 +12,8 @@ public class EnemyAttack : MonoBehaviour
     List<GameObject> weakPointList = new List<GameObject>();
     GameObject attackObject;
 
+    List<Vector3> weakPointTransformList = new List<Vector3>();
+
     [SerializeField] int[] whatAttackInt;
 
     int whatAttackForAttack;
@@ -87,8 +89,12 @@ public class EnemyAttack : MonoBehaviour
             foreach (GameObject weakPoints in weakPointList)
             {
 
-                weakPoints.transform.localScale -= new Vector3(speed * Time.deltaTime, 0, 0);
-                //weakPoints.transform.localScale -= attackObject.transform.localScale * Time.deltaTime;
+                for (int i = 0; i < weakPointTransformList.Count; i++)
+                {
+
+                    weakPoints.transform.localScale -= new Vector3(weakPointTransformList[i].x / attackObject.transform.localScale.x * Time.deltaTime, 0, 0);
+
+                }
 
             }
 
@@ -127,7 +133,12 @@ public class EnemyAttack : MonoBehaviour
             foreach (GameObject weakPoints in weakPointList)
             {
 
-                weakPoints.transform.localScale += new Vector3(speed * Time.deltaTime, 0);
+                for (int i = 0; i < weakPointTransformList.Count; i++)
+                {
+
+                    weakPoints.transform.localScale += new Vector3(weakPointTransformList[i].x / attackObject.transform.localScale.x * Time.deltaTime, 0, 0);
+
+                }
 
             }
 
@@ -178,7 +189,7 @@ public class EnemyAttack : MonoBehaviour
                         Transform AttackObject = allAttacksObjects[whatAttack].transform.Find("WeakPointCollection");
                         foreach (Transform child in AttackObject.transform)
                         {
-
+                            weakPointTransformList.Add(child.localScale);
                             weakPointList.Add(child.gameObject);
 
                         }
