@@ -128,7 +128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 91096482971479129}
   m_Layer: 6
-  m_Name: Movement Stuff
+  m_Name: Movement And Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -246,6 +246,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6301167957799180273}
   - component: {fileID: 6018908200448207198}
+  - component: {fileID: 7750626638870311632}
   m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
@@ -314,6 +315,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.8660242, y: 0.856297}
   m_EdgeRadius: 0
+--- !u!114 &7750626638870311632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9136090402687323043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4f8ac006dfe2ff4c84420b76300c203, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4643728535115355963
 PrefabInstance:
   m_ObjectHideFlags: 0

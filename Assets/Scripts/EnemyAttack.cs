@@ -89,10 +89,10 @@ public class EnemyAttack : MonoBehaviour
             foreach (GameObject weakPoints in weakPointList)
             {
 
-                for (int i = 0; i < weakPointTransformList.Count; i++)
+                foreach(Vector3 weakPointsVector in weakPointTransformList)
                 {
 
-                    weakPoints.transform.localScale -= new Vector3(weakPointTransformList[i].x / attackObject.transform.localScale.x * Time.deltaTime, 0, 0);
+                    weakPoints.transform.localScale -= new Vector3(weakPointsVector.x / attackObject.transform.localScale.x/ weakPointTransformList.Count * Time.deltaTime, 0, 0);
 
                 }
 
@@ -133,10 +133,10 @@ public class EnemyAttack : MonoBehaviour
             foreach (GameObject weakPoints in weakPointList)
             {
 
-                for (int i = 0; i < weakPointTransformList.Count; i++)
+                foreach (Vector3 weakPointsVector in weakPointTransformList)
                 {
 
-                    weakPoints.transform.localScale += new Vector3(weakPointTransformList[i].x / attackObject.transform.localScale.x * Time.deltaTime, 0, 0);
+                    weakPoints.transform.localScale += new Vector3(weakPointsVector.x / attackObject.transform.localScale.x / weakPointTransformList.Count * Time.deltaTime, 0, 0);
 
                 }
 
@@ -148,6 +148,12 @@ public class EnemyAttack : MonoBehaviour
 
                 howFastGoBack = maxHowFastGoBack;
 
+                startStretchAttack = false;
+                currentlyAttacking = false;
+
+                weakPointList.Clear();
+                weakPointTransformList.Clear();
+
                 attackObject.SetActive(false);
             }
         }
@@ -157,6 +163,7 @@ public class EnemyAttack : MonoBehaviour
 
     void Attack()
     {
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         int whatAttack = Random.Range(0, allAttacksObjects.Count);
@@ -167,6 +174,8 @@ public class EnemyAttack : MonoBehaviour
         switch (whatAttackInt[whatAttack])
         {
             case 0: // Stretch Attack
+
+                #region Stretch Attack
 
                 Vector3 whereToLook = player.transform.position - attackObject.transform.position; // Får Vart Den Ska Titta
                 float angle = Mathf.Atan2(whereToLook.y, whereToLook.x) * Mathf.Rad2Deg; // Får Vinkeln Där Den Ska Titta
@@ -191,7 +200,6 @@ public class EnemyAttack : MonoBehaviour
                         {
                             weakPointTransformList.Add(child.localScale);
                             weakPointList.Add(child.gameObject);
-
                         }
 
                         startStretchAttack = true;
@@ -200,13 +208,16 @@ public class EnemyAttack : MonoBehaviour
                     {
 
                         startStretchAttack = false;
+                        currentlyAttacking = false;
                         // Not In Range
                         // Check If Enemy Attack Again
                     }
 
                 }
 
-            break;
+                #endregion
+
+                break;
 
             case 1:
 
