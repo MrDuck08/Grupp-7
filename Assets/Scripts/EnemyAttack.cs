@@ -5,7 +5,7 @@ public class EnemyAttack : MonoBehaviour
 {
     [SerializeField] Transform playerLocation;
 
-    bool ifEnemyInRange = true;
+    public bool playerInRange = true;
     bool currentlyAttacking = false;
 
     List<GameObject> allAttacksObjects = new List<GameObject>();
@@ -15,8 +15,9 @@ public class EnemyAttack : MonoBehaviour
     List<Vector3> weakPointTransformList = new List<Vector3>();
 
     [SerializeField] int[] whatAttackInt;
-
     int whatAttackForAttack;
+
+    EnemyFollowPlayer enemyMovment;
 
     [Header("Attacks")]
 
@@ -61,20 +62,22 @@ public class EnemyAttack : MonoBehaviour
 
         }
 
+        enemyMovment = GetComponent<EnemyFollowPlayer>();
+
     }
 
     void Update()
     {
 
-        if (ifEnemyInRange && !currentlyAttacking)
-        {
-            currentlyAttacking = true;
+        //if (playerInRange && !currentlyAttacking)
+        //{
+        //    currentlyAttacking = true;
+        //    enemyMovment.stop = true;
+
+        //    Attack();
 
 
-            Attack();
-
-
-        }
+        //}
 
         #region Stretch Attack
 
@@ -146,6 +149,8 @@ public class EnemyAttack : MonoBehaviour
             {
                 startGoingBack = false;
 
+                enemyMovment.stop = false;
+
                 howFastGoBack = maxHowFastGoBack;
 
                 startStretchAttack = false;
@@ -155,16 +160,20 @@ public class EnemyAttack : MonoBehaviour
                 weakPointTransformList.Clear();
 
                 attackObject.SetActive(false);
+
             }
         }
 
         #endregion
     }
 
-    void Attack()
+    public void Attack()
     {
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        currentlyAttacking = true;
+        enemyMovment.stop = true;
 
         int whatAttack = Random.Range(0, allAttacksObjects.Count);
         whatAttackForAttack = whatAttack;
@@ -229,7 +238,7 @@ public class EnemyAttack : MonoBehaviour
     {
         Gizmos.color = Color.blue;
         Vector2 direction = playerLocation.position - transform.position;
-        Gizmos.DrawRay(transform.position, direction);
+        //Gizmos.DrawRay(transform.position, direction);
     }
 
 }
