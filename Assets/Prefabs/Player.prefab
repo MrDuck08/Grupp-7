@@ -232,9 +232,9 @@ MonoBehaviour:
   groundDecay: 1
   body: {fileID: 4944870964944268339}
   groundCheck: {fileID: 2847190868253552885}
-  groundMask:
+  jumpableLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 136
   grounded: 1
 --- !u!1 &9136090402687323043
 GameObject:

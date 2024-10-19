@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D body;
     public Transform groundCheck;
 
-    public LayerMask groundMask;
+    public LayerMask jumpableLayer;
 
     public bool grounded;
 
@@ -106,7 +106,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckGround()
     {
-        grounded = Physics2D.OverlapCircle(groundCheck.transform.position, 0.35f, groundMask);
+        grounded = Physics2D.OverlapCircle(groundCheck.transform.position, 0.35f, jumpableLayer);
     }
 
     void ApplyFriction()

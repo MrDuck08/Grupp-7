@@ -69,16 +69,6 @@ public class EnemyAttack : MonoBehaviour
     void Update()
     {
 
-        //if (playerInRange && !currentlyAttacking)
-        //{
-        //    currentlyAttacking = true;
-        //    enemyMovment.stop = true;
-
-        //    Attack();
-
-
-        //}
-
         #region Stretch Attack
 
         if (startStretchAttack)
@@ -165,6 +155,7 @@ public class EnemyAttack : MonoBehaviour
         }
 
         #endregion
+
     }
 
     public void Attack()
@@ -199,12 +190,12 @@ public class EnemyAttack : MonoBehaviour
                     if(attackRayHit.distance/2 <= stretchAttackRange)
                     {
 
-                        allAttacksObjects[whatAttack].SetActive(true);
+                        attackObject.SetActive(true);
 
                         maxHowFastStretchAttack = (attackRayHit.distance / 2) / speed; // Dividera Med 2 För Att Tänka På Att Skalan Ökas Också
                         howFastAttack = maxHowFastStretchAttack;
 
-                        Transform AttackObject = allAttacksObjects[whatAttack].transform.Find("WeakPointCollection");
+                        Transform AttackObject = attackObject.transform.Find("WeakPointCollection");
                         foreach (Transform child in AttackObject.transform)
                         {
                             weakPointTransformList.Add(child.localScale);
@@ -212,12 +203,15 @@ public class EnemyAttack : MonoBehaviour
                         }
 
                         startStretchAttack = true;
+
+                        
                     }
                     else
                     {
 
                         startStretchAttack = false;
                         currentlyAttacking = false;
+                        enemyMovment.stop = false;
                         // Not In Range
                         // Check If Enemy Attack Again
                     }
