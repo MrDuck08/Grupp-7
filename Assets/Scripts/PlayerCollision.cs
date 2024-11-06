@@ -4,21 +4,27 @@ using System.Collections;
 public class PlayerCollision : MonoBehaviour
 {
 
+    RespawnScript respawnScript;
+
+    private void Start()
+    {
+        respawnScript = FindAnyObjectByType<RespawnScript>();
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
 
         if (collision.gameObject.tag == "EnemyAttack")
         {
-            HealthManager.health--;
-            if (HealthManager.health <= 0)
-            {
-                //Game over, 
-                gameObject.SetActive(false);
-            }
-            else
-            {
-                StartCoroutine(GetHurt());
-            }
+            TakeDamage();
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "EnemyAttack")
+        {
+            TakeDamage();
         }
     }
 
@@ -37,8 +43,9 @@ public class PlayerCollision : MonoBehaviour
         if (HealthManager.health <= 0)
         {
             //Game over, 
-            //PlayerManager.isGameOver = true;
-            gameObject.SetActive(false);
+
+            respawnScript.Respawn();
+
         }
         else
         {

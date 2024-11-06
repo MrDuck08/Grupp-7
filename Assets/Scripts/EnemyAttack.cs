@@ -13,6 +13,12 @@ public class EnemyAttack : MonoBehaviour
     GameObject attackObject;
 
     List<Vector3> weakPointTransformList = new List<Vector3>();
+    List<Vector3> originalWeakPointScaleList = new List<Vector3>();
+    List<Vector3> originalWeakPointTransformList = new List<Vector3>();
+    Vector3 originalAttackScale;
+    Vector3 originalAttackPos;
+
+    [Header("s")]
 
     [SerializeField] int[] whatAttackInt;
     int whatAttackForAttack;
@@ -45,6 +51,18 @@ public class EnemyAttack : MonoBehaviour
     RaycastHit2D attackRayHit;
 
     [SerializeField] LayerMask stopLayers;
+
+    #endregion
+
+    #region Charge Attack
+
+    float playerDirection;
+
+    bool anticipateCharge = false;
+
+    float timeUntilCharge;
+    [SerializeField] float maxTimeUntilCharge = 1f;
+
 
     #endregion
 
@@ -98,6 +116,8 @@ public class EnemyAttack : MonoBehaviour
 
                 howFastAttack = maxHowFastStretchAttack;
                 howLongStayAfterStretchAttack = maxHowLongStayAfterStretchAttack;
+
+                attackObject.GetComponent<BoxCollider2D>().enabled = false;
             }
         }
 
@@ -137,21 +157,25 @@ public class EnemyAttack : MonoBehaviour
 
             if (howFastGoBack <= 0)
             {
-                startGoingBack = false;
-
-                enemyMovment.stop = false;
-
-                howFastGoBack = maxHowFastGoBack;
-
-                startStretchAttack = false;
-                currentlyAttacking = false;
-
-                weakPointList.Clear();
-                weakPointTransformList.Clear();
-
-                attackObject.SetActive(false);
+                ResetAttack();
 
             }
+        }
+
+        #endregion
+
+        #region Charge Attack
+
+        if (anticipateCharge)
+        {
+
+            timeUntilCharge -= Time.deltaTime;
+
+            if(timeUntilCharge < 0)
+            {
+
+            }
+
         }
 
         #endregion
@@ -170,6 +194,17 @@ public class EnemyAttack : MonoBehaviour
         whatAttackForAttack = whatAttack;
 
         attackObject = allAttacksObjects[whatAttack];
+        originalAttackPos = attackObject.transform.localPosition;
+        originalAttackScale = attackObject.transform.localScale;
+
+        Transform AttackObject = attackObject.transform.Find("WeakPointCollection");
+        foreach (Transform child in AttackObject.transform)
+        {
+            originalWeakPointTransformList.Add(child.localPosition);
+            originalWeakPointScaleList.Add(child.localScale);
+            weakPointTransformList.Add(child.localScale);
+            weakPointList.Add(child.gameObject);
+        }
 
         switch (whatAttackInt[whatAttack])
         {
@@ -191,16 +226,11 @@ public class EnemyAttack : MonoBehaviour
                     {
 
                         attackObject.SetActive(true);
-
+    
                         maxHowFastStretchAttack = (attackRayHit.distance / 2) / speed; // Dividera Med 2 För Att Tänka På Att Skalan Ökas Också
                         howFastAttack = maxHowFastStretchAttack;
 
-                        Transform AttackObject = attackObject.transform.Find("WeakPointCollection");
-                        foreach (Transform child in AttackObject.transform)
-                        {
-                            weakPointTransformList.Add(child.localScale);
-                            weakPointList.Add(child.gameObject);
-                        }
+                        attackObject.GetComponent<BoxCollider2D>().enabled = true;
 
                         startStretchAttack = true;
 
@@ -217,15 +247,66 @@ public class EnemyAttack : MonoBehaviour
                     }
 
                 }
+                else
+                {
+                    ResetAttack();
+                }
 
                 #endregion
 
                 break;
 
-            case 1:
+            case 1: // Charge Attack
 
-            break;
+                playerDirection = Mathf.Sign(player.transform.position.x - transform.position.x);
+
+                attackObject.GetComponent<BoxCollider2D>().enabled = true;
+
+                timeUntilCharge = maxTimeUntilCharge;
+
+                anticipateCharge = true;
+
+                break;
         }
+    }
+
+    public void ResetAttack()
+    {
+
+        for(int i = 0; i < weakPointList.Count; i++)
+        {
+
+            weakPointList[i].gameObject.transform.localPosition = originalWeakPointTransformList[i];
+            weakPointList[i].gameObject.transform.localScale = originalWeakPointScaleList[i];
+        }
+
+        startGoingBack = false;
+
+        enemyMovment.stop = false;
+
+        howFastGoBack = maxHowFastGoBack;
+        howFastAttack = maxHowFastStretchAttack;
+        howLongStayAfterStretchAttack = maxHowLongStayAfterStretchAttack;
+
+        startStretchAttack = false;
+        startWaitingToGoBack = false;
+        startGoingBack = false;
+        currentlyAttacking = false;
+
+        originalWeakPointTransformList.Clear();
+        originalWeakPointScaleList.Clear();
+        weakPointList.Clear();
+        weakPointTransformList.Clear();
+
+        if (attackObject != null)
+        {
+            attackObject.transform.localPosition = originalAttackPos;
+
+            attackObject.transform.localScale = originalAttackScale;
+
+            attackObject.SetActive(false);
+        }
+
     }
 
     private void OnDrawGizmos()

@@ -1,4 +1,4 @@
-using UnityEditor;
+ï»¿using UnityEditor;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -13,16 +13,14 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D body;
     public Transform groundCheck;
 
-    public LayerMask jumpableLayer;
+    public LayerMask groundMask;
 
     public bool grounded;
 
     bool facingRight = true;
 
     float xInput;
-
     float yInput;
-
 
     void Update()
     {
@@ -47,12 +45,14 @@ public class PlayerMovement : MonoBehaviour
         HandleJump();
 
     }
+
     private void FixedUpdate(){
 
         ApplyFriction();
     }
+
     void GetInput()
-    { 
+    {  
         xInput = Input.GetAxisRaw("Horizontal");
         yInput = Input.GetAxisRaw("Vertical");
     }
@@ -63,14 +63,12 @@ public class PlayerMovement : MonoBehaviour
         {
             float increment = xInput * acceleration;
             float newSpeed = body.linearVelocity.x + increment;
-
             body.linearVelocity = new Vector2(newSpeed, body.linearVelocity.y);
 
             float direction = Mathf.Sign(xInput);
             Vector3 currentScale = transform.localScale;
             transform.localScale = new Vector3(Mathf.Abs(currentScale.x) * direction, currentScale.y, currentScale.z);
         }
-
     }
 
     void FaceInput()
@@ -83,45 +81,34 @@ public class PlayerMovement : MonoBehaviour
     {
             if (Input.GetButtonDown("Jump") && grounded)
             {
-
                 body.AddForce(new Vector2(0, jumpSpeed) , ForceMode2D.Impulse);
             }
     }
 
     void Flip()
     {
-
-        // Vänd sprite:n genom att spegla den på x-axeln
         Vector3 scaler = transform.localScale;
         scaler.x *= -1;
         transform.localScale = scaler;
-
-        Transform weaponBase = transform.Find("PlayerWeaponAll"); // Hittar Childen PlayerWeaponAll
+        Transform weaponBase = transform.Find("PlayerWeaponAll");
         if (weaponBase != null) // Kolllar Om Den Hittades
         {
-            weaponBase.transform.localScale = scaler; // Vända Vapnerna
+            weaponBase.transform.localScale = scaler; // VÃ¤nda Vapnerna
         }
     }
 
 
-    private void CheckGround()
+private void CheckGround()
     {
-        grounded = Physics2D.OverlapCircle(groundCheck.transform.position, 0.35f, jumpableLayer);
+       //grounded = Physics2D.OverlapAreaAll(groundCheck.bounds.min, groundCheck.bounds.max, groundMask).Length > 0;
+        grounded = Physics2D.OverlapCircle(groundCheck.transform.position, 0.35f, groundMask);
     }
 
-    void ApplyFriction()
-    {
-
+    void ApplyFriction(){
         if (grounded && xInput == 0 && body.linearVelocity.y <= 0)
         {
             body.linearVelocity *= groundDecay;
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-
-
-    }
 }

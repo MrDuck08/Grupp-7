@@ -302,7 +302,7 @@ GameObject:
   - component: {fileID: 5484586374450994377}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -443,7 +443,7 @@ MonoBehaviour:
   maxHowFastStretchAttack: 0.2
   maxHowLongStayAfterStretchAttack: 1
   maxHowFastGoBack: 0.3
-  stretchAttackRange: 3
+  stretchAttackRange: 4
   stopLayers:
     serializedVersion: 2
     m_Bits: 8
@@ -462,6 +462,8 @@ MonoBehaviour:
   speed: 1.5
   lineOfSite: 7
   attackRange: 4
+  baseLineOfSite: 0
+  startTransform: {x: 0, y: 0, z: 0}
   stop: 0
 --- !u!50 &5484586374450994377
 Rigidbody2D:

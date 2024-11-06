@@ -1,14 +1,15 @@
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class EnemyFollowPlayer : MonoBehaviour
 {
     public float speed;
     public float lineOfSite;
-    float baseLineOfSite;
     public float attackRange;
+    public float baseLineOfSite;
 
     private Transform player;
+
+    public Vector3 startTransform;
 
     public bool stop = false;
 
@@ -24,11 +25,13 @@ public class EnemyFollowPlayer : MonoBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
 
         baseLineOfSite = lineOfSite;
-    }
 
+        startTransform = transform.position;
+    }
 
     private void FixedUpdate()
     {
+
         float distanceFromPlayer = Vector2.Distance(player.position, transform.position);
         if (distanceFromPlayer < lineOfSite && distanceFromPlayer > attackRange && !stop)
         {
@@ -41,7 +44,6 @@ public class EnemyFollowPlayer : MonoBehaviour
             transform.position = MovePos;
 
             rigidbody2D.constraints = RigidbodyConstraints2D.None;
-
 
         }
         else if (distanceFromPlayer <= attackRange && !stop)
