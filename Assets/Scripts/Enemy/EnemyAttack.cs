@@ -149,7 +149,11 @@ public class EnemyAttack : MonoBehaviour
                 howFastAttack = maxHowFastStretchAttack;
                 howLongStayAfterStretchAttack = maxHowLongStayAfterStretchAttack;
 
-                attackObject.GetComponent<BoxCollider2D>().enabled = false;
+                if(attackObject.GetComponent<EnemyFollowPlayer>() != null)
+                {
+                    attackObject.GetComponent<BoxCollider2D>().enabled = false;
+                }
+
             }
         }
 
@@ -208,7 +212,15 @@ public class EnemyAttack : MonoBehaviour
             {
 
                 attackObject.SetActive(true);
-                attackObject.GetComponent<BoxCollider2D>().enabled = true;
+
+                if(attackObject.GetComponent<BoxCollider2D>() != null)
+                {
+                    attackObject.GetComponent<BoxCollider2D>().enabled = true;
+                }
+                if (attackObject.GetComponent<CapsuleCollider2D>() != null)
+                {
+                    attackObject.GetComponent<CapsuleCollider2D>().enabled = true;
+                }
 
                 distanceToPlayer = Vector3.Distance(player.transform.position, transform.position) + howMoreToRunAfterCharge;
 
@@ -233,7 +245,14 @@ public class EnemyAttack : MonoBehaviour
             if (chargeTime < 0)
             {
 
-                attackObject.GetComponent<BoxCollider2D>().enabled = false;
+                if (attackObject.GetComponent<BoxCollider2D>() != null)
+                {
+                    attackObject.GetComponent<BoxCollider2D>().enabled = false;
+                }
+                if (attackObject.GetComponent<CapsuleCollider2D>() != null)
+                {
+                    attackObject.GetComponent<CapsuleCollider2D>().enabled = false;
+                }
 
                 chargeRecoveryTime = maxChargeRecoveryTime;
 
@@ -329,7 +348,10 @@ public class EnemyAttack : MonoBehaviour
                         maxHowFastStretchAttack = (attackRayHit.distance / 2) / stretchSpeed; // Dividera Med 2 För Att Tänka På Att Skalan Ökas Också
                         howFastAttack = maxHowFastStretchAttack;
 
-                        attackObject.GetComponent<BoxCollider2D>().enabled = true;
+                        if (attackObject.GetComponent<EnemyFollowPlayer>() != null)
+                        {
+                            attackObject.GetComponent<BoxCollider2D>().enabled = true;
+                        }
 
                         startStretchAttack = true;
 

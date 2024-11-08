@@ -42,6 +42,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3813656736481770560}
   - component: {fileID: 3143289067443725533}
+  - component: {fileID: 7819961248273521956}
   m_Layer: 0
   m_Name: Attack2
   m_TagString: EnemyAttack
@@ -111,6 +112,43 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.47437918, y: 0.8831954}
   m_EdgeRadius: 0
+--- !u!70 &7819961248273521956
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554413500641548486}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.3292898, y: 0.072491825}
+  m_Size: {x: 0.5, y: 0.8449837}
+  m_Direction: 0
 --- !u!1 &1243099299838798126
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,7 +588,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerLocation: {fileID: 0}
   playerInRange: 1
-  whatAttackInt: 0000000001000000
+  whatAttackInt: 0000000001000000010000000100000001000000
+  maxStunTime: 2
   stretchSpeed: 2
   maxHowFastStretchAttack: 0.2
   maxHowLongStayAfterStretchAttack: 1
@@ -560,7 +599,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   howMoreToRunAfterCharge: 1
-  chargeSpeed: 6
+  chargeSpeed: 7
   maxChargeStartupTime: 1
   maxChargeRecoveryTime: 1
 --- !u!114 &8832996382395770815
