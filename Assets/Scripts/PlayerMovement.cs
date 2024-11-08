@@ -26,6 +26,11 @@ public class PlayerMovement : MonoBehaviour
     {
         GetInput();
 
+        if (Input.GetMouseButtonDown(1))
+        {
+            knockback();
+        }
+
         Vector2 direction = new Vector2(xInput, 0).normalized;
 
         if (xInput < 0 && facingRight == true)
@@ -98,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-private void CheckGround()
+    private void CheckGround()
     {
        //grounded = Physics2D.OverlapAreaAll(groundCheck.bounds.min, groundCheck.bounds.max, groundMask).Length > 0;
         grounded = Physics2D.OverlapCircle(groundCheck.transform.position, 0.35f, groundMask);
@@ -109,6 +114,15 @@ private void CheckGround()
         {
             body.linearVelocity *= groundDecay;
         }
+    }
+
+    public void knockback()
+    {
+
+        float direction = Mathf.Sign(transform.localScale.x); // Får 1 eller -1 från vilket håll den kollar
+
+        body.linearVelocity = new Vector2(50 * direction, 20);
+
     }
 
 }

@@ -21,20 +21,33 @@ public class EnemyAttack : MonoBehaviour
     [Header("s")]
 
     [SerializeField] int[] whatAttackInt;
-    int whatAttackForAttack;
 
     EnemyFollowPlayer enemyMovment;
 
     [Header("Attacks")]
 
+    #region Stun
+
+    [Header("Stun")]
+
+    float stunTime;
+    [SerializeField] float maxStunTime = 2f;
+
+    bool stunned = false;
+
+    #endregion
+
     #region Attacks
+
+    GameObject player;
 
     #region Stretch Attack
 
     [Header("Stretch Attacks")]
 
-    [SerializeField] float speed;
+    [SerializeField] float stretchSpeed;
 
+    [Header("Stretch Times")]
     float howFastAttack;
     [SerializeField] float maxHowFastStretchAttack = 0.2f;
     float howLongStayAfterStretchAttack;
@@ -56,17 +69,35 @@ public class EnemyAttack : MonoBehaviour
 
     #region Charge Attack
 
+    [Header("Charge Attack")]
+
     float playerDirection;
+    float distanceToPlayer;
 
     bool anticipateCharge = false;
+    bool startCharge = false;
+    bool startChargeRecovery = false;
 
-    float timeUntilCharge;
-    [SerializeField] float maxTimeUntilCharge = 1f;
+    [Header("Attack Values")]
+
+    [SerializeField] float howMoreToRunAfterCharge = 1;
+
+    [SerializeField] float chargeSpeed = 6;
+
+    [Header("Timers")]
+
+    float chargeStartupTime;
+    [SerializeField] float maxChargeStartupTime = 1f;
+    float chargeTime;
+    float maxChargeTime;
+    float chargeRecoveryTime;
+    [SerializeField] float maxChargeRecoveryTime = 0.5f;
 
 
     #endregion
 
     #endregion
+
 
 
 
@@ -91,11 +122,12 @@ public class EnemyAttack : MonoBehaviour
 
         if (startStretchAttack)
         {
+
             howFastAttack -= Time.deltaTime;
 
-            attackObject.transform.position += attackObject.transform.right  * speed * Time.deltaTime;
+            attackObject.transform.position += attackObject.transform.right  * stretchSpeed * Time.deltaTime;
 
-            attackObject.transform.localScale += new Vector3(speed * Time.deltaTime, 0, 0);
+            attackObject.transform.localScale += new Vector3(stretchSpeed * Time.deltaTime, 0, 0);
 
             foreach (GameObject weakPoints in weakPointList)
             {
@@ -139,9 +171,9 @@ public class EnemyAttack : MonoBehaviour
         {
             howFastGoBack -= Time.deltaTime;
 
-            attackObject.transform.position -= attackObject.transform.right * speed * Time.deltaTime;
+            attackObject.transform.position -= attackObject.transform.right * stretchSpeed * Time.deltaTime;
 
-            attackObject.transform.localScale -= new Vector3(speed * Time.deltaTime, 0);
+            attackObject.transform.localScale -= new Vector3(stretchSpeed * Time.deltaTime, 0);
 
             foreach (GameObject weakPoints in weakPointList)
             {
@@ -169,11 +201,75 @@ public class EnemyAttack : MonoBehaviour
         if (anticipateCharge)
         {
 
-            timeUntilCharge -= Time.deltaTime;
+            chargeStartupTime -= Time.deltaTime;
 
-            if(timeUntilCharge < 0)
+
+            if(chargeStartupTime < 0)
             {
 
+                attackObject.SetActive(true);
+                attackObject.GetComponent<BoxCollider2D>().enabled = true;
+
+                distanceToPlayer = Vector3.Distance(player.transform.position, transform.position) + howMoreToRunAfterCharge;
+
+                maxChargeTime = distanceToPlayer / chargeSpeed;
+                chargeTime = maxChargeTime;
+
+                anticipateCharge = false;
+                startCharge = true;
+            }
+
+        }
+
+        if (startCharge)
+        {
+
+            Vector2 MovePos = new Vector2(transform.position.x + playerDirection * chargeSpeed * Time.deltaTime, transform.position.y);
+
+            transform.position = MovePos;
+
+            chargeTime -= Time.deltaTime;
+
+            if (chargeTime < 0)
+            {
+
+                attackObject.GetComponent<BoxCollider2D>().enabled = false;
+
+                chargeRecoveryTime = maxChargeRecoveryTime;
+
+                startCharge = false;
+                startChargeRecovery = true;
+
+            }
+        }
+
+        if (startChargeRecovery)
+        {
+
+            chargeRecoveryTime -= Time.deltaTime;
+
+            if(chargeRecoveryTime < 0)
+            {
+                ResetAttack();
+            }
+
+        }
+
+        #endregion
+
+        #region Stun
+
+        if (stunned)
+        {
+
+            stunTime -= Time.deltaTime;
+
+            if(stunTime < 0)
+            {
+
+                stunned = false;
+
+                enemyMovment.stop = false;
             }
 
         }
@@ -185,13 +281,14 @@ public class EnemyAttack : MonoBehaviour
     public void Attack()
     {
 
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        #region General Info Gathering
+
+        player = GameObject.FindGameObjectWithTag("Player");
 
         currentlyAttacking = true;
         enemyMovment.stop = true;
 
         int whatAttack = Random.Range(0, allAttacksObjects.Count);
-        whatAttackForAttack = whatAttack;
 
         attackObject = allAttacksObjects[whatAttack];
         originalAttackPos = attackObject.transform.localPosition;
@@ -205,6 +302,8 @@ public class EnemyAttack : MonoBehaviour
             weakPointTransformList.Add(child.localScale);
             weakPointList.Add(child.gameObject);
         }
+
+        #endregion
 
         switch (whatAttackInt[whatAttack])
         {
@@ -227,7 +326,7 @@ public class EnemyAttack : MonoBehaviour
 
                         attackObject.SetActive(true);
     
-                        maxHowFastStretchAttack = (attackRayHit.distance / 2) / speed; // Dividera Med 2 För Att Tänka På Att Skalan Ökas Också
+                        maxHowFastStretchAttack = (attackRayHit.distance / 2) / stretchSpeed; // Dividera Med 2 För Att Tänka På Att Skalan Ökas Också
                         howFastAttack = maxHowFastStretchAttack;
 
                         attackObject.GetComponent<BoxCollider2D>().enabled = true;
@@ -258,17 +357,21 @@ public class EnemyAttack : MonoBehaviour
 
             case 1: // Charge Attack
 
-                playerDirection = Mathf.Sign(player.transform.position.x - transform.position.x);
+                #region Charge Attack
 
-                attackObject.GetComponent<BoxCollider2D>().enabled = true;
+                playerDirection = Mathf.Sign(player.transform.position.x - transform.position.x); // Får Om Den Position i korrelation med fiendes position och sen ger 1 eller -1
 
-                timeUntilCharge = maxTimeUntilCharge;
+                chargeStartupTime = maxChargeStartupTime;
 
                 anticipateCharge = true;
+
+                #endregion
 
                 break;
         }
     }
+
+    #region Reset Attack
 
     public void ResetAttack()
     {
@@ -287,6 +390,14 @@ public class EnemyAttack : MonoBehaviour
         howFastGoBack = maxHowFastGoBack;
         howFastAttack = maxHowFastStretchAttack;
         howLongStayAfterStretchAttack = maxHowLongStayAfterStretchAttack;
+
+        chargeStartupTime = maxChargeStartupTime;
+        chargeTime = maxChargeTime;
+        chargeRecoveryTime = maxChargeRecoveryTime;
+
+        anticipateCharge = false;
+        startCharge = false;
+        startChargeRecovery = false;
 
         startStretchAttack = false;
         startWaitingToGoBack = false;
@@ -308,6 +419,28 @@ public class EnemyAttack : MonoBehaviour
         }
 
     }
+
+    #endregion
+
+    #region Trigger
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (startCharge && collision.gameObject.layer == 3)
+        {
+
+            ResetAttack();
+
+            stunTime = maxStunTime;
+
+            stunned = true;
+
+            enemyMovment.stop = true;
+
+        }
+    }
+
+    #endregion
 
     private void OnDrawGizmos()
     {
