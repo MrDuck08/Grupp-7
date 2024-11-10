@@ -22,6 +22,9 @@ public class Chip : MonoBehaviour
 
     Transform player;
 
+    Vector2 testVector = new Vector2(1.5f, 0.2f);
+    bool testBool = false;
+
 
     private void Start()
     {
@@ -67,14 +70,17 @@ public class Chip : MonoBehaviour
         {
 
             stop = true;
-            Debug.Log("STart Searching Up");
-            Vector2 relativeUpWallCheckPosition = (Vector2)transform.position + new Vector2(wallCheckPosition.x, wallCheckPosition.y + 0.01f * Time.deltaTime);
-            bool upWallChecked = Physics2D.OverlapCircle(relativeUpWallCheckPosition, checkRadius, groundLayer);
 
-            if (upWallChecked)
+            testVector =  new Vector2(wallCheckPosition.x + checkRadius, wallCheckPosition.y + 1f * Time.deltaTime);
+            bool upWallChecked = Physics2D.OverlapCircle(testVector, checkRadius, groundLayer);
+
+            if (!upWallChecked && !testBool)
             {
                 Debug.Log("Move Up");
                 transform.position = relativeWallCheckPosition;
+
+                testBool = true;
+                stop = false;
 
             }
 
@@ -91,6 +97,10 @@ public class Chip : MonoBehaviour
 
         Gizmos.DrawWireSphere((Vector2)transform.position + wallCheckPosition, checkRadius);
         Gizmos.DrawWireSphere((Vector2)transform.position + groundCheckPosition, checkRadius);
+
+        Gizmos.color = Color.blue;
+
+        Gizmos.DrawWireSphere((Vector2)transform.position + testVector, checkRadius);
 
     }
 
