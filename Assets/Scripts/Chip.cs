@@ -22,8 +22,9 @@ public class Chip : MonoBehaviour
 
     Transform player;
 
-    Vector2 testVector = new Vector2(1.5f, 0.2f);
-    bool testBool = false;
+    Vector2 findWhereToJumpPos = new Vector2(1.5f, 0.2f);
+    float findJumpY = 1;
+
 
 
     private void Start()
@@ -37,8 +38,13 @@ public class Chip : MonoBehaviour
     {
 
         Movement();
-        Jump();
+       
 
+    }
+
+    private void Update()
+    {
+        Jump();
     }
 
     private void Movement()
@@ -66,20 +72,35 @@ public class Chip : MonoBehaviour
         Vector2 relativeGroundCheckPosition = (Vector2)transform.position + new Vector2(groundCheckPosition.x, groundCheckPosition.y);
         bool groundChecked = Physics2D.OverlapCircle(relativeGroundCheckPosition, checkRadius, groundLayer);
 
+        if (!groundChecked)
+        {
+
+            //stop = true;
+
+            //findJumpY += 0.1f * Time.deltaTime;
+
+            //findWhereToJumpPos = (Vector2)transform.position + new Vector2(wallCheckPosition.x + checkRadius, wallCheckPosition.y);
+            //bool upWallChecked = Physics2D.OverlapCircle(findWhereToJumpPos, checkRadius, groundLayer);
+
+        }
+
         if (wallChecked)
         {
 
             stop = true;
 
-            testVector =  new Vector2(wallCheckPosition.x + checkRadius, wallCheckPosition.y + 1f * Time.deltaTime);
-            bool upWallChecked = Physics2D.OverlapCircle(testVector, checkRadius, groundLayer);
+            findJumpY += 0.1f * Time.deltaTime;
 
-            if (!upWallChecked && !testBool)
+            findWhereToJumpPos = (Vector2)transform.position + new Vector2(wallCheckPosition.x + checkRadius, wallCheckPosition.y + findJumpY);
+            bool upWallChecked = Physics2D.OverlapCircle(findWhereToJumpPos, checkRadius, groundLayer);
+
+
+            if (!upWallChecked)
             {
                 Debug.Log("Move Up");
-                transform.position = relativeWallCheckPosition;
+                transform.position = findWhereToJumpPos;
 
-                testBool = true;
+                findJumpY = 1;
                 stop = false;
 
             }
@@ -100,7 +121,7 @@ public class Chip : MonoBehaviour
 
         Gizmos.color = Color.blue;
 
-        Gizmos.DrawWireSphere((Vector2)transform.position + testVector, checkRadius);
+        Gizmos.DrawWireSphere(findWhereToJumpPos, checkRadius);
 
     }
 
