@@ -19,11 +19,20 @@ public class Chip : MonoBehaviour
     [SerializeField] float walkRange = 3;
 
     bool stop = false;
+    bool findNewGroundRight = false;
 
     Transform player;
 
-    Vector2 findWhereToJumpPos = new Vector2(1.5f, 0.2f);
-    float findJumpY = 1;
+    Vector2 findWhereToJumpUp = new Vector2(1.5f, 0.2f);
+    float findJumpYUp = 0.1f;
+
+    Vector2 findGroundToJumpDown;
+    float findJumpYDown = 0.1f;
+
+    Vector2 findGroundRight;
+    float findJumpYRight = 0.1f;
+    float findJumpXRight = 0.1f;
+    Vector2 findGroundToJumpRight;
 
 
 
@@ -72,40 +81,113 @@ public class Chip : MonoBehaviour
         Vector2 relativeGroundCheckPosition = (Vector2)transform.position + new Vector2(groundCheckPosition.x, groundCheckPosition.y);
         bool groundChecked = Physics2D.OverlapCircle(relativeGroundCheckPosition, checkRadius, groundLayer);
 
+        #region Ground Search
+
         if (!groundChecked)
         {
 
-            //stop = true;
+            #region Right Ground Search
 
-            //findJumpY += 0.1f * Time.deltaTime;
+            if (!findNewGroundRight)
+            {
 
-            //findWhereToJumpPos = (Vector2)transform.position + new Vector2(wallCheckPosition.x + checkRadius, wallCheckPosition.y);
-            //bool upWallChecked = Physics2D.OverlapCircle(findWhereToJumpPos, checkRadius, groundLayer);
+                stop = true;
+
+                findJumpXRight += 1f * Time.deltaTime;
+
+                findGroundRight = (Vector2)transform.position + new Vector2(groundCheckPosition.x + findJumpXRight, groundCheckPosition.y);
+                findNewGroundRight = Physics2D.OverlapCircle(findGroundRight, checkRadius, groundLayer);
+
+
+            }
+
+            #endregion
+
+            #region Down Ground Check
+
+            stop = true;
+
+            findJumpYDown += 1f * Time.deltaTime;
+
+            findGroundToJumpDown = (Vector2)transform.position + new Vector2(groundCheckPosition.x + 1, groundCheckPosition.y - findJumpYDown);
+            bool findNewGroundDown = Physics2D.OverlapCircle(findGroundToJumpDown, checkRadius, groundLayer);
+
+            if (findNewGroundDown)
+            {
+
+                transform.position = findGroundToJumpDown;
+
+                ResetCheckValues();
+
+            }
+
+            #endregion
 
         }
+        if (findNewGroundRight)
+        {
+
+            findJumpYRight += 1f * Time.deltaTime;
+
+            findGroundToJumpRight = new Vector2(findGroundRight.x + checkRadius * 2, findGroundRight.y + findJumpYRight);
+            bool findWhereToJump = Physics2D.OverlapCircle(findGroundToJumpRight, checkRadius, groundLayer);
+
+            if (!findWhereToJump)
+            {
+
+                transform.position = findGroundToJumpRight;
+
+                ResetCheckValues();
+
+            }
+
+        }
+
+        #endregion
+
+        #region Wall Up Check
 
         if (wallChecked)
         {
 
             stop = true;
 
-            findJumpY += 0.1f * Time.deltaTime;
+            findJumpYUp += 1f * Time.deltaTime;
 
-            findWhereToJumpPos = (Vector2)transform.position + new Vector2(wallCheckPosition.x + checkRadius, wallCheckPosition.y + findJumpY);
-            bool upWallChecked = Physics2D.OverlapCircle(findWhereToJumpPos, checkRadius, groundLayer);
+            findWhereToJumpUp = (Vector2)transform.position + new Vector2(wallCheckPosition.x + checkRadius/2, wallCheckPosition.y + findJumpYUp);
+            bool upWallChecked = Physics2D.OverlapCircle(findWhereToJumpUp, checkRadius, groundLayer);
 
 
             if (!upWallChecked)
             {
-                Debug.Log("Move Up");
-                transform.position = findWhereToJumpPos;
 
-                findJumpY = 1;
-                stop = false;
+                transform.position = findWhereToJumpUp;
 
+                ResetCheckValues();
             }
 
         }
+
+        #endregion
+
+        if (groundChecked && !wallChecked)
+        {
+            stop = false;
+        }
+
+    }
+
+    private void ResetCheckValues()
+    {
+
+        findJumpYUp = 0.1f;
+        findJumpYDown = 0.1f;
+        findJumpXRight = 0.1f;
+        findJumpYRight = 0.1f;
+
+        findNewGroundRight = false;
+
+        stop = false;
 
     }
 
@@ -121,7 +203,11 @@ public class Chip : MonoBehaviour
 
         Gizmos.color = Color.blue;
 
-        Gizmos.DrawWireSphere(findWhereToJumpPos, checkRadius);
+
+        Gizmos.DrawWireSphere(findGroundToJumpRight, checkRadius);
+        Gizmos.DrawWireSphere(findWhereToJumpUp, checkRadius);
+        Gizmos.DrawWireSphere(findGroundToJumpDown, checkRadius);
+        Gizmos.DrawWireSphere(findGroundRight, checkRadius);
 
     }
 
