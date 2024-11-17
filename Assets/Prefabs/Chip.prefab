@@ -183,3 +183,4 @@ MonoBehaviour:
     m_Bits: 8
   speed: 3
   walkRange: 6
+  testObject: {fileID: 0}

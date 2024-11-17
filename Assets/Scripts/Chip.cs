@@ -34,6 +34,21 @@ public class Chip : MonoBehaviour
     float findJumpXRight = 0.1f;
     Vector2 findGroundToJumpRight;
 
+    #region Jump
+
+    [SerializeField] float jumpSpeed = 5;
+    [SerializeField] float extraJumpLenght = 5;
+    float jumpAcceration;
+    float distanceToJumpPos;
+    float timeForJumpUp;
+
+    Vector2 jumpPos;
+
+    bool startJumpUp = false;
+    bool jumping = false;
+
+    #endregion
+
 
 
     private void Start()
@@ -47,13 +62,34 @@ public class Chip : MonoBehaviour
     {
 
         Movement();
-       
 
     }
 
     private void Update()
     {
-        Jump();
+
+        if(!jumping)
+        {
+            JumpCheck();
+        }
+
+        if(startJumpUp)
+        {
+
+            jumpSpeed -= jumpAcceration * Time.deltaTime;
+
+
+            transform.position = Vector2.MoveTowards(transform.position, jumpPos, jumpSpeed);
+
+            if(transform.position == new Vector3(jumpPos.x, jumpPos.y))
+            {
+
+                startJumpUp = false;
+
+
+            }
+
+        }
     }
 
     private void Movement()
@@ -72,7 +108,7 @@ public class Chip : MonoBehaviour
         }
     }
 
-    void Jump()
+    void JumpCheck()
     {
 
         Vector2 relativeWallCheckPosition = (Vector2)transform.position + new Vector2(wallCheckPosition.x, wallCheckPosition.y);
@@ -161,7 +197,7 @@ public class Chip : MonoBehaviour
             if (!upWallChecked)
             {
 
-                transform.position = findWhereToJumpUp;
+                Jump(findWhereToJumpUp);
 
                 ResetCheckValues();
             }
@@ -174,6 +210,26 @@ public class Chip : MonoBehaviour
         {
             stop = false;
         }
+
+    }
+
+    void Jump(Vector2 posToJumpTo)
+    {
+        jumping = true;
+
+
+        jumpPos = posToJumpTo;
+
+        float jumpXPos = jumpPos.x/2; // Få Mitten Av Avståndet
+        float jumpYPos = jumpPos.y + extraJumpLenght;
+
+        distanceToJumpPos = Vector3.Distance(new Vector2(jumpXPos, jumpYPos), transform.position);
+
+        timeForJumpUp = distanceToJumpPos/jumpSpeed;
+
+        jumpAcceration = jumpSpeed / timeForJumpUp;
+
+        startJumpUp = true;
 
     }
 
