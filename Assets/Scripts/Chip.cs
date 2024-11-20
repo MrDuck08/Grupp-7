@@ -34,25 +34,32 @@ public class Chip : MonoBehaviour
     float findJumpXRight = 0.1f;
     Vector2 findGroundToJumpRight;
 
+    public GameObject TestObject;
+
     #region Jump
 
     [SerializeField] float jumpSpeed = 5;
     [SerializeField] float extraJumpLenght = 5;
-    float jumpAcceration;
+    float jumpAcceration = 0.1f;
     float distanceToJumpPos;
     float timeForJumpUp;
 
     Vector2 jumpPos;
 
     bool startJumpUp = false;
+    bool startJumpingDown = false;
     bool jumping = false;
 
     #endregion
+
+    Rigidbody2D rb2D;
 
 
 
     private void Start()
     {
+
+        rb2D = GetComponent<Rigidbody2D>();
 
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
@@ -68,6 +75,15 @@ public class Chip : MonoBehaviour
     private void Update()
     {
 
+        //jumpSpeed -= jumpAcceration * Time.deltaTime;
+
+        //if(jumpSpeed < 0)
+        //{
+        //    jumpSpeed = 0;
+        //}
+
+        //TestObject.transform.position = Vector2.MoveTowards(TestObject.transform.position, new Vector2(1333, 133), jumpSpeed);
+
         if(!jumping)
         {
             JumpCheck();
@@ -76,6 +92,8 @@ public class Chip : MonoBehaviour
         if(startJumpUp)
         {
 
+            rb2D.gravityScale = 0;
+
             jumpSpeed -= jumpAcceration * Time.deltaTime;
 
 
@@ -83,10 +101,43 @@ public class Chip : MonoBehaviour
 
             if(transform.position == new Vector3(jumpPos.x, jumpPos.y))
             {
-
+                Debug.Log(jumpPos + " Up Pos");
                 startJumpUp = false;
+                startJumpingDown = true;
+
+                jumpPos.x *= 2;
+                jumpPos.y -= extraJumpLenght;
+
+                distanceToJumpPos = Vector3.Distance(new Vector2(jumpPos.x, jumpPos.y), transform.position);
+
+                timeForJumpUp = distanceToJumpPos / jumpSpeed;
+
+                jumpAcceration = jumpSpeed / timeForJumpUp;
+
+                jumpSpeed = 0;
+
+                Debug.Log(jumpPos + " Down Pos");
+
+            }
+
+        }
+
+        if (startJumpingDown)
+        {
+
+            jumpSpeed += jumpAcceration * Time.deltaTime;
+
+            transform.position = Vector2.MoveTowards(transform.position, jumpPos, jumpSpeed);
+
+            if (transform.position == new Vector3(jumpPos.x, jumpPos.y))
+            {
+
+                startJumpingDown = false;
+                jumping = false;
 
 
+
+                rb2D.gravityScale = 1;
             }
 
         }
@@ -188,9 +239,9 @@ public class Chip : MonoBehaviour
 
             stop = true;
 
-            findJumpYUp += 1f * Time.deltaTime;
+            findJumpYUp += 2f * Time.deltaTime;
 
-            findWhereToJumpUp = (Vector2)transform.position + new Vector2(wallCheckPosition.x + checkRadius/2, wallCheckPosition.y + findJumpYUp);
+            findWhereToJumpUp = (Vector2)transform.position + new Vector2(wallCheckPosition.x + checkRadius/2, wallCheckPosition.y * findJumpYUp);
             bool upWallChecked = Physics2D.OverlapCircle(findWhereToJumpUp, checkRadius, groundLayer);
 
 
@@ -220,10 +271,18 @@ public class Chip : MonoBehaviour
 
         jumpPos = posToJumpTo;
 
-        float jumpXPos = jumpPos.x/2; // Få Mitten Av Avståndet
-        float jumpYPos = jumpPos.y + extraJumpLenght;
+        Debug.Log(jumpPos + " 1");
 
-        distanceToJumpPos = Vector3.Distance(new Vector2(jumpXPos, jumpYPos), transform.position);
+        float distanceX = jumpPos.x - transform.position.x;
+
+        distanceX /= 2;
+
+        float x = jumpPos.x - distanceX;
+
+        jumpPos.y += extraJumpLenght;
+
+        Debug.Log(jumpPos + " 2");
+        distanceToJumpPos = Vector3.Distance(new Vector2(x, jumpPos.y), transform.position);
 
         timeForJumpUp = distanceToJumpPos/jumpSpeed;
 
