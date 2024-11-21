@@ -181,8 +181,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  speed: 3
+  speed: 6
   walkRange: 6
-  TestObject: {fileID: 0}
-  jumpSpeed: 5
-  extraJumpLenght: 5
+  jumpSpeed: 4
+  extraJumpLenght: 3

@@ -18,6 +18,8 @@ public class Chip : MonoBehaviour
     [SerializeField] float speed = 3;
     [SerializeField] float walkRange = 3;
 
+    #region Search
+
     bool stop = false;
     bool findNewGroundRight = false;
 
@@ -34,15 +36,22 @@ public class Chip : MonoBehaviour
     float findJumpXRight = 0.1f;
     Vector2 findGroundToJumpRight;
 
-    public GameObject TestObject;
+    float searchSpeed = 5;
+
+    #endregion
 
     #region Jump
 
-    [SerializeField] float jumpSpeed = 5;
+    [Header("Jump")]
+
+    [SerializeField] float maxJumpSpeed = 5;
+    float jumpSpeed;
     [SerializeField] float extraJumpLenght = 5;
-    float jumpAcceration = 0.1f;
+    float jumpAcceration = 1f;
     float distanceToJumpPos;
     float timeForJumpUp;
+    float maxTimeForJump;
+    float xHalfWayJump;
 
     Vector2 jumpPos;
 
@@ -62,6 +71,8 @@ public class Chip : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
 
         player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        jumpSpeed = maxJumpSpeed;
 
     }
 
@@ -89,34 +100,40 @@ public class Chip : MonoBehaviour
             JumpCheck();
         }
 
-        if(startJumpUp)
+        #region Jump
+
+        if (startJumpUp)
         {
+
+            timeForJumpUp -= Time.deltaTime;
 
             rb2D.gravityScale = 0;
 
-            jumpSpeed -= jumpAcceration * Time.deltaTime;
+            jumpSpeed += jumpAcceration * Time.deltaTime;
 
 
-            transform.position = Vector2.MoveTowards(transform.position, jumpPos, jumpSpeed);
+            transform.position = Vector2.MoveTowards(transform.position, new Vector2(jumpPos.x - xHalfWayJump, jumpPos.y), jumpSpeed * Time.deltaTime);
 
-            if(transform.position == new Vector3(jumpPos.x, jumpPos.y))
+            if(timeForJumpUp <= 0)
             {
-                Debug.Log(jumpPos + " Up Pos");
+
                 startJumpUp = false;
                 startJumpingDown = true;
 
-                jumpPos.x *= 2;
+                jumpPos.x += xHalfWayJump;
                 jumpPos.y -= extraJumpLenght;
 
                 distanceToJumpPos = Vector3.Distance(new Vector2(jumpPos.x, jumpPos.y), transform.position);
 
-                timeForJumpUp = distanceToJumpPos / jumpSpeed;
+                jumpSpeed = maxJumpSpeed;
+
+                timeForJumpUp = distanceToJumpPos * 2 / jumpSpeed;
+
+                timeForJumpUp = maxTimeForJump;
 
                 jumpAcceration = jumpSpeed / timeForJumpUp;
 
                 jumpSpeed = 0;
-
-                Debug.Log(jumpPos + " Down Pos");
 
             }
 
@@ -124,23 +141,27 @@ public class Chip : MonoBehaviour
 
         if (startJumpingDown)
         {
+            timeForJumpUp -= Time.deltaTime;
 
             jumpSpeed += jumpAcceration * Time.deltaTime;
 
-            transform.position = Vector2.MoveTowards(transform.position, jumpPos, jumpSpeed);
+            transform.position = Vector2.MoveTowards(transform.position, new Vector2(jumpPos.x - xHalfWayJump, jumpPos.y), jumpSpeed * Time.deltaTime);
 
-            if (transform.position == new Vector3(jumpPos.x, jumpPos.y))
+            if (timeForJumpUp <= 0)
             {
 
                 startJumpingDown = false;
                 jumping = false;
 
+                stop = false;
 
 
                 rb2D.gravityScale = 1;
             }
 
         }
+
+        #endregion
     }
 
     private void Movement()
@@ -168,6 +189,32 @@ public class Chip : MonoBehaviour
         Vector2 relativeGroundCheckPosition = (Vector2)transform.position + new Vector2(groundCheckPosition.x, groundCheckPosition.y);
         bool groundChecked = Physics2D.OverlapCircle(relativeGroundCheckPosition, checkRadius, groundLayer);
 
+        #region Wall Up Check
+
+        if (wallChecked)
+        {
+
+            stop = true;
+
+            findJumpYUp += searchSpeed * Time.deltaTime;
+
+            findWhereToJumpUp = (Vector2)transform.position + new Vector2(wallCheckPosition.x + checkRadius, wallCheckPosition.y * findJumpYUp);
+            bool upWallChecked = Physics2D.OverlapCircle(findWhereToJumpUp, checkRadius, groundLayer);
+
+
+            if (!upWallChecked)
+            {
+
+                ResetCheckValues();
+
+                Jump(findWhereToJumpUp);
+
+            }
+
+        }
+
+        #endregion
+
         #region Ground Search
 
         if (!groundChecked)
@@ -180,7 +227,7 @@ public class Chip : MonoBehaviour
 
                 stop = true;
 
-                findJumpXRight += 1f * Time.deltaTime;
+                findJumpXRight += searchSpeed * Time.deltaTime;
 
                 findGroundRight = (Vector2)transform.position + new Vector2(groundCheckPosition.x + findJumpXRight, groundCheckPosition.y);
                 findNewGroundRight = Physics2D.OverlapCircle(findGroundRight, checkRadius, groundLayer);
@@ -194,14 +241,14 @@ public class Chip : MonoBehaviour
 
             stop = true;
 
-            findJumpYDown += 1f * Time.deltaTime;
+            findJumpYDown += searchSpeed * Time.deltaTime;
 
             findGroundToJumpDown = (Vector2)transform.position + new Vector2(groundCheckPosition.x + 1, groundCheckPosition.y - findJumpYDown);
             bool findNewGroundDown = Physics2D.OverlapCircle(findGroundToJumpDown, checkRadius, groundLayer);
 
             if (findNewGroundDown)
             {
-
+                Debug.Log("Go Ground Down");
                 transform.position = findGroundToJumpDown;
 
                 ResetCheckValues();
@@ -214,7 +261,7 @@ public class Chip : MonoBehaviour
         if (findNewGroundRight)
         {
 
-            findJumpYRight += 1f * Time.deltaTime;
+            findJumpYRight += searchSpeed * Time.deltaTime;
 
             findGroundToJumpRight = new Vector2(findGroundRight.x + checkRadius * 2, findGroundRight.y + findJumpYRight);
             bool findWhereToJump = Physics2D.OverlapCircle(findGroundToJumpRight, checkRadius, groundLayer);
@@ -232,32 +279,8 @@ public class Chip : MonoBehaviour
 
         #endregion
 
-        #region Wall Up Check
 
-        if (wallChecked)
-        {
-
-            stop = true;
-
-            findJumpYUp += 2f * Time.deltaTime;
-
-            findWhereToJumpUp = (Vector2)transform.position + new Vector2(wallCheckPosition.x + checkRadius/2, wallCheckPosition.y * findJumpYUp);
-            bool upWallChecked = Physics2D.OverlapCircle(findWhereToJumpUp, checkRadius, groundLayer);
-
-
-            if (!upWallChecked)
-            {
-
-                Jump(findWhereToJumpUp);
-
-                ResetCheckValues();
-            }
-
-        }
-
-        #endregion
-
-        if (groundChecked && !wallChecked)
+        if (groundChecked && !wallChecked && !jumping)
         {
             stop = false;
         }
@@ -267,26 +290,24 @@ public class Chip : MonoBehaviour
     void Jump(Vector2 posToJumpTo)
     {
         jumping = true;
-
+        stop = true;
 
         jumpPos = posToJumpTo;
 
-        Debug.Log(jumpPos + " 1");
 
-        float distanceX = jumpPos.x - transform.position.x;
 
-        distanceX /= 2;
+        xHalfWayJump = jumpPos.x - transform.position.x;
 
-        float x = jumpPos.x - distanceX;
+        xHalfWayJump /= 2;
 
         jumpPos.y += extraJumpLenght;
 
-        Debug.Log(jumpPos + " 2");
-        distanceToJumpPos = Vector3.Distance(new Vector2(x, jumpPos.y), transform.position);
+        distanceToJumpPos = Vector2.Distance(new Vector2(jumpPos.x - xHalfWayJump, jumpPos.y), transform.position);
 
-        timeForJumpUp = distanceToJumpPos/jumpSpeed;
+        timeForJumpUp = distanceToJumpPos *2 / jumpSpeed;
+        maxTimeForJump = timeForJumpUp;
 
-        jumpAcceration = jumpSpeed / timeForJumpUp;
+        jumpAcceration = -jumpSpeed / timeForJumpUp;
 
         startJumpUp = true;
 
