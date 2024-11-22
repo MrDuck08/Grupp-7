@@ -53,11 +53,14 @@ public class Chip : MonoBehaviour
     float maxTimeForJump;
     float xHalfWayJump;
 
+    Vector2 downJumpPos;
     Vector2 jumpPos;
 
     bool startJumpUp = false;
     bool startJumpingDown = false;
     bool jumping = false;
+
+    bool jumpDown = false;
 
     #endregion
 
@@ -122,6 +125,12 @@ public class Chip : MonoBehaviour
 
                 jumpPos.x += xHalfWayJump;
                 jumpPos.y -= extraJumpLenght;
+                if (jumpDown)
+                {
+                    jumpPos.y = downJumpPos.y;
+
+                    jumpDown = false;
+                }
 
                 distanceToJumpPos = Vector3.Distance(new Vector2(jumpPos.x, jumpPos.y), transform.position);
 
@@ -155,7 +164,7 @@ public class Chip : MonoBehaviour
 
                 stop = false;
 
-
+                Debug.Log("DOne");
                 rb2D.gravityScale = 1;
             }
 
@@ -207,7 +216,7 @@ public class Chip : MonoBehaviour
 
                 ResetCheckValues();
 
-                Jump(findWhereToJumpUp);
+                Jump(findWhereToJumpUp, 0);
 
             }
 
@@ -248,10 +257,10 @@ public class Chip : MonoBehaviour
 
             if (findNewGroundDown)
             {
-                Debug.Log("Go Ground Down");
-                transform.position = findGroundToJumpDown;
 
                 ResetCheckValues();
+
+                Jump(findGroundToJumpDown, 1);
 
             }
 
@@ -287,12 +296,34 @@ public class Chip : MonoBehaviour
 
     }
 
-    void Jump(Vector2 posToJumpTo)
+    void Jump(Vector2 posToJumpTo, int whatTypeOfJump)
     {
+
+        // 0 = Wall Jump
+        // 1 = Down Jump
+        // 2 = Hole Jump
+
         jumping = true;
         stop = true;
 
-        jumpPos = posToJumpTo;
+        if(whatTypeOfJump == 0)
+
+        {
+            jumpPos = posToJumpTo;
+
+        }
+
+        if(whatTypeOfJump == 1)
+        {
+
+            jumpPos = posToJumpTo;
+            downJumpPos = posToJumpTo;
+            Debug.Log("Jump Down");
+            jumpPos.y = transform.position.y;
+
+            jumpDown = true;
+
+        }
 
 
 
@@ -304,7 +335,7 @@ public class Chip : MonoBehaviour
 
         distanceToJumpPos = Vector2.Distance(new Vector2(jumpPos.x - xHalfWayJump, jumpPos.y), transform.position);
 
-        timeForJumpUp = distanceToJumpPos *2 / jumpSpeed;
+        timeForJumpUp = distanceToJumpPos * 2 / jumpSpeed;
         maxTimeForJump = timeForJumpUp;
 
         jumpAcceration = -jumpSpeed / timeForJumpUp;

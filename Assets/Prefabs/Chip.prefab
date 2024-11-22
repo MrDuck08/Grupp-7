@@ -183,5 +183,5 @@ MonoBehaviour:
     m_Bits: 8
   speed: 6
   walkRange: 6
-  jumpSpeed: 4
+  maxJumpSpeed: 5
   extraJumpLenght: 3
