@@ -14,6 +14,8 @@ public class PlayerSword : WeaponBase
 
     [SerializeField] Transform parentTransform;
 
+    EnemyHealth enemyHealth;
+
     #region Float
 
     [Header("Attack")]
@@ -55,6 +57,8 @@ public class PlayerSword : WeaponBase
         base.Start();
 
         rb = GetComponent<Rigidbody2D>();
+
+        enemyHealth = FindFirstObjectByType<EnemyHealth>();
 
         timeUntilAttack = maxtTimeUntilAttack;
         howFastAttack = maxHowFastAttack;
@@ -185,5 +189,21 @@ public class PlayerSword : WeaponBase
         howFastAttack = maxHowFastAttack;
 
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Weak point")
+        {
+            enemyHealth.TakeDamage(2);
+        }
+        if (collision.gameObject.tag == "Enemy")
+        {
+            enemyHealth.TakeDamage(1);
+        }
+        if (collision.gameObject.tag == "EnemyAttack")
+        {
+            enemyHealth.TakeDamage(1);
+        }
+    }
+
 
 }

@@ -47,7 +47,9 @@ public class Chip : MonoBehaviour
     [SerializeField] float maxJumpSpeed = 5;
     float jumpSpeed;
     [SerializeField] float extraJumpLenght = 5;
+    float originalExtraJumpLenght;
     float jumpAcceration = 1f;
+    [SerializeField] float downAcceration = 1f;
     float distanceToJumpPos;
     float timeForJumpUp;
     float maxTimeForJump;
@@ -76,6 +78,7 @@ public class Chip : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
         jumpSpeed = maxJumpSpeed;
+        originalExtraJumpLenght = extraJumpLenght;
 
     }
 
@@ -88,15 +91,6 @@ public class Chip : MonoBehaviour
 
     private void Update()
     {
-
-        //jumpSpeed -= jumpAcceration * Time.deltaTime;
-
-        //if(jumpSpeed < 0)
-        //{
-        //    jumpSpeed = 0;
-        //}
-
-        //TestObject.transform.position = Vector2.MoveTowards(TestObject.transform.position, new Vector2(1333, 133), jumpSpeed);
 
         if(!jumping)
         {
@@ -132,15 +126,16 @@ public class Chip : MonoBehaviour
                     jumpDown = false;
                 }
 
-                distanceToJumpPos = Vector3.Distance(new Vector2(jumpPos.x, jumpPos.y), transform.position);
-
                 jumpSpeed = maxJumpSpeed;
+
+
+                distanceToJumpPos = Vector2.Distance(new Vector2(jumpPos.x - xHalfWayJump, jumpPos.y), transform.position);
 
                 timeForJumpUp = distanceToJumpPos * 2 / jumpSpeed;
 
-                timeForJumpUp = maxTimeForJump;
+                maxTimeForJump = timeForJumpUp;
 
-                jumpAcceration = jumpSpeed / timeForJumpUp;
+                jumpAcceration = downAcceration;
 
                 jumpSpeed = 0;
 
@@ -156,7 +151,7 @@ public class Chip : MonoBehaviour
 
             transform.position = Vector2.MoveTowards(transform.position, new Vector2(jumpPos.x - xHalfWayJump, jumpPos.y), jumpSpeed * Time.deltaTime);
 
-            if (timeForJumpUp <= 0)
+            if (transform.position == new Vector3(jumpPos.x - xHalfWayJump, jumpPos.y))
             {
 
                 startJumpingDown = false;
@@ -164,7 +159,7 @@ public class Chip : MonoBehaviour
 
                 stop = false;
 
-                Debug.Log("DOne");
+                extraJumpLenght = originalExtraJumpLenght;
                 rb2D.gravityScale = 1;
             }
 
@@ -180,9 +175,7 @@ public class Chip : MonoBehaviour
         if (distanceFromPlayer < walkRange && !stop)
         {
 
-            float Direction = Mathf.Sign(player.position.x - transform.position.x);
-
-            Vector2 MovePos = new Vector2(transform.position.x + -Direction * (speed / distanceFromPlayer) * Time.deltaTime, transform.position.y);
+            Vector2 MovePos = new Vector2(transform.position.x + 1 * (speed / distanceFromPlayer) * Time.deltaTime, transform.position.y);
 
             transform.position = MovePos;
 
@@ -278,9 +271,9 @@ public class Chip : MonoBehaviour
             if (!findWhereToJump)
             {
 
-                transform.position = findGroundToJumpRight;
-
                 ResetCheckValues();
+
+                Jump(findGroundToJumpRight, 2);
 
             }
 
@@ -306,22 +299,35 @@ public class Chip : MonoBehaviour
         jumping = true;
         stop = true;
 
-        if(whatTypeOfJump == 0)
-
-        {
-            jumpPos = posToJumpTo;
-
-        }
-
-        if(whatTypeOfJump == 1)
+        switch (whatTypeOfJump)
         {
 
-            jumpPos = posToJumpTo;
-            downJumpPos = posToJumpTo;
-            Debug.Log("Jump Down");
-            jumpPos.y = transform.position.y;
+            case 0:
 
-            jumpDown = true;
+                jumpPos = posToJumpTo;
+
+            break;
+
+            case 1:
+
+                jumpPos = posToJumpTo;
+                downJumpPos = posToJumpTo;
+
+                jumpPos.y = transform.position.y;
+
+                jumpDown = true;
+
+            break;
+
+            case 2:
+
+                jumpPos = posToJumpTo;
+
+                float xGap = jumpPos.x - transform.position.x;
+
+                extraJumpLenght = xGap * 0.6f;
+
+            break;
 
         }
 

@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - EnemyAttack
   - RespawnManager
+  - ObsticleRespawn
   layers:
   - Default
   - TransparentFX

@@ -14,6 +14,7 @@ public class PlayerAxe : WeaponBase
     [SerializeField] Transform parentTransform;
 
     PlayerWeaponBase playerWeaponBase;
+    EnemyHealth enemyHealth;
 
     #region Float
 
@@ -72,6 +73,7 @@ public class PlayerAxe : WeaponBase
         rb = GetComponent<Rigidbody2D>();
 
         playerWeaponBase = FindFirstObjectByType<PlayerWeaponBase>();
+        enemyHealth = FindFirstObjectByType<EnemyHealth>();
 
         timeUntilAttack = maxtTimeUntilAttack;
         howFastAttack = maxHowFastAttack;
@@ -282,5 +284,21 @@ public class PlayerAxe : WeaponBase
 
         playerWeaponBase.WhereToLookOfset = 0;
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Weak point")
+        {
+            enemyHealth.TakeDamage(2);
+        }
+        if (collision.gameObject.tag == "Enemy")
+        {
+            enemyHealth.TakeDamage(1);
+        }
+        if (collision.gameObject.tag == "EnemyAttack")
+        {
+            enemyHealth.TakeDamage(1);
+        }
     }
 }
