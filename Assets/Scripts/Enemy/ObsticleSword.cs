@@ -5,9 +5,8 @@ public class ObsticleSword : ObsticleBase
 {
 
     float chargeSpeed = 0.2f;
-    float speed = 50;
-    float distanceToGo;
-    float timeforBack = 2;
+    float timeforBack = 1.7f;
+    float speedDown;
     float acceration;
 
     bool startChargeUp;
@@ -15,20 +14,20 @@ public class ObsticleSword : ObsticleBase
 
     Vector3 whereToGo;
 
+    Rigidbody2D rb;
+
     public override void Start()
     {
         base.Start();
 
+        rb = GetComponent<Rigidbody2D>();
+
         startChargeUp = true;
         startAttack = false;
 
-        distanceToGo = Vector2.Distance(gameObject.transform.position, gameObject.transform.position + gameObject.transform.localScale/2);
+        chargeSpeed = 300;
 
-        whereToGo = new Vector2(gameObject.transform.position.x, transform.position.y + transform.localScale.y / 2);
-
-        chargeSpeed = distanceToGo * 2 / timeforBack;
-
-        acceration = -chargeSpeed / timeforBack;
+        acceration = 100;
 
     }
 
@@ -40,19 +39,19 @@ public class ObsticleSword : ObsticleBase
         if(startChargeUp)
         {
 
-            chargeSpeed += acceration * Time.deltaTime;
+            chargeSpeed -= acceration * Time.deltaTime;
 
             timeforBack -= Time.deltaTime;
 
-            transform.position = Vector2.MoveTowards(transform.position, whereToGo, chargeSpeed * Time.deltaTime);
+            rb.linearVelocity = transform.up * chargeSpeed * Time.deltaTime;
 
-            if (transform.position == whereToGo)
+            if (timeforBack <= 0)
             {
 
                 startChargeUp = false;
                 startAttack = true;
 
-               
+                speedDown = Random.Range(19000 ,20000);
 
             }
 
@@ -61,8 +60,10 @@ public class ObsticleSword : ObsticleBase
         
         if(startAttack)
         {
+            
+            //transform.position = Vector2.MoveTowards(transform.position, new Vector2(transform.position.x, spawnPoint.transform.position.y), speed * Time.deltaTime);
 
-            transform.position = Vector2.MoveTowards(transform.position, new Vector2(transform.position.x, spawnPoint.transform.position.y - spawnPoint.transform.localScale.y), speed * Time.deltaTime);
+            rb.linearVelocity = -transform.up * speedDown * Time.deltaTime;
 
         }
 

@@ -17,7 +17,7 @@ public class BasicObsticle : ObsticleBase
     {
         base.Update();
 
-        rb2D.linearVelocity = -transform.up * 5000 * Time.deltaTime;
+        rb2D.linearVelocity = -transform.up * 4000 * Time.deltaTime;
 
     }
 }
