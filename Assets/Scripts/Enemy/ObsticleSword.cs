@@ -12,15 +12,9 @@ public class ObsticleSword : ObsticleBase
     bool startChargeUp;
     bool startAttack; 
 
-    Vector3 whereToGo;
-
-    Rigidbody2D rb;
-
     public override void Start()
     {
         base.Start();
-
-        rb = GetComponent<Rigidbody2D>();
 
         startChargeUp = true;
         startAttack = false;
@@ -35,6 +29,12 @@ public class ObsticleSword : ObsticleBase
     {
         base.Update();
 
+        if (gameHandler.rotatingArena)
+        {
+
+            return;
+
+        }
 
         if(startChargeUp)
         {

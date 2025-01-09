@@ -10,9 +10,13 @@ public class MiniGamePlayer : MonoBehaviour
 
     Rigidbody2D rb2D;
 
+    MiniGamehandler miniGamehandler;
+
     private void Start()
     {
         rb2D = GetComponent<Rigidbody2D>();
+
+        miniGamehandler = FindAnyObjectByType<MiniGamehandler>();
     }
 
     private void Update()

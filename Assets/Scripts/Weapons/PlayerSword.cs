@@ -39,7 +39,7 @@ public class PlayerSword : WeaponBase
     [Header("Check If Object")]
 
     [SerializeField] GameObject checkToLeaveObject;
-    Collider2D checkToLeaveObjectCollider;
+    Collider2D attackCollider;
 
     #region Bool
 
@@ -57,8 +57,11 @@ public class PlayerSword : WeaponBase
         base.Start();
 
         rb = GetComponent<Rigidbody2D>();
+        attackCollider = GetComponent<Collider2D>();
 
         enemyHealth = FindFirstObjectByType<EnemyHealth>();
+
+        attackCollider.enabled = false;
 
         timeUntilAttack = maxtTimeUntilAttack;
         howFastAttack = maxHowFastAttack;
@@ -77,6 +80,8 @@ public class PlayerSword : WeaponBase
 
             if (timeUntilAttack <= 0)
             {
+                attackCollider.enabled = true;
+
                 startAttack = true;
                 startCharge = false;
                 attacking = true;
@@ -108,6 +113,8 @@ public class PlayerSword : WeaponBase
 
 
                 speed = attackDistance / howFastGoBack;
+
+                attackCollider.enabled = false;
 
                 // Stäng Av Attack Hitbox
 

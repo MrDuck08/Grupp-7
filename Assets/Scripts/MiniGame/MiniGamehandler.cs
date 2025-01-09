@@ -8,7 +8,7 @@ public class MiniGamehandler : MonoBehaviour
     [SerializeField] GameObject basicObsticle;
     [SerializeField] GameObject swordObsticle;
     [SerializeField] GameObject spawnGameobject;
-    [SerializeField] GameObject testObject;
+    [SerializeField] GameObject enemySpawnObject;
 
     Vector2 spawnObjectsPos = Vector2.zero;
     public Vector2 spawnObsticlePos;
@@ -23,13 +23,13 @@ public class MiniGamehandler : MonoBehaviour
 
     float spawnEnemyTime = 3;
 
-    int maxOfBasicObsticle = 6;
+    int maxOfBasicObsticle = 4;
     int maxOfSwordObsticle = 3;
     int howManyTimesRotate;
     float howMuchToRotate = 0;
 
 
-    bool rotatingArena = false;
+    public bool rotatingArena = false;
     bool preRotation = false;
     bool finalRotation = false;
     bool enemySpawnCooldown = false;
@@ -43,8 +43,8 @@ public class MiniGamehandler : MonoBehaviour
     private void Update()
     {
 
-        testObject.transform.position = spawnGameobject.transform.position;
-        testObject.transform.rotation = spawnGameobject.transform.rotation;
+        enemySpawnObject.transform.position = spawnGameobject.transform.position; 
+        enemySpawnObject.transform.rotation = spawnGameobject.transform.rotation;
 
         #region Rotate Arena
 
@@ -56,14 +56,13 @@ public class MiniGamehandler : MonoBehaviour
             if(timeUntilArenaFlip <= 0)
             {
 
-                preRotation = true;
                 rotatingArena = true;
 
                 timeUntilArenaFlip = Random.Range(25, 35);
-                timeUntilArenaFlip = 3;
 
                 speedForRotation = 10 / timeForPreRotation;
 
+                preRotation = true;
             }
 
         }
@@ -75,7 +74,7 @@ public class MiniGamehandler : MonoBehaviour
 
             timeForPreRotation -= Time.deltaTime;
 
-            arena.transform.rotation = Quaternion.Euler(0f, 0f, arena.transform.rotation.z + rotation);
+            arena.transform.rotation = Quaternion.Euler(0f, 0f, rotation);
 
             if(timeForPreRotation <= 0)
             {
@@ -91,8 +90,6 @@ public class MiniGamehandler : MonoBehaviour
                 speedForRotation = howMuchSpeedForFinalRotation;
                 timeForFinalRotation = howMuchToRotate / speedForRotation;
 
-                howMuchToRotate += arena.transform.rotation.z;
-
                 finalRotation = true;
 
             }
@@ -106,12 +103,35 @@ public class MiniGamehandler : MonoBehaviour
 
             timeForFinalRotation -= Time.deltaTime;
 
-            arena.transform.rotation = Quaternion.Euler(0f, 0f, arena.transform.rotation.z + rotation);
+            arena.transform.rotation = Quaternion.Euler(0f, 0f, rotation);
 
             if (timeForFinalRotation < 0)
             {
-                rotation = arena.transform.rotation.z;
-                arena.transform.rotation = Quaternion.Euler(0, 0, howMuchToRotate + 10);
+
+                #region Correct Rotation
+
+                float zRotation = arena.transform.eulerAngles.z;
+
+                if(zRotation < 95 && zRotation > 85) // Den är ca 90
+                {
+                    arena.transform.rotation = Quaternion.Euler(0, 0, 90);
+                }
+                if (zRotation > 175 && zRotation < 185) // Den är ca 180
+                {
+                    arena.transform.rotation = Quaternion.Euler(0, 0, 180);
+                }
+                if (zRotation > 265 && zRotation < 275) // Den är ca -90(270 i Euler)
+                {
+                    arena.transform.rotation = Quaternion.Euler(0, 0, -90);
+                }
+                if (zRotation > 355 && zRotation < 365) // Den är ca 0(360 i Euler)
+                {
+                    arena.transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
+
+                #endregion
+
+                rotation = arena.transform.eulerAngles.z;
 
                 finalRotation = false;
                 rotatingArena = false;
@@ -153,29 +173,28 @@ public class MiniGamehandler : MonoBehaviour
 
         if (!enemySpawnCooldown)
         {
-            spawnObjectsPos = testObject.transform.position;
-            spawnObjectsPos += new Vector2(Random.Range(-testObject.transform.localScale.x / 2, testObject.transform.localScale.x / 2), Random.Range(testObject.transform.localScale.y / 2, -testObject.transform.localScale.y / 2)); // Random Pos Spawn
+            spawnObjectsPos = enemySpawnObject.transform.position;
+            spawnObjectsPos += new Vector2(Random.Range(-enemySpawnObject.transform.localScale.x / 2, enemySpawnObject.transform.localScale.x / 2), Random.Range(enemySpawnObject.transform.localScale.y / 2, -enemySpawnObject.transform.localScale.y / 2)); // Random Pos Spawn
 
             while (true)
             {
 
                 int whoToSpawn = Random.Range(0, 10);
 
-                break;
-
                 if (whoToSpawn <= 7)
                 {
 
+
                     GameObject whoISpawned = Instantiate(basicObsticle, spawnObjectsPos, Quaternion.identity);
-                    whoISpawned.GetComponent<ObsticleBase>().spawnPoint = testObject;
+                    whoISpawned.GetComponent<ObsticleBase>().spawnPoint = enemySpawnObject;
                     maxOfBasicObsticle--;
 
                 }
-                else
+                else if(maxOfSwordObsticle != 0)
                 {
 
                     GameObject whoISpawned = Instantiate(swordObsticle, spawnObjectsPos, Quaternion.identity);
-                    whoISpawned.GetComponent<ObsticleBase>().spawnPoint = testObject;
+                    whoISpawned.GetComponent<ObsticleBase>().spawnPoint = enemySpawnObject;
                     maxOfSwordObsticle--;
 
                 }
@@ -214,7 +233,7 @@ public class MiniGamehandler : MonoBehaviour
         Gizmos.color = Color.blue;
 
         //Gizmos.DrawSphere(spawnObsticlePos, 0.5f);
-        Gizmos.DrawSphere(testObject.transform.position, 0.5f);
+        Gizmos.DrawSphere(enemySpawnObject.transform.position, 0.5f);
 
     }
 }

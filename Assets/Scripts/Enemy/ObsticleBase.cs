@@ -2,18 +2,18 @@ using UnityEngine;
 
 public class ObsticleBase : MonoBehaviour
 {
-    MiniGamehandler gameHandler;
+    public MiniGamehandler gameHandler;
 
     public GameObject spawnPoint;
+
+    public Rigidbody2D rb;
 
     public virtual void Start()
     {
 
         gameHandler = FindAnyObjectByType<MiniGamehandler>();
 
-        Transform spawnPointTransform = gameHandler.arena.transform.Find("SpawnPoint");
-
-        //spawnPoint = spawnPointTransform.gameObject;
+        rb = GetComponent<Rigidbody2D>();
 
         transform.rotation = spawnPoint.transform.rotation;  // G�r s� att de tittar "Ner�t"
 
@@ -23,7 +23,20 @@ public class ObsticleBase : MonoBehaviour
     public virtual void Update()
     {
 
+        if (gameHandler.rotatingArena)
+        {
 
+            rb.linearVelocity = Vector3.zero;
+
+            transform.rotation = spawnPoint.transform.rotation;
+
+            transform.parent = gameHandler.arena.transform;
+
+        }
+        else
+        {
+            transform.parent = null;
+        }
 
     }
 

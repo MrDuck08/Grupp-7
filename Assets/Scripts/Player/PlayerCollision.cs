@@ -3,53 +3,75 @@ using System.Collections;
 
 public class PlayerCollision : MonoBehaviour
 {
+    public float invincibilityDuration = 1.5f; // Hur länge i-frames pågår
+    public bool isInvincible = false; // Kontroll för om spelaren är osårbar
+    private float invincibilityTimer = 0f; // Timer för att hålla koll på tiden
 
     RespawnScript respawnScript;
+    PlayerMovement playerMovement;
 
     private void Start()
     {
+
         respawnScript = FindAnyObjectByType<RespawnScript>();
+        playerMovement = FindAnyObjectByType<PlayerMovement>();
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-
-        if (collision.gameObject.tag == "EnemyAttack")
+        if (collision.transform.tag == "EnemyAttack")
         {
+            if (!isInvincible)
+            {
+                playerMovement.knockback(collision.gameObject.GetComponentInParent<GameObject>().GetComponentInParent<GameObject>());
+
+            }
             TakeDamage();
+
         }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "EnemyAttack")
         {
+            if (!isInvincible)
+            {
+                playerMovement.knockback(collision.transform.parent.gameObject.transform.parent.gameObject);
+
+            }
             TakeDamage();
+
         }
     }
-
     IEnumerator GetHurt()
     {
-
-        Physics2D.IgnoreLayerCollision(6, 8);
-        yield return new WaitForSeconds(0.5f);
-        Physics2D.IgnoreLayerCollision(6, 8, false);
+        isInvincible = true;
+        yield return new WaitForSeconds(3);
+        isInvincible = false;
 
     }
 
     public void TakeDamage()
     {
-        HealthManager.health--;
-        if (HealthManager.health <= 0)
-        {
-            //Game over, 
 
-            respawnScript.Respawn();
-
-        }
-        else
+        if (isInvincible == false)
         {
-            StartCoroutine(GetHurt());
+
+            HealthManager.health--;
+            if (HealthManager.health <= 0)
+            {
+                //Game over, 
+                //PlayerManager.isGameOver = true;
+                respawnScript.Respawn();
+            }
+            else
+            {
+                StartCoroutine(GetHurt());
+            }
+
         }
     }
 }
