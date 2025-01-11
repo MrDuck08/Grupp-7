@@ -10,7 +10,7 @@ public class BasicObsticle : ObsticleBase
         if(gameHandler.rotatingArena == false)
         {
 
-            rb.linearVelocity = -transform.up * 4000 * Time.deltaTime;
+            rb.linearVelocity = -transform.up * 3500 * Time.deltaTime;
 
         }
 

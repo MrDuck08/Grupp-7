@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5249557813140286142}
   m_Layer: 0
   m_Name: BasicObsticle
-  m_TagString: Untagged
+  m_TagString: EnemyAttack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -129,7 +129,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1734cf29babd35a479d611a830c7a280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameHandler: {fileID: 0}
   spawnPoint: {fileID: 0}
+  rb: {fileID: 0}
 --- !u!58 &5249557813140286142
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -164,5 +166,5 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Offset: {x: 0.0032538523, y: 0}
+  m_Radius: 0.3047909

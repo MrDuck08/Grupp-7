@@ -13,7 +13,7 @@ public class MiniGamehandler : MonoBehaviour
     Vector2 spawnObjectsPos = Vector2.zero;
     public Vector2 spawnObsticlePos;
 
-    float timeUntilArenaFlip = 1;
+    float timeUntilArenaFlip = 20;
     float timeForPreRotation;
     float maxTimeForPreRotation = 2;
     float timeForFinalRotation;
@@ -176,34 +176,43 @@ public class MiniGamehandler : MonoBehaviour
             spawnObjectsPos = enemySpawnObject.transform.position;
             spawnObjectsPos += new Vector2(Random.Range(-enemySpawnObject.transform.localScale.x / 2, enemySpawnObject.transform.localScale.x / 2), Random.Range(enemySpawnObject.transform.localScale.y / 2, -enemySpawnObject.transform.localScale.y / 2)); // Random Pos Spawn
 
+            bool somethingWasSpawned = false;
+
             while (true)
             {
 
                 int whoToSpawn = Random.Range(0, 10);
 
-                if (whoToSpawn <= 7)
+                if (whoToSpawn <= 7 && maxOfBasicObsticle != 0)
                 {
 
-
+                    somethingWasSpawned = true;
                     GameObject whoISpawned = Instantiate(basicObsticle, spawnObjectsPos, Quaternion.identity);
                     whoISpawned.GetComponent<ObsticleBase>().spawnPoint = enemySpawnObject;
                     maxOfBasicObsticle--;
 
                 }
-                else if(maxOfSwordObsticle != 0)
+                if(whoToSpawn > 7 && maxOfSwordObsticle != 0)
                 {
 
+                    somethingWasSpawned = true;
                     GameObject whoISpawned = Instantiate(swordObsticle, spawnObjectsPos, Quaternion.identity);
                     whoISpawned.GetComponent<ObsticleBase>().spawnPoint = enemySpawnObject;
                     maxOfSwordObsticle--;
 
                 }
 
-                break;
+                if (somethingWasSpawned)
+                {
+                    break;
+                }
+
 
             }
 
             enemySpawnCooldown = true;
+            
+
         }
 
     }
