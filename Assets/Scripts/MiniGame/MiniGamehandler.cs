@@ -4,6 +4,8 @@ using System.Collections;
 public class MiniGamehandler : MonoBehaviour
 {
 
+    GameManager manager;
+
     public GameObject arena;
     [SerializeField] GameObject basicObsticle;
     [SerializeField] GameObject swordObsticle;
@@ -13,30 +15,45 @@ public class MiniGamehandler : MonoBehaviour
     Vector2 spawnObjectsPos = Vector2.zero;
     public Vector2 spawnObsticlePos;
 
+    #region Rotating Arena
+
     float timeUntilArenaFlip = 20;
     float timeForPreRotation;
     float maxTimeForPreRotation = 2;
     float timeForFinalRotation;
     float rotation = 0;
     float speedForRotation = -140;
+    float howMuchToRotate = 0;
     [SerializeField] float howMuchSpeedForFinalRotation = -140;
+
+    int howManyTimesRotate;
+
+    public bool rotatingArena = false;
+    bool preRotation = false;
+    bool finalRotation = false;
+
+    #endregion
+
+    #region Spawn enemys
 
     float spawnEnemyTime = 3;
 
     int maxOfBasicObsticle = 4;
     int maxOfSwordObsticle = 3;
-    int howManyTimesRotate;
-    float howMuchToRotate = 0;
 
-
-    public bool rotatingArena = false;
-    bool preRotation = false;
-    bool finalRotation = false;
     bool enemySpawnCooldown = false;
+
+    #endregion
+
+    float timeUntilMiniGameComplete = 2;
 
     private void Start()
     {
         timeForPreRotation = maxTimeForPreRotation;
+
+        manager = FindAnyObjectByType<GameManager>();
+
+        StartCoroutine(TimeUntilMinigameFinished());
 
     }
 
@@ -236,13 +253,12 @@ public class MiniGamehandler : MonoBehaviour
 
     #endregion
 
-    private void OnDrawGizmos()
+    IEnumerator TimeUntilMinigameFinished()
     {
 
-        Gizmos.color = Color.blue;
+        yield return new WaitForSeconds(timeUntilMiniGameComplete);
 
-        //Gizmos.DrawSphere(spawnObsticlePos, 0.5f);
-        Gizmos.DrawSphere(enemySpawnObject.transform.position, 0.5f);
+        StartCoroutine(manager.MiniGameComplete());
 
     }
 }

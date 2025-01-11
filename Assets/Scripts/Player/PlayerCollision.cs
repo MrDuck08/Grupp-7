@@ -9,25 +9,39 @@ public class PlayerCollision : MonoBehaviour
 
     RespawnScript respawnScript;
     PlayerMovement playerMovement;
+    GameManager gameManager;
 
     private void Start()
     {
 
         respawnScript = FindAnyObjectByType<RespawnScript>();
         playerMovement = FindAnyObjectByType<PlayerMovement>();
+        gameManager = FindAnyObjectByType<GameManager>();
 
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.tag == "EnemyAttack")
-        {
-            if (!isInvincible)
-            {
-                playerMovement.knockback(collision.gameObject.GetComponentInParent<GameObject>().GetComponentInParent<GameObject>());
 
-            }
-            TakeDamage();
+        switch (collision.transform.tag)
+        {
+
+            case "EnemyAttack":
+
+                if (!isInvincible)
+                {
+                    playerMovement.knockback(collision.gameObject.GetComponentInParent<GameObject>().GetComponentInParent<GameObject>());
+
+                }
+                TakeDamage();
+
+                break;
+
+            case "MinigameHinder":
+
+                gameManager.StartMinigame(transform.position, collision.gameObject.name);
+
+                break;
 
         }
 

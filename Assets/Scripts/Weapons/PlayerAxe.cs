@@ -4,17 +4,12 @@ public class PlayerAxe : WeaponBase
 {
     [Header("General")]
 
-    Vector2 mousePos;
-    [SerializeField] Camera cam;
-
-    Rigidbody2D rb;
-
-    Transform beforeAttackTransform;
-
     [SerializeField] Transform parentTransform;
 
     PlayerWeaponBase playerWeaponBase;
     EnemyHealth enemyHealth;
+
+    BoxCollider2D axeHeadCollider;
 
     #region Float
 
@@ -45,9 +40,6 @@ public class PlayerAxe : WeaponBase
 
     [Header("Check If Object")]
 
-    [SerializeField] GameObject checkToLeaveObject;
-    Collider2D checkToLeaveObjectCollider;
-
     #region Bool
 
     public bool stayUnsheathed = true;
@@ -70,10 +62,12 @@ public class PlayerAxe : WeaponBase
     {
         base.Start();
 
-        rb = GetComponent<Rigidbody2D>();
-
         playerWeaponBase = FindFirstObjectByType<PlayerWeaponBase>();
         enemyHealth = FindFirstObjectByType<EnemyHealth>();
+
+        axeHeadCollider = GetComponentInChildren<BoxCollider2D>();
+
+        axeHeadCollider.enabled = false;
 
         timeUntilAttack = maxtTimeUntilAttack;
         howFastAttack = maxHowFastAttack;
@@ -105,6 +99,8 @@ public class PlayerAxe : WeaponBase
 
                 speed = attackDistance / howFastAttack;
 
+                axeHeadCollider.enabled = true;
+
 
             }
         }
@@ -125,8 +121,6 @@ public class PlayerAxe : WeaponBase
                 float distanceToSwingDown = maxDistanceToLookUpWhenAiming + maxDistanceToLookDownInSwing;
 
                 howFastToChangeWhereAiming = distanceToSwingDown/ timeToSwingDown;
-
-                // Aktivera Attack Hitbox
 
             }
         }
@@ -149,7 +143,7 @@ public class PlayerAxe : WeaponBase
                 speed = attackDistance / howFastGoBack;
                 howFastToChangeWhereAiming = maxDistanceToLookDownInSwing / howFastGoBack;
 
-                // Stäng Av Attack Hitbox
+                axeHeadCollider.enabled = false;
 
             }
         }
