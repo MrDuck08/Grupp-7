@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Windows;
 
 public class EnemyFollowPlayer : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class EnemyFollowPlayer : MonoBehaviour
     public Vector3 startTransform;
 
     public bool stop = false;
+    bool facingRight = false;
 
     EnemyAttack enemyAttack;
 
@@ -52,6 +54,30 @@ public class EnemyFollowPlayer : MonoBehaviour
 
             rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
         }
+
+        #region Change where looking
+
+        if (distanceFromPlayer < lineOfSite && !stop)
+        {
+
+            float whereToLook = Mathf.Sign(player.position.x - transform.position.x);
+
+            if (whereToLook < 0 && facingRight == true)
+            {
+                transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y);
+                facingRight = false;
+            }
+
+            if (whereToLook > 0 && facingRight == false)
+            {
+                transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y);
+                facingRight = true;
+            }
+
+        }
+
+        #endregion
+
 
     }
 

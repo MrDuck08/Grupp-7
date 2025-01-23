@@ -63,7 +63,7 @@ public class PlayerCollision : MonoBehaviour
     IEnumerator GetHurt()
     {
         isInvincible = true;
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(0.5f);
         isInvincible = false;
 
     }

@@ -10,6 +10,7 @@ TagManager:
   - RespawnManager
   - ObsticleRespawn
   - MinigameHinder
+  - WeakPoint
   layers:
   - Default
   - TransparentFX

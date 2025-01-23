@@ -36,7 +36,7 @@ public class Chip : MonoBehaviour
     float findJumpXRight = 0.1f;
     Vector2 findGroundToJumpRight;
 
-    float searchSpeed = 5;
+    [SerializeField] float searchSpeed = 5;
 
     #endregion
 
@@ -161,6 +161,8 @@ public class Chip : MonoBehaviour
 
                 extraJumpLenght = originalExtraJumpLenght;
                 rb2D.gravityScale = 1;
+
+                jumpSpeed = maxJumpSpeed;
             }
 
         }
@@ -219,7 +221,7 @@ public class Chip : MonoBehaviour
 
         #region Ground Search
 
-        if (!groundChecked)
+        if (!groundChecked) // Ground is not found
         {
 
             #region Right Ground Search

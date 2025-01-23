@@ -19,9 +19,9 @@ public class ObsticleSword : ObsticleBase
         startChargeUp = true;
         startAttack = false;
 
-        chargeSpeed = 300;
+        chargeSpeed = 30;
 
-        acceration = 100;
+        acceration = chargeSpeed/3;
 
     }
 
@@ -43,7 +43,7 @@ public class ObsticleSword : ObsticleBase
 
             timeforBack -= Time.deltaTime;
 
-            rb.linearVelocity = transform.up * chargeSpeed * Time.deltaTime;
+
 
             if (timeforBack <= 0)
             {
@@ -51,21 +51,37 @@ public class ObsticleSword : ObsticleBase
                 startChargeUp = false;
                 startAttack = true;
 
-                speedDown = Random.Range(19000 ,20000);
+                speedDown = Random.Range(2000 ,2100);
 
             }
 
         }
      
-        
-        if(startAttack)
+
+
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        if (startChargeUp)
         {
-            
+
+            rb.linearVelocity = transform.up * chargeSpeed * Time.deltaTime;
+
+        }
+
+
+        if (startAttack)
+        {
+
             //transform.position = Vector2.MoveTowards(transform.position, new Vector2(transform.position.x, spawnPoint.transform.position.y), speed * Time.deltaTime);
 
             rb.linearVelocity = -transform.up * speedDown * Time.deltaTime;
 
         }
+
 
     }
 

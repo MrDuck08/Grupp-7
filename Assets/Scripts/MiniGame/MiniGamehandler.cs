@@ -9,7 +9,7 @@ public class MiniGamehandler : MonoBehaviour
     public GameObject arena;
     [SerializeField] GameObject basicObsticle;
     [SerializeField] GameObject swordObsticle;
-    [SerializeField] GameObject spawnGameobject;
+    [SerializeField] GameObject spawnGameobjectTransform;
     [SerializeField] GameObject enemySpawnObject;
 
     Vector2 spawnObjectsPos = Vector2.zero;
@@ -45,7 +45,7 @@ public class MiniGamehandler : MonoBehaviour
 
     #endregion
 
-    float timeUntilMiniGameComplete = 2;
+    float timeUntilMiniGameComplete = 50;
 
     private void Start()
     {
@@ -60,8 +60,8 @@ public class MiniGamehandler : MonoBehaviour
     private void Update()
     {
 
-        enemySpawnObject.transform.position = spawnGameobject.transform.position; 
-        enemySpawnObject.transform.rotation = spawnGameobject.transform.rotation;
+        enemySpawnObject.transform.position = spawnGameobjectTransform.transform.position; 
+        enemySpawnObject.transform.rotation = spawnGameobjectTransform.transform.rotation;
 
         #region Rotate Arena
 
@@ -258,7 +258,10 @@ public class MiniGamehandler : MonoBehaviour
 
         yield return new WaitForSeconds(timeUntilMiniGameComplete);
 
-        StartCoroutine(manager.MiniGameComplete());
+
+        manager = FindAnyObjectByType<GameManager>();
+
+        manager.MiniGameComplete();
 
     }
 }

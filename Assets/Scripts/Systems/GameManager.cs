@@ -43,23 +43,20 @@ public class GameManager : MonoBehaviour
 
         afterMinigamePos = whereToSpawnWhenGoBack;
         whoToTurnOfAfterMinigame = wallToTurnOff;
-
+        loader = FindAnyObjectByType<SceneLoader>();
         loader.ChangeScene(2);
     }
 
-    public IEnumerator MiniGameComplete()
+    public void MiniGameComplete()
     {
-
+        loader = FindAnyObjectByType<SceneLoader>();
         loader.ChangeScene(1);
-        StartCoroutine(Test());
-
-        yield return null;
-
+        StartCoroutine(RemoveBlockAfterSceneIsLoaded());
 
 
     }
 
-    IEnumerator Test()
+    IEnumerator RemoveBlockAfterSceneIsLoaded()
     {
 
         yield return new WaitForSeconds(0.01f);

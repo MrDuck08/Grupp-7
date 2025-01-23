@@ -198,17 +198,22 @@ public class PlayerSword : WeaponBase
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Weak point")
+
+        if (collision.gameObject.tag == "WeakPoint")
         {
-            enemyHealth.TakeDamage(2);
+
+            collision.transform.parent.transform.parent.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
+
         }
         if (collision.gameObject.tag == "Enemy")
         {
-            enemyHealth.TakeDamage(1);
+
+            collision.GetComponent<EnemyHealth>().TakeDamageInfo(1);
+
         }
         if (collision.gameObject.tag == "EnemyAttack")
         {
-            enemyHealth.TakeDamage(1);
+            collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(1);
         }
     }
 

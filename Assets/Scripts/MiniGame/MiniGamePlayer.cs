@@ -1,4 +1,3 @@
-using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
 public class MiniGamePlayer : MonoBehaviour
@@ -10,7 +9,7 @@ public class MiniGamePlayer : MonoBehaviour
 
     Rigidbody2D rb2D;
 
-    MiniGamehandler miniGamehandler;
+    SceneLoader loader;
 
     int health = 3;
 
@@ -18,11 +17,12 @@ public class MiniGamePlayer : MonoBehaviour
     {
         rb2D = GetComponent<Rigidbody2D>();
 
-        miniGamehandler = FindAnyObjectByType<MiniGamehandler>();
     }
 
     private void Update()
     {
+
+        loader = FindAnyObjectByType<SceneLoader>();
 
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
@@ -43,7 +43,7 @@ public class MiniGamePlayer : MonoBehaviour
 
                 case 0:
 
-                    Debug.Log("lose");
+                    loader.ReloadScene();
 
                     break;
 

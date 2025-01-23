@@ -16,6 +16,8 @@ public class IfWeaponGoBack : MonoBehaviour
 
     Rigidbody2D rb;
 
+    bool touchingSomething = false;
+
 
     private void Start()
     {
@@ -26,10 +28,8 @@ public class IfWeaponGoBack : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-
-    private void FixedUpdate()
+    private void Update()
     {
-
         float dis = Vector3.Distance(transform.position, parentTransform.position);
 
         if (dis != maxDisatnceBetweenPlayerAndSword)
@@ -45,6 +45,25 @@ public class IfWeaponGoBack : MonoBehaviour
         float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
 
         parentTransform.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+        if(touchingSomething == false)
+        {
+
+            if (playerWeaponBase.swordActive)
+            {
+                playerSword = FindFirstObjectByType<PlayerSword>();
+
+                playerSword.stayUnsheathed = true;
+            }
+
+            if (playerWeaponBase.axeActive)
+            {
+                playerAxe = FindFirstObjectByType<PlayerAxe>();
+
+                playerAxe.stayUnsheathed = true;
+            }
+
+        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -66,7 +85,11 @@ public class IfWeaponGoBack : MonoBehaviour
             }
 
         }
+
+        touchingSomething = true;
     }
+
+
 
     private void OnTriggerExit2D(Collider2D collision)
     {
@@ -86,5 +109,7 @@ public class IfWeaponGoBack : MonoBehaviour
                 playerAxe.stayUnsheathed = true;
             }
         }
+
+        touchingSomething = false;
     }
 }

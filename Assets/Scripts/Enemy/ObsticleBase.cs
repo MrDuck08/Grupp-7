@@ -7,6 +7,10 @@ public class ObsticleBase : MonoBehaviour
     public GameObject spawnPoint;
 
     public Rigidbody2D rb;
+    BoxCollider2D boxCollider;
+    Collider2D collider2D;
+
+    bool doneOnce = false;
 
     public virtual void Start()
     {
@@ -14,6 +18,7 @@ public class ObsticleBase : MonoBehaviour
         gameHandler = FindAnyObjectByType<MiniGamehandler>();
 
         rb = GetComponent<Rigidbody2D>();
+        collider2D = GetComponent<Collider2D>();
 
         transform.rotation = spawnPoint.transform.rotation;  // G�r s� att de tittar "Ner�t"
 
@@ -32,12 +37,28 @@ public class ObsticleBase : MonoBehaviour
 
             transform.parent = gameHandler.arena.transform;
 
+            collider2D.enabled = false;
+
+            doneOnce = false;
+
         }
         else
         {
-            transform.parent = null;
+            if (!doneOnce) // Så man inte behöver repetera samma sak i onödan
+            {
+
+                transform.parent = null;
+                collider2D.enabled = true;
+
+                doneOnce = true;
+            }
         }
 
+    }
+
+    public virtual void FixedUpdate()
+    {
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

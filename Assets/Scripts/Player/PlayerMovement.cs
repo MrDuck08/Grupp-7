@@ -62,10 +62,6 @@ public class PlayerMovement : MonoBehaviour
         HandleJump();
 
 
-        // Vanlig r�relselogik h�r
-        float input = Input.GetAxis("Horizontal");
-        body.linearVelocity = new Vector2(input * 5f, body.linearVelocity.y);
-
     }
     private void FixedUpdate()
     {
@@ -143,7 +139,6 @@ public class PlayerMovement : MonoBehaviour
     public void knockback(GameObject objectThatCollidedWithMe)
     {
 
-        Debug.Log("Knockback activated!");
         //float direction = Mathf.Sign(transform.localScale.x); // F�r 1 eller -1 fr�n vilket h�ll den kollar
 
         //body.linearVelocity = new Vector2(250 * -direction, -10);

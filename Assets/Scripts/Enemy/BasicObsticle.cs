@@ -1,19 +1,30 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BasicObsticle : ObsticleBase
 {
 
+     float speed = 500;
+
     public override void Update()
     {
         base.Update();
 
-        if(gameHandler.rotatingArena == false)
+
+
+
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        if (gameHandler.rotatingArena == false)
         {
 
-            rb.linearVelocity = -transform.up * 3500 * Time.deltaTime;
+            rb.linearVelocity = -transform.up * speed * Time.deltaTime;
 
         }
-
 
     }
 }
