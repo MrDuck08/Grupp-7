@@ -90,6 +90,32 @@ public class PlayerWeaponBase : MonoBehaviour
 
             axeActive = false;
         }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+
+            //if (playerAxe)
+            //{
+                
+            //    currentWeapon = avilableWeapons[((int)WeaponState.Axe)];
+            //    currentWeapon.weaponType = WeaponState.Axe;
+
+            //    swordActive = true;
+
+            //    axeActive = false;
+
+            //}
+            //else
+            //{
+            //    currentWeapon.weaponType = WeaponState.Sword;
+            //    currentWeapon = avilableWeapons[((int)WeaponState.Sword)];
+            //    swordActive = false;
+
+            //    axeActive = true;
+
+            //}
+
+        }
     }
 
     private void FixedUpdate()
