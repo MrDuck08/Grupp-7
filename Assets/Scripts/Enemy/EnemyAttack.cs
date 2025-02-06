@@ -125,7 +125,7 @@ public class EnemyAttack : MonoBehaviour
 
             howFastAttack -= Time.deltaTime;
 
-            attackObject.transform.position += attackObject.transform.right  * stretchSpeed * Time.deltaTime;
+            attackObject.transform.position += attackObject.transform.right * stretchSpeed * Time.deltaTime;
 
             attackObject.transform.localScale += new Vector3(stretchSpeed * Time.deltaTime, 0, 0);
 

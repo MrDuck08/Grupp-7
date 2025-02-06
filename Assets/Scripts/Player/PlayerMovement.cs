@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Data.Common;
-using UnityEditor;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -29,24 +27,55 @@ public class PlayerMovement : MonoBehaviour
     float knockbackDuration = 0.5f;
     float knockbackTimer = 0f;
 
+    float direction;
+
+    Animator myAnimator;
+
+    #region Dash
+
+    [Header("Dash")]
+
+    [SerializeField] GameObject dashCheck;
+
+    bool searchingForDashLocation = false;
+
+    float searchSpeed = 1.5f;
+    float maxDashSearchLenght = 5;
+
+    Vector2 playerPosOnSearch;
+
+    #endregion
+
+    private void Start()
+    {
+        myAnimator = GetComponentInChildren<Animator>();
+    }
 
     void Update()
     {
         GetInput();
 
-        Vector2 direction = new Vector2(xInput, 0).normalized;
+        Vector2 inputDirection = new Vector2(xInput, 0).normalized;
+
+        #region What direction facing
 
         if (xInput < 0 && facingRight == true)
         {
             Flip();
+            direction = -1;
             facingRight = false;
         }
 
         if (xInput > 0 && facingRight == false)
         {
             Flip();
+            direction = 1;
             facingRight = true;
         }
+
+        #endregion
+
+        #region Knockback
 
         if (isKnockbackActive)
         {
@@ -57,10 +86,59 @@ public class PlayerMovement : MonoBehaviour
             }
             return; // Hoppa �ver r�relselogiken
         }
-        body.linearVelocity = new Vector2(direction.x * groundSpeed, body.linearVelocityY);
+
+        #endregion
+
+        body.linearVelocity = new Vector2(inputDirection.x * groundSpeed, body.linearVelocityY);
+
+        #region Handle Stuff
+
         CheckGround();
         HandleJump();
+        DashHandler();
 
+        #endregion
+
+        #region animation
+
+        if (xInput == 0)
+        {
+
+            myAnimator.SetBool("IsRunning", false);
+
+
+        }
+        else
+        {
+            myAnimator.SetBool("IsRunning", true);
+
+        }
+
+        #endregion
+
+        #region Dash search
+
+        if (searchingForDashLocation)
+        {
+
+            dashCheck.transform.position += new Vector3(direction * searchSpeed * Time.deltaTime , 0, 0);
+
+            dashCheck.transform.localScale += new Vector3(searchSpeed * 2 * Time.deltaTime, 0, 0);
+
+            if (Mathf.Abs(dashCheck.transform.position.x) >= Mathf.Abs(playerPosOnSearch.x + maxDashSearchLenght * direction))
+            {
+                Debug.Log(Mathf.Abs(dashCheck.transform.position.x) + " Dash Pos " + dashCheck.transform.position.x + " No Abs");
+                Debug.Log(Mathf.Abs(playerPosOnSearch.x + maxDashSearchLenght * direction) + " Stop Pos " + playerPosOnSearch.x + maxDashSearchLenght * direction + " No Abss");
+
+                Debug.Log("DO IT Case Pos");
+
+                TransformToDashPos();
+
+            }
+
+        }
+
+        #endregion
 
     }
     private void FixedUpdate()
@@ -68,16 +146,20 @@ public class PlayerMovement : MonoBehaviour
 
         ApplyFriction();
     }
+
     void GetInput()
     {
         xInput = Input.GetAxisRaw("Horizontal");
         yInput = Input.GetAxisRaw("Vertical");
     }
 
+    #region General Movement
+
     void MoveWithInput()
     {
         if (Mathf.Abs(xInput) > 0)
         {
+
             float increment = xInput * acceleration;
             float newSpeed = body.linearVelocity.x + increment;
 
@@ -136,6 +218,10 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Knockback
+
     public void knockback(GameObject objectThatCollidedWithMe)
     {
 
@@ -162,6 +248,8 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    #endregion
+
     public IEnumerator Died()
     {
 
@@ -172,4 +260,36 @@ public class PlayerMovement : MonoBehaviour
         isDeadCheck = 1;
 
     }
+
+    #region Dash
+
+    void DashHandler()
+    {
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+
+            playerPosOnSearch = transform.position;
+
+            searchingForDashLocation = true;
+
+        }
+
+    }
+
+    public void TransformToDashPos()
+    {
+        searchingForDashLocation = false;
+
+
+        transform.position = new Vector3(transform.position.x + dashCheck.transform.position.x * direction, transform.position.y, transform.position.z);
+        Debug.Log(direction);
+        Debug.Log(dashCheck.transform.position.x + " Dash Pos x");
+
+        dashCheck.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        dashCheck.transform.localScale = new Vector3(1 ,1, 1);
+
+    }
+
+    #endregion
 }

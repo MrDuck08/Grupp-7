@@ -59,6 +59,15 @@ public class PlayerCollision : MonoBehaviour
             TakeDamage();
 
         }
+
+        if (collision.gameObject.tag == "Ground")
+        {
+            Debug.Log("Stop Due To Impact");
+
+            playerMovement.TransformToDashPos();
+
+        }
+
     }
     IEnumerator GetHurt()
     {

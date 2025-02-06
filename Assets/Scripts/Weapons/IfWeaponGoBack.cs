@@ -53,14 +53,20 @@ public class IfWeaponGoBack : MonoBehaviour
             {
                 playerSword = FindFirstObjectByType<PlayerSword>();
 
-                playerSword.stayUnsheathed = true;
+                if(playerSword != null)
+                {
+                    playerSword.stayUnsheathed = true;
+                }
             }
 
             if (playerWeaponBase.axeActive)
             {
                 playerAxe = FindFirstObjectByType<PlayerAxe>();
 
-                playerAxe.stayUnsheathed = true;
+                if(playerAxe != null)
+                {
+                    playerAxe.stayUnsheathed = true;
+                }
             }
 
         }

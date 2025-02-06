@@ -94,26 +94,21 @@ public class PlayerWeaponBase : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
 
-            //if (playerAxe)
-            //{
-                
-            //    currentWeapon = avilableWeapons[((int)WeaponState.Axe)];
-            //    currentWeapon.weaponType = WeaponState.Axe;
+            int CurrenWeaponIndex = (int)currentWeapon.weaponType;
+            CurrenWeaponIndex += 1;
 
-            //    swordActive = true;
+            if (CurrenWeaponIndex < 0)
+            {
+                CurrenWeaponIndex = (int)WeaponState.Total + CurrenWeaponIndex;
+                // Byter Till Första Vapnet Om Den går -1
+            }
+            if (CurrenWeaponIndex >= (int)WeaponState.Total)
+            {
+                CurrenWeaponIndex = 0;
+                // Byter Tillbacka Till Första Vapnet Om Du Går Över Max Antal Vapen
+            }
 
-            //    axeActive = false;
-
-            //}
-            //else
-            //{
-            //    currentWeapon.weaponType = WeaponState.Sword;
-            //    currentWeapon = avilableWeapons[((int)WeaponState.Sword)];
-            //    swordActive = false;
-
-            //    axeActive = true;
-
-            //}
+            WeaponSwapAnimation(CurrenWeaponIndex);
 
         }
     }
@@ -226,12 +221,16 @@ public class PlayerWeaponBase : MonoBehaviour
         {
             playerAxe = FindAnyObjectByType<PlayerAxe>();
 
+            axeActive = true;
+
             playerAxe.ResetAttack();
         }
 
         if (currentWeaponIndex == (int)WeaponState.Sword)
         {
             playerSword = FindAnyObjectByType<PlayerSword>();
+
+            swordActive = false;
 
             playerSword.ResetAttack();
         }
