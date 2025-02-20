@@ -39,8 +39,8 @@ public class PlayerMovement : MonoBehaviour
 
     bool searchingForDashLocation = false;
 
-    float searchSpeed = 1.5f;
-    float maxDashSearchLenght = 5;
+    float searchSpeed = 50f;
+    float maxDashSearchLenght = 3;
 
     Vector2 playerPosOnSearch;
 
@@ -121,18 +121,18 @@ public class PlayerMovement : MonoBehaviour
         if (searchingForDashLocation)
         {
 
+            playerPosOnSearch = transform.position;
+
             dashCheck.transform.position += new Vector3(direction * searchSpeed * Time.deltaTime , 0, 0);
 
-            dashCheck.transform.localScale += new Vector3(searchSpeed * 2 * Time.deltaTime, 0, 0);
+            dashCheck.transform.localScale += new Vector3(searchSpeed * Time.deltaTime, 0, 0);
 
-            if (Mathf.Abs(dashCheck.transform.position.x) >= Mathf.Abs(playerPosOnSearch.x + maxDashSearchLenght * direction))
+         
+
+            if (Vector2.Distance(dashCheck.transform.position, playerPosOnSearch) >= Vector2.Distance(playerPosOnSearch, new Vector2(playerPosOnSearch.x + maxDashSearchLenght, playerPosOnSearch.y)))
             {
-                Debug.Log(Mathf.Abs(dashCheck.transform.position.x) + " Dash Pos " + dashCheck.transform.position.x + " No Abs");
-                Debug.Log(Mathf.Abs(playerPosOnSearch.x + maxDashSearchLenght * direction) + " Stop Pos " + playerPosOnSearch.x + maxDashSearchLenght * direction + " No Abss");
 
-                Debug.Log("DO IT Case Pos");
-
-                TransformToDashPos();
+                TransformToDashPos(false);
 
             }
 
@@ -269,25 +269,34 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
 
-            playerPosOnSearch = transform.position;
-
             searchingForDashLocation = true;
 
         }
 
     }
 
-    public void TransformToDashPos()
+    public void TransformToDashPos(bool WallHit)
     {
+
+        float wallDistance = 0;
+
+        if (WallHit)
+        {
+
+            wallDistance = 1f;
+
+
+
+        }
+
         searchingForDashLocation = false;
 
 
-        transform.position = new Vector3(transform.position.x + dashCheck.transform.position.x * direction, transform.position.y, transform.position.z);
-        Debug.Log(direction);
+        transform.position = new Vector3(transform.position.x + Vector2.Distance(dashCheck.transform.position, playerPosOnSearch) * direction - wallDistance * direction, transform.position.y, transform.position.z);
         Debug.Log(dashCheck.transform.position.x + " Dash Pos x");
 
         dashCheck.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-        dashCheck.transform.localScale = new Vector3(1 ,1, 1);
+        dashCheck.transform.localScale = new Vector3(0.28111f, 0.28111f, 0.28111f);
 
     }
 

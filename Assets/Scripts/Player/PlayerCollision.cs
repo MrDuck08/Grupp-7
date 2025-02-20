@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class PlayerCollision : MonoBehaviour
 {
@@ -60,15 +61,8 @@ public class PlayerCollision : MonoBehaviour
 
         }
 
-        if (collision.gameObject.tag == "Ground")
-        {
-            Debug.Log("Stop Due To Impact");
-
-            playerMovement.TransformToDashPos();
-
-        }
-
     }
+
     IEnumerator GetHurt()
     {
         isInvincible = true;
