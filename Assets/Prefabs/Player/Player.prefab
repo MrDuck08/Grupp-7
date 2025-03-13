@@ -228,6 +228,7 @@ MonoBehaviour:
     m_Bits: 8
   grounded: 1
   dashCheck: {fileID: 0}
+  dashHasReset: 1
 --- !u!1 &9136090402687323043
 GameObject:
   m_ObjectHideFlags: 0

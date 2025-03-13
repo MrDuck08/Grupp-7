@@ -836,6 +836,7 @@ MonoBehaviour:
   playerInRange: 1
   whatAttackInt: 0000000001000000
   maxStunTime: 2
+  completeStop: 0
   stretchSpeed: 2
   maxHowFastStretchAttack: 0.2
   maxHowLongStayAfterStretchAttack: 1
@@ -864,6 +865,7 @@ MonoBehaviour:
   lineOfSite: 7
   attackRange: 4
   baseLineOfSite: 0
+  knockBackForce: 6
   startTransform: {x: 0, y: 0, z: 0}
   stop: 0
 --- !u!50 &5484586374450994377
@@ -889,9 +891,9 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_Interpolate: 1
+  m_SleepingMode: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &4873735804972123378
 MonoBehaviour:

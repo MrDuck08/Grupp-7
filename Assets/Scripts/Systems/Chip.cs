@@ -294,23 +294,19 @@ public class Chip : MonoBehaviour
     void Jump(Vector2 posToJumpTo, int whatTypeOfJump)
     {
 
-        // 0 = Wall Jump
-        // 1 = Down Jump
-        // 2 = Hole Jump
-
         jumping = true;
         stop = true;
 
         switch (whatTypeOfJump)
         {
 
-            case 0:
+            case 0: // 0 = Wall Jump
 
                 jumpPos = posToJumpTo;
 
             break;
 
-            case 1:
+            case 1: // 1 = Down Jump
 
                 jumpPos = posToJumpTo;
                 downJumpPos = posToJumpTo;
@@ -321,7 +317,7 @@ public class Chip : MonoBehaviour
 
             break;
 
-            case 2:
+            case 2: // 2 = Hole Jump
 
                 jumpPos = posToJumpTo;
 

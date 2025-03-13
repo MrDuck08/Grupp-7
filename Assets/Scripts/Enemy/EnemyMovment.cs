@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Windows;
 
@@ -7,6 +8,8 @@ public class EnemyFollowPlayer : MonoBehaviour
     public float lineOfSite;
     public float attackRange;
     public float baseLineOfSite;
+    float whereToLook;
+    [SerializeField] float knockBackForce = 50;
 
     private Transform player;
 
@@ -34,6 +37,8 @@ public class EnemyFollowPlayer : MonoBehaviour
     private void FixedUpdate()
     {
 
+        #region Move & Detect
+
         float distanceFromPlayer = Vector2.Distance(player.position, transform.position);
         if (distanceFromPlayer < lineOfSite && distanceFromPlayer > attackRange && !stop)
         {
@@ -55,12 +60,14 @@ public class EnemyFollowPlayer : MonoBehaviour
             rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
         }
 
+        #endregion
+
         #region Change where looking
+
+        whereToLook = Mathf.Sign(player.position.x - transform.position.x);
 
         if (distanceFromPlayer < lineOfSite && !stop)
         {
-
-            float whereToLook = Mathf.Sign(player.position.x - transform.position.x);
 
             if (whereToLook < 0 && facingRight == true)
             {
@@ -80,6 +87,29 @@ public class EnemyFollowPlayer : MonoBehaviour
 
 
     }
+
+    #region Knockback
+
+    public IEnumerator Knockback()
+    {
+
+        enemyAttack.completeStop = true;
+        enemyAttack.ResetAttack();
+
+        stop = true;
+
+        rigidbody2D.constraints = RigidbodyConstraints2D.None;
+
+        rigidbody2D.linearVelocity = new Vector2(knockBackForce * -whereToLook, knockBackForce/2);
+
+        yield return new WaitForSeconds(0.5f);
+
+        enemyAttack.completeStop = false;
+        stop = false;
+
+    }
+
+    #endregion
 
     void OnDrawGizmosSelected()
     {

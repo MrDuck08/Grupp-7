@@ -14,6 +14,9 @@ public class EnemyHealth : MonoBehaviour
     bool invincibility = false;
     bool arleadyLooking;
 
+    PlayerMovement playerMovement;
+    EnemyFollowPlayer enemyMovment;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -60,9 +63,17 @@ public class EnemyHealth : MonoBehaviour
         for(int i = 0; i < damageList.Count; i++)
         {
 
-            if(damageList[i] == 2)
+            if(damageList[i] == 2) // Weakpoint hit, 2 skada
             {
                 amount = damageList[i];
+
+                playerMovement = FindObjectOfType<PlayerMovement>();
+
+                playerMovement.dashHasReset = true;
+
+                enemyMovment = FindObjectOfType<EnemyFollowPlayer>();
+
+                StartCoroutine(enemyMovment.Knockback());
 
                 break;
             }

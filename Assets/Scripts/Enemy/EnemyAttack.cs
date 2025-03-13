@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class EnemyAttack : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] float maxStunTime = 2f;
 
     bool stunned = false;
+    public bool completeStop;
 
     #endregion
 
@@ -48,12 +50,14 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] float stretchSpeed;
 
     [Header("Stretch Times")]
-    float howFastAttack;
     [SerializeField] float maxHowFastStretchAttack = 0.2f;
-    float howLongStayAfterStretchAttack;
+    float howFastAttack;
     [SerializeField] float maxHowLongStayAfterStretchAttack = 0.2f;
-    float howFastGoBack;
+    float howLongStayAfterStretchAttack;
     [SerializeField] float maxHowFastGoBack = 0.3f;
+    float howFastGoBack;
+
+    [Header("Stretch Attack Values")]
 
     [SerializeField] float stretchAttackRange = 2f;
 
@@ -69,7 +73,7 @@ public class EnemyAttack : MonoBehaviour
 
     #region Charge Attack
 
-    [Header("Charge Attack")]
+
 
     float playerDirection;
     float distanceToPlayer;
@@ -78,7 +82,8 @@ public class EnemyAttack : MonoBehaviour
     bool startCharge = false;
     bool startChargeRecovery = false;
 
-    [Header("Attack Values")]
+    [Header("Charge Attack")]
+
 
     [SerializeField] float howMoreToRunAfterCharge = 1;
 
@@ -86,20 +91,49 @@ public class EnemyAttack : MonoBehaviour
 
     [Header("Timers")]
 
-    float chargeStartupTime;
     [SerializeField] float maxChargeStartupTime = 1f;
+    float chargeStartupTime;
     float chargeTime;
     float maxChargeTime;
-    float chargeRecoveryTime;
     [SerializeField] float maxChargeRecoveryTime = 0.5f;
+    float chargeRecoveryTime;
 
+
+    #endregion
+
+    #region Jump Attack
+
+
+    bool anticipateJump = false;
+    bool jumpUp = false;
+    bool jumpDown = false;
+
+    [Header("Jump Attack")]
+
+    [SerializeField] float maxJumpSpeed = 5;
+    [SerializeField] float jumpSpeed;
+    [SerializeField] float downAcceration = 1f;
+    float jumpAcceration = 1f;
+
+    float xHalfWayJump;
+    float distanceToJumpPos;
+    float extraJumpLenghtY;
+
+    Vector2 jumpPos;
+
+    [Header("Timers")]
+
+    float jumpStartupTime;
+    [SerializeField] float maxJumpStartupTime = 1;
+    float timeForJumpUp;
+    [SerializeField] float maxTimeForJump = 1;
 
     #endregion
 
     #endregion
 
 
-
+    Rigidbody2D rigidbody2D;
 
     void Start()
     {
@@ -111,6 +145,7 @@ public class EnemyAttack : MonoBehaviour
 
         }
 
+        rigidbody2D = GetComponent<Rigidbody2D>();
         enemyMovment = GetComponent<EnemyFollowPlayer>();
 
     }
@@ -132,10 +167,10 @@ public class EnemyAttack : MonoBehaviour
             foreach (GameObject weakPoints in weakPointList)
             {
 
-                foreach(Vector3 weakPointsVector in weakPointTransformList)
+                foreach (Vector3 weakPointsVector in weakPointTransformList)
                 {
 
-                    weakPoints.transform.localScale -= new Vector3(weakPointsVector.x / attackObject.transform.localScale.x/ weakPointTransformList.Count * Time.deltaTime, 0, 0);
+                    weakPoints.transform.localScale -= new Vector3(weakPointsVector.x / attackObject.transform.localScale.x / weakPointTransformList.Count * Time.deltaTime, 0, 0);
 
                 }
 
@@ -149,7 +184,7 @@ public class EnemyAttack : MonoBehaviour
                 howFastAttack = maxHowFastStretchAttack;
                 howLongStayAfterStretchAttack = maxHowLongStayAfterStretchAttack;
 
-                if(attackObject.GetComponent<EnemyFollowPlayer>() != null)
+                if (attackObject.GetComponent<EnemyFollowPlayer>() != null)
                 {
                     attackObject.GetComponent<BoxCollider2D>().enabled = false;
                 }
@@ -200,6 +235,106 @@ public class EnemyAttack : MonoBehaviour
 
         #endregion
 
+        #region Jump Attack
+
+        if (anticipateJump)
+        {
+
+            jumpStartupTime -= Time.deltaTime;
+
+            if(jumpStartupTime < 0)
+            {
+
+                attackObject.SetActive(true);
+
+                if (attackObject.GetComponent<BoxCollider2D>() != null)
+                {
+                    attackObject.GetComponent<BoxCollider2D>().enabled = true;
+                }
+
+                anticipateJump = false;
+
+                jumpPos = player.transform.position;
+
+                distanceToPlayer = Vector2.Distance(player.transform.position, transform.position);
+
+                xHalfWayJump = distanceToPlayer / 2;
+                extraJumpLenghtY = distanceToPlayer;
+
+                distanceToJumpPos = Vector2.Distance(new Vector2(jumpPos.x - xHalfWayJump * playerDirection, jumpPos.y + extraJumpLenghtY), transform.position);
+
+                jumpSpeed = maxJumpSpeed;
+
+                timeForJumpUp = distanceToJumpPos * 2 / jumpSpeed;
+
+                jumpAcceration = -jumpSpeed / timeForJumpUp;
+
+                jumpUp = true;
+
+            }
+
+        }
+
+        if (jumpUp)
+        {
+
+            timeForJumpUp -= Time.deltaTime;
+
+            rigidbody2D.gravityScale = 0;
+
+            jumpSpeed += jumpAcceration * Time.deltaTime;
+
+
+            transform.position = Vector2.MoveTowards(transform.position, new Vector2(jumpPos.x - xHalfWayJump * playerDirection, jumpPos.y + extraJumpLenghtY), jumpSpeed * Time.deltaTime);
+
+            if(timeForJumpUp < 0)
+            {
+
+                jumpUp = false;
+                jumpDown = true;
+
+                jumpSpeed = maxJumpSpeed;
+
+
+                distanceToJumpPos = Vector2.Distance(jumpPos, transform.position);
+
+                timeForJumpUp = distanceToJumpPos * 2 / jumpSpeed;
+
+                //maxTimeForJump = timeForJumpUp;
+
+                jumpAcceration = downAcceration;
+
+                jumpSpeed = 0;
+
+            }
+
+        }
+
+        if (jumpDown)
+        {
+
+            timeForJumpUp -= Time.deltaTime;
+
+            jumpSpeed += jumpAcceration * Time.deltaTime;
+
+            transform.position = Vector2.MoveTowards(transform.position, jumpPos, jumpSpeed * Time.deltaTime);
+
+            if (transform.position == new Vector3(jumpPos.x, jumpPos.y))
+            {
+
+                if (attackObject.GetComponent<BoxCollider2D>() != null)
+                {
+                    attackObject.GetComponent<BoxCollider2D>().enabled = false;
+                }
+
+                ResetAttack();
+
+            }
+
+        }
+
+        #endregion
+
         #region Charge Attack
 
         if (anticipateCharge)
@@ -208,12 +343,13 @@ public class EnemyAttack : MonoBehaviour
             chargeStartupTime -= Time.deltaTime;
 
 
-            if(chargeStartupTime < 0)
+            if (chargeStartupTime < 0)
             {
 
+                Debug.Log("Jump");
                 attackObject.SetActive(true);
 
-                if(attackObject.GetComponent<BoxCollider2D>() != null)
+                if (attackObject.GetComponent<BoxCollider2D>() != null)
                 {
                     attackObject.GetComponent<BoxCollider2D>().enabled = true;
                 }
@@ -267,7 +403,7 @@ public class EnemyAttack : MonoBehaviour
 
             chargeRecoveryTime -= Time.deltaTime;
 
-            if(chargeRecoveryTime < 0)
+            if (chargeRecoveryTime < 0)
             {
                 ResetAttack();
             }
@@ -299,6 +435,13 @@ public class EnemyAttack : MonoBehaviour
 
     public void Attack()
     {
+
+        if (completeStop) // Knockback är aktiv
+        {
+
+            return;
+
+        }
 
         #region General Info Gathering
 
@@ -390,6 +533,20 @@ public class EnemyAttack : MonoBehaviour
                 #endregion
 
                 break;
+
+            case 2: // Jump Attack
+
+                #region Jump Attack
+
+                playerDirection = Mathf.Sign(player.transform.position.x - transform.position.x);
+
+                jumpStartupTime = maxJumpStartupTime;
+
+                anticipateJump = true;
+
+                #endregion
+
+                break;
         }
     }
 
@@ -407,7 +564,12 @@ public class EnemyAttack : MonoBehaviour
 
         startGoingBack = false;
 
-        enemyMovment.stop = false;
+        if (!completeStop) // Om completeStop är sann då körs knockback och då ska stop vara true
+        {
+            enemyMovment.stop = false;
+        }
+
+        rigidbody2D.gravityScale = 1;
 
         howFastGoBack = maxHowFastGoBack;
         howFastAttack = maxHowFastStretchAttack;
@@ -417,6 +579,9 @@ public class EnemyAttack : MonoBehaviour
         chargeTime = maxChargeTime;
         chargeRecoveryTime = maxChargeRecoveryTime;
 
+        jumpStartupTime = maxJumpStartupTime;
+        timeForJumpUp = maxTimeForJump;
+
         anticipateCharge = false;
         startCharge = false;
         startChargeRecovery = false;
@@ -425,6 +590,10 @@ public class EnemyAttack : MonoBehaviour
         startWaitingToGoBack = false;
         startGoingBack = false;
         currentlyAttacking = false;
+
+        anticipateJump = false;
+        jumpUp = false;
+        jumpDown = false;
 
         originalWeakPointTransformList.Clear();
         originalWeakPointScaleList.Clear();

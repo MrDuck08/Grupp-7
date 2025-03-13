@@ -37,12 +37,11 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] GameObject dashCheck;
 
-    bool searchingForDashLocation = false;
-
-    float searchSpeed = 50f;
     float maxDashSearchLenght = 3;
 
     Vector2 playerPosOnSearch;
+
+    public bool dashHasReset = true;
 
     #endregion
 
@@ -53,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+
         GetInput();
 
         Vector2 inputDirection = new Vector2(xInput, 0).normalized;
@@ -111,30 +111,6 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             myAnimator.SetBool("IsRunning", true);
-
-        }
-
-        #endregion
-
-        #region Dash search
-
-        if (searchingForDashLocation)
-        {
-
-            playerPosOnSearch = transform.position;
-
-            dashCheck.transform.position += new Vector3(direction * searchSpeed * Time.deltaTime , 0, 0);
-
-            dashCheck.transform.localScale += new Vector3(searchSpeed * Time.deltaTime, 0, 0);
-
-         
-
-            if (Vector2.Distance(dashCheck.transform.position, playerPosOnSearch) >= Vector2.Distance(playerPosOnSearch, new Vector2(playerPosOnSearch.x + maxDashSearchLenght, playerPosOnSearch.y)))
-            {
-
-                TransformToDashPos(false);
-
-            }
 
         }
 
@@ -234,10 +210,6 @@ public class PlayerMovement : MonoBehaviour
         // Riktning för knockback (vänster eller höger)
         float direction = Mathf.Sign(transform.localScale.x);
 
-        // Applicera en kraft endast i X-led
-        body.AddForce(new Vector2(10000 * -direction, 3), ForceMode2D.Impulse);
-        //body.linearVelocity = new Vector2(200 * -direction, body.linearVelocity.y);
-
         isKnockbackActive = true;
         knockbackTimer = knockbackDuration;
 
@@ -266,37 +238,31 @@ public class PlayerMovement : MonoBehaviour
     void DashHandler()
     {
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashHasReset)
         {
 
-            searchingForDashLocation = true;
+            playerPosOnSearch = transform.position;
+
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(direction, 0), maxDashSearchLenght, groundMask);
+
+            if (hit)
+            {
+
+                transform.position = new Vector3(transform.position.x + Vector2.Distance(hit.point, playerPosOnSearch) * direction - 0.2f * direction, transform.position.y, transform.position.z);
+
+                dashHasReset = false;
+
+            }
+            else
+            {
+
+                transform.position = new Vector3(transform.position.x + maxDashSearchLenght * direction, transform.position.y, transform.position.z);
+
+                dashHasReset = false;
+
+            }
 
         }
-
-    }
-
-    public void TransformToDashPos(bool WallHit)
-    {
-
-        float wallDistance = 0;
-
-        if (WallHit)
-        {
-
-            wallDistance = 1f;
-
-
-
-        }
-
-        searchingForDashLocation = false;
-
-
-        transform.position = new Vector3(transform.position.x + Vector2.Distance(dashCheck.transform.position, playerPosOnSearch) * direction - wallDistance * direction, transform.position.y, transform.position.z);
-        Debug.Log(dashCheck.transform.position.x + " Dash Pos x");
-
-        dashCheck.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-        dashCheck.transform.localScale = new Vector3(0.28111f, 0.28111f, 0.28111f);
 
     }
 
