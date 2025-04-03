@@ -849,6 +849,11 @@ MonoBehaviour:
   chargeSpeed: 7
   maxChargeStartupTime: 1
   maxChargeRecoveryTime: 1
+  maxJumpSpeed: 5
+  jumpSpeed: 0
+  downAcceration: 1
+  maxJumpStartupTime: 1
+  maxTimeForJump: 1
 --- !u!114 &8832996382395770815
 MonoBehaviour:
   m_ObjectHideFlags: 0

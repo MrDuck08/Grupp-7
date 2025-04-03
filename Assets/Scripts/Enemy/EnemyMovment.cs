@@ -19,6 +19,7 @@ public class EnemyFollowPlayer : MonoBehaviour
     bool facingRight = false;
 
     EnemyAttack enemyAttack;
+    FinalBoss finalBoss;
 
     Rigidbody2D rigidbody2D;
 
@@ -27,6 +28,7 @@ public class EnemyFollowPlayer : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
         enemyAttack = GetComponent<EnemyAttack>();
+        finalBoss = GetComponent<FinalBoss>();
         rigidbody2D = GetComponent<Rigidbody2D>();
 
         baseLineOfSite = lineOfSite;
@@ -55,7 +57,14 @@ public class EnemyFollowPlayer : MonoBehaviour
         }
         else if (distanceFromPlayer <= attackRange && !stop)
         {
-            enemyAttack.Attack();
+            if (enemyAttack != null)
+            {
+                enemyAttack.Attack();
+            }
+            if(finalBoss != null)
+            {
+             //Boss Attack   
+            }
 
             rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
         }
@@ -93,8 +102,11 @@ public class EnemyFollowPlayer : MonoBehaviour
     public IEnumerator Knockback()
     {
 
-        enemyAttack.completeStop = true;
-        enemyAttack.ResetAttack();
+        if(enemyAttack != null)
+        {
+            enemyAttack.completeStop = true;
+            enemyAttack.ResetAttack();
+        }
 
         stop = true;
 
@@ -104,8 +116,11 @@ public class EnemyFollowPlayer : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        enemyAttack.completeStop = false;
-        stop = false;
+        if(enemyAttack != null)
+        {
+            enemyAttack.completeStop = false;
+            stop = false;
+        }
 
     }
 

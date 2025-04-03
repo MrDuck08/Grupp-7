@@ -4,6 +4,9 @@ using UnityEngine.Rendering;
 
 public class EnemyAttack : MonoBehaviour
 {
+
+    #region General Info
+
     [SerializeField] Transform playerLocation;
 
     public bool playerInRange = true;
@@ -18,6 +21,8 @@ public class EnemyAttack : MonoBehaviour
     List<Vector3> originalWeakPointTransformList = new List<Vector3>();
     Vector3 originalAttackScale;
     Vector3 originalAttackPos;
+
+    #endregion
 
     [Header("s")]
 
@@ -132,6 +137,14 @@ public class EnemyAttack : MonoBehaviour
 
     #endregion
 
+    #region Boss
+
+    [SerializeField] bool amIFinalBoss = false;
+
+    bool feintCharge = false;
+    bool feintJump = false;
+
+    #endregion
 
     Rigidbody2D rigidbody2D;
 
@@ -247,6 +260,12 @@ public class EnemyAttack : MonoBehaviour
 
                 attackObject.SetActive(true);
 
+                if (feintCharge)
+                {
+                    Debug.Log(attackObject.transform.GetChild(0).gameObject.name);
+                    attackObject.transform.GetChild(0).gameObject.SetActive(false);
+                }
+
                 if (attackObject.GetComponent<BoxCollider2D>() != null)
                 {
                     attackObject.GetComponent<BoxCollider2D>().enabled = true;
@@ -340,13 +359,14 @@ public class EnemyAttack : MonoBehaviour
         if (anticipateCharge)
         {
 
+            transform.position -= new Vector3(0.1f * playerDirection * Time.deltaTime, 0);
             chargeStartupTime -= Time.deltaTime;
 
 
             if (chargeStartupTime < 0)
             {
 
-                Debug.Log("Jump");
+                Debug.Log("Charge");
                 attackObject.SetActive(true);
 
                 if (attackObject.GetComponent<BoxCollider2D>() != null)
@@ -528,6 +548,32 @@ public class EnemyAttack : MonoBehaviour
 
                 chargeStartupTime = maxChargeStartupTime;
 
+                if (amIFinalBoss)
+                {
+
+                    int feintOrNot = Random.Range(0, 2);
+
+                    switch (feintOrNot)
+                    {
+
+                        case 0:
+
+                            feintCharge = false;
+
+                            break;
+
+                        case 1:
+
+                            feintCharge = true;
+
+                            break; 
+
+                    }
+
+                }
+
+                feintCharge = true;
+
                 anticipateCharge = true;
 
                 #endregion
@@ -541,6 +587,32 @@ public class EnemyAttack : MonoBehaviour
                 playerDirection = Mathf.Sign(player.transform.position.x - transform.position.x);
 
                 jumpStartupTime = maxJumpStartupTime;
+
+                if (amIFinalBoss)
+                {
+
+                    int feintOrNot = Random.Range(0, 2);
+
+                    switch (feintOrNot)
+                    {
+
+                        case 0:
+
+                            feintJump = false;
+
+                            break;
+
+                        case 1:
+
+                            feintJump = true;
+
+                            break;
+
+                    }
+
+                }
+
+                feintJump = true;
 
                 anticipateJump = true;
 
