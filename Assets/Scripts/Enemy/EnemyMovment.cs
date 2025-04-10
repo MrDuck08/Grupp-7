@@ -20,7 +20,7 @@ public class EnemyFollowPlayer : MonoBehaviour
 
     EnemyAttack enemyAttack;
     FinalBoss finalBoss;
-
+    float mmk = 12;
     Rigidbody2D rigidbody2D;
 
     void Start()
@@ -63,7 +63,7 @@ public class EnemyFollowPlayer : MonoBehaviour
             }
             if(finalBoss != null)
             {
-             //Boss Attack   
+
             }
 
             rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
