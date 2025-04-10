@@ -159,7 +159,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      V Bot ljus_0: -5805130288645316196
+      V Bot ljus_1: 2079688486979808741
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
