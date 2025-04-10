@@ -45,7 +45,7 @@ public class MiniGamehandler : MonoBehaviour
 
     #endregion
 
-    float timeUntilMiniGameComplete = 50;
+    float timeUntilMiniGameComplete = 2;
 
     private void Start()
     {
@@ -60,7 +60,7 @@ public class MiniGamehandler : MonoBehaviour
     private void Update()
     {
 
-        enemySpawnObject.transform.position = spawnGameobjectTransform.transform.position; 
+        enemySpawnObject.transform.position = spawnGameobjectTransform.transform.position;
         enemySpawnObject.transform.rotation = spawnGameobjectTransform.transform.rotation;
 
         #region Rotate Arena
@@ -70,7 +70,7 @@ public class MiniGamehandler : MonoBehaviour
 
             timeUntilArenaFlip -= Time.deltaTime;
 
-            if(timeUntilArenaFlip <= 0)
+            if (timeUntilArenaFlip <= 0)
             {
 
                 rotatingArena = true;
@@ -84,7 +84,7 @@ public class MiniGamehandler : MonoBehaviour
 
         }
 
-        if(preRotation) // Rotera Arena
+        if (preRotation) // Rotera Arena
         {
 
             rotation += speedForRotation * Time.deltaTime;
@@ -93,7 +93,7 @@ public class MiniGamehandler : MonoBehaviour
 
             arena.transform.rotation = Quaternion.Euler(0f, 0f, rotation);
 
-            if(timeForPreRotation <= 0)
+            if (timeForPreRotation <= 0)
             {
 
                 timeForPreRotation = maxTimeForPreRotation;
@@ -129,7 +129,7 @@ public class MiniGamehandler : MonoBehaviour
 
                 float zRotation = arena.transform.eulerAngles.z;
 
-                if(zRotation < 95 && zRotation > 85) // Den är ca 90
+                if (zRotation < 95 && zRotation > 85) // Den är ca 90
                 {
                     arena.transform.rotation = Quaternion.Euler(0, 0, 90);
                 }
@@ -181,7 +181,7 @@ public class MiniGamehandler : MonoBehaviour
     void EnemySpawnerFunction()
     {
 
-        if(maxOfBasicObsticle == 0 && maxOfSwordObsticle == 0)
+        if (maxOfBasicObsticle == 0 && maxOfSwordObsticle == 0)
         {
 
             return;
@@ -209,7 +209,7 @@ public class MiniGamehandler : MonoBehaviour
                     maxOfBasicObsticle--;
 
                 }
-                if(whoToSpawn > 7 && maxOfSwordObsticle != 0)
+                if (whoToSpawn > 7 && maxOfSwordObsticle != 0)
                 {
 
                     somethingWasSpawned = true;
@@ -228,7 +228,7 @@ public class MiniGamehandler : MonoBehaviour
             }
 
             enemySpawnCooldown = true;
-            
+
 
         }
 
@@ -255,13 +255,21 @@ public class MiniGamehandler : MonoBehaviour
 
     IEnumerator TimeUntilMinigameFinished()
     {
-
+        //Debug.Log(timeUntilMiniGameComplete + " TimeUntilComplete");
         yield return new WaitForSeconds(timeUntilMiniGameComplete);
 
 
         manager = FindAnyObjectByType<GameManager>();
 
-        manager.MiniGameComplete();
+        StartCoroutine(manager.MiniGameComplete());
 
     }
+
+    public void SettingsForMinigame(float timeForMinigame)
+    {
+
+        timeUntilMiniGameComplete = timeForMinigame;
+        //Debug.Log("Run");
+    }
+
 }

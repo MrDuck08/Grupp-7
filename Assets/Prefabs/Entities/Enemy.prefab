@@ -854,6 +854,7 @@ MonoBehaviour:
   downAcceration: 1
   maxJumpStartupTime: 1
   maxTimeForJump: 1
+  amIFinalBoss: 0
 --- !u!114 &8832996382395770815
 MonoBehaviour:
   m_ObjectHideFlags: 0
