@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      H bot ljus_0: 6092849618858434506
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
