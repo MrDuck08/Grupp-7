@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "Nytt ljust gr\xE4s_0": 7567222432140772076
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
