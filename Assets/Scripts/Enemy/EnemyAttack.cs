@@ -323,6 +323,18 @@ public class EnemyAttack : MonoBehaviour
 
                 jumpAcceration = downAcceration;
 
+                if (feintJump)
+                {
+                    jumpPos.x -= xHalfWayJump * playerDirection;
+
+                    distanceToJumpPos = Vector2.Distance(jumpPos, transform.position);
+
+                    timeForJumpUp = distanceToJumpPos * 2 / jumpSpeed;
+
+                    jumpAcceration *= 4;
+
+                }
+
                 jumpSpeed = 0;
 
             }
@@ -347,6 +359,37 @@ public class EnemyAttack : MonoBehaviour
                 }
 
                 ResetAttack();
+
+                if (feintJump)
+                {
+
+                    anticipateCharge = true;
+                    currentlyAttacking = true;
+                    enemyMovment.stop = true;
+
+                    chargeStartupTime = 0;
+
+                    originalWeakPointTransformList.Clear();
+                    originalWeakPointScaleList.Clear();
+                    weakPointTransformList.Clear();
+                    weakPointList.Clear();
+
+                    attackObject = gameObject.transform.GetChild(1).transform.Find("Charge Attack").gameObject;
+                    originalAttackPos = attackObject.transform.localPosition;
+                    originalAttackScale = attackObject.transform.localScale;
+
+                    Transform AttackObject = attackObject.transform.Find("WeakPointCollection");
+                    foreach (Transform child in AttackObject.transform)
+                    {
+                        originalWeakPointTransformList.Add(child.localPosition);
+                        originalWeakPointScaleList.Add(child.localScale);
+                        weakPointTransformList.Add(child.localScale);
+                        weakPointList.Add(child.gameObject);
+                    }
+
+                    playerDirection = Mathf.Sign(player.transform.position.x - transform.position.x);
+
+                }
 
             }
 
@@ -379,7 +422,7 @@ public class EnemyAttack : MonoBehaviour
                 }
 
                 distanceToPlayer = Vector3.Distance(player.transform.position, transform.position) + howMoreToRunAfterCharge;
-
+                
                 maxChargeTime = distanceToPlayer / chargeSpeed;
                 chargeTime = maxChargeTime;
 
@@ -400,7 +443,7 @@ public class EnemyAttack : MonoBehaviour
 
             if (chargeTime < 0)
             {
-
+                Debug.Log("Charge Done");
                 if (attackObject.GetComponent<BoxCollider2D>() != null)
                 {
                     attackObject.GetComponent<BoxCollider2D>().enabled = false;
@@ -411,7 +454,7 @@ public class EnemyAttack : MonoBehaviour
                 }
 
                 chargeRecoveryTime = maxChargeRecoveryTime;
-
+                chargeRecoveryTime = 3;
                 startCharge = false;
                 startChargeRecovery = true;
 
@@ -425,6 +468,9 @@ public class EnemyAttack : MonoBehaviour
 
             if (chargeRecoveryTime < 0)
             {
+                feintJump = false;
+
+                Debug.Log("Charge Recovery");
                 ResetAttack();
             }
 
@@ -462,7 +508,7 @@ public class EnemyAttack : MonoBehaviour
             return;
 
         }
-
+        Debug.Log("New Attack");
         #region General Info Gathering
 
         player = GameObject.FindGameObjectWithTag("Player");
@@ -471,7 +517,7 @@ public class EnemyAttack : MonoBehaviour
         enemyMovment.stop = true;
 
         int whatAttack = Random.Range(0, allAttacksObjects.Count);
-
+        whatAttack = 0;
         attackObject = allAttacksObjects[whatAttack];
         originalAttackPos = attackObject.transform.localPosition;
         originalAttackScale = attackObject.transform.localScale;
@@ -632,6 +678,7 @@ public class EnemyAttack : MonoBehaviour
 
             weakPointList[i].gameObject.transform.localPosition = originalWeakPointTransformList[i];
             weakPointList[i].gameObject.transform.localScale = originalWeakPointScaleList[i];
+
         }
 
         startGoingBack = false;
@@ -640,7 +687,7 @@ public class EnemyAttack : MonoBehaviour
         {
             enemyMovment.stop = false;
         }
-
+        Debug.Log("Reset " + feintJump + " Feint or not");
         rigidbody2D.gravityScale = 1;
 
         howFastGoBack = maxHowFastGoBack;
@@ -679,6 +726,12 @@ public class EnemyAttack : MonoBehaviour
             attackObject.transform.localScale = originalAttackScale;
 
             attackObject.SetActive(false);
+        }
+
+        if (!feintJump)
+        {
+
+
         }
 
     }
