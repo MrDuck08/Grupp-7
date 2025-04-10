@@ -20,7 +20,7 @@ public class EnemyFollowPlayer : MonoBehaviour
 
     EnemyAttack enemyAttack;
     FinalBoss finalBoss;
-    float mmk = 1;
+    float mmk = 12;
     Rigidbody2D rigidbody2D;
 
     void Start()
