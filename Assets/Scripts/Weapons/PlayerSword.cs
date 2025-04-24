@@ -15,6 +15,7 @@ public class PlayerSword : WeaponBase
     [SerializeField] Transform parentTransform;
 
     EnemyHealth enemyHealth;
+    AudioManager audioManager; 
 
     #region Float
 
@@ -60,6 +61,7 @@ public class PlayerSword : WeaponBase
         attackCollider = GetComponent<Collider2D>();
 
         enemyHealth = FindFirstObjectByType<EnemyHealth>();
+        audioManager = FindFirstObjectByType<AudioManager>();
 
         attackCollider.enabled = false;
 
@@ -90,6 +92,7 @@ public class PlayerSword : WeaponBase
                 attackDistance = attackRange + maxDisatnceBetweenPlayerAndSwordUnsheathed;
 
                 speed = attackDistance/ howFastAttack;
+                audioManager.SwordSound();
 
                 // Aktivera Attack Hitbox
 

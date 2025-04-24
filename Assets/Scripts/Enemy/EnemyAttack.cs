@@ -142,6 +142,7 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] bool amIFinalBoss = false;
 
     bool feintCharge = false;
+    public bool anticipateFeintCharge = false;
     bool feintJump = false;
 
     #endregion
@@ -260,12 +261,6 @@ public class EnemyAttack : MonoBehaviour
 
                 attackObject.SetActive(true);
 
-                if (feintCharge)
-                {
-                    Debug.Log(attackObject.transform.GetChild(0).gameObject.name);
-                    attackObject.transform.GetChild(0).gameObject.SetActive(false);
-                }
-
                 if (attackObject.GetComponent<BoxCollider2D>() != null)
                 {
                     attackObject.GetComponent<BoxCollider2D>().enabled = true;
@@ -283,6 +278,11 @@ public class EnemyAttack : MonoBehaviour
                 distanceToJumpPos = Vector2.Distance(new Vector2(jumpPos.x - xHalfWayJump * playerDirection, jumpPos.y + extraJumpLenghtY), transform.position);
 
                 jumpSpeed = maxJumpSpeed;
+
+                if (feintCharge)
+                {
+                    jumpSpeed *= 2;
+                }
 
                 timeForJumpUp = distanceToJumpPos * 2 / jumpSpeed;
 
@@ -323,6 +323,13 @@ public class EnemyAttack : MonoBehaviour
 
                 jumpAcceration = downAcceration;
 
+                if (feintCharge)
+                {
+
+                    jumpAcceration *= 2;
+
+                }
+
                 if (feintJump)
                 {
                     jumpPos.x -= xHalfWayJump * playerDirection;
@@ -331,7 +338,7 @@ public class EnemyAttack : MonoBehaviour
 
                     timeForJumpUp = distanceToJumpPos * 2 / jumpSpeed;
 
-                    jumpAcceration *= 4;
+                    jumpAcceration *= 5;
 
                 }
 
@@ -508,16 +515,26 @@ public class EnemyAttack : MonoBehaviour
             return;
 
         }
-        Debug.Log("New Attack");
+
         #region General Info Gathering
 
         player = GameObject.FindGameObjectWithTag("Player");
 
+        int whatAttack = Random.Range(0, allAttacksObjects.Count);
+        whatAttack = 1;
+        if (feintCharge)
+        {
+
+            whatAttack = 0;
+            feintJump = false;
+
+            ResetAttack();
+
+        }
+
         currentlyAttacking = true;
         enemyMovment.stop = true;
 
-        int whatAttack = Random.Range(0, allAttacksObjects.Count);
-        whatAttack = 0;
         attackObject = allAttacksObjects[whatAttack];
         originalAttackPos = attackObject.transform.localPosition;
         originalAttackScale = attackObject.transform.localScale;
@@ -621,7 +638,7 @@ public class EnemyAttack : MonoBehaviour
                 feintCharge = true;
 
                 anticipateCharge = true;
-
+                Debug.Log("Charge Attack");
                 #endregion
 
                 break;
@@ -634,31 +651,29 @@ public class EnemyAttack : MonoBehaviour
 
                 jumpStartupTime = maxJumpStartupTime;
 
-                if (amIFinalBoss)
-                {
+                //if (amIFinalBoss)
+                //{
 
-                    int feintOrNot = Random.Range(0, 2);
+                //    int feintOrNot = Random.Range(0, 2);
 
-                    switch (feintOrNot)
-                    {
+                //    switch (feintOrNot)
+                //    {
 
-                        case 0:
+                //        case 0:
 
-                            feintJump = false;
+                //            feintJump = false;
 
-                            break;
+                //            break;
 
-                        case 1:
+                //        case 1:
 
-                            feintJump = true;
+                //            feintJump = true;
 
-                            break;
+                //            break;
 
-                    }
+                //    }
 
-                }
-
-                feintJump = true;
+                //}
 
                 anticipateJump = true;
 
@@ -687,7 +702,7 @@ public class EnemyAttack : MonoBehaviour
         {
             enemyMovment.stop = false;
         }
-        Debug.Log("Reset " + feintJump + " Feint or not");
+
         rigidbody2D.gravityScale = 1;
 
         howFastGoBack = maxHowFastGoBack;

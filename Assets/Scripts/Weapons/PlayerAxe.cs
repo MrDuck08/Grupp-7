@@ -10,6 +10,7 @@ public class PlayerAxe : WeaponBase
     EnemyHealth enemyHealth;
 
     BoxCollider2D axeHeadCollider;
+    AudioManager audioManager; 
 
     #region Float
 
@@ -63,6 +64,7 @@ public class PlayerAxe : WeaponBase
         base.Start();
 
         playerWeaponBase = FindFirstObjectByType<PlayerWeaponBase>();
+        audioManager = FindAnyObjectByType<AudioManager>();
         enemyHealth = FindFirstObjectByType<EnemyHealth>();
 
         axeHeadCollider = GetComponentInChildren<BoxCollider2D>();
@@ -98,6 +100,8 @@ public class PlayerAxe : WeaponBase
                 attackDistance = attackRange + maxDisatnceBetweenPlayerAndSwordUnsheathed;
 
                 speed = attackDistance / howFastAttack;
+
+                audioManager.AxeSound();
 
                 axeHeadCollider.enabled = true;
 

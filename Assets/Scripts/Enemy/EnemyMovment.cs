@@ -23,6 +23,8 @@ public class EnemyFollowPlayer : MonoBehaviour
     float mmk = 12;
     Rigidbody2D rigidbody2D;
 
+    [SerializeField]
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -55,18 +57,22 @@ public class EnemyFollowPlayer : MonoBehaviour
             rigidbody2D.constraints = RigidbodyConstraints2D.None;
 
         }
-        else if (distanceFromPlayer <= attackRange && !stop)
+        else if (distanceFromPlayer <= attackRange)
         {
-            if (enemyAttack != null)
+            if (enemyAttack != null && !stop)
             {
                 enemyAttack.Attack();
+
+                rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
             }
-            if(finalBoss != null)
+
+            if (enemyAttack.anticipateFeintCharge)
             {
+                Debug.Log("Feint Charge");
+                enemyAttack.Attack();
 
             }
 
-            rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
         }
 
         #endregion
@@ -75,7 +81,7 @@ public class EnemyFollowPlayer : MonoBehaviour
 
         whereToLook = Mathf.Sign(player.position.x - transform.position.x);
 
-        if (distanceFromPlayer < lineOfSite && !stop)
+        if (distanceFromPlayer < lineOfSite)
         {
 
             if (whereToLook < 0 && facingRight == true)

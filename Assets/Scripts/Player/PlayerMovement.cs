@@ -27,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     float knockbackDuration = 0.5f;
     float knockbackTimer = 0f;
 
+
     float direction;
 
     Animator myAnimator;
@@ -45,9 +46,14 @@ public class PlayerMovement : MonoBehaviour
 
     #endregion
 
+    bool playingSOund;
+
+    AudioManager audioManager;
+
     private void Start()
     {
         myAnimator = GetComponentInChildren<Animator>();
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     void Update()
@@ -106,15 +112,31 @@ public class PlayerMovement : MonoBehaviour
 
             myAnimator.SetBool("IsRunning", false);
 
+        if (xInput == 0)
+        {
+            if (playingSOund)
+            {
+                audioManager.RunningSoundStop();
+                playingSOund = false;
+            }
 
         }
         else
         {
+
             myAnimator.SetBool("IsRunning", true);
 
         }
 
         #endregion
+
+            if (playingSOund == false)
+            {
+                audioManager.RunningSound();
+                playingSOund = true;
+            }
+
+        }
 
     }
     private void FixedUpdate()
@@ -159,7 +181,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && grounded)
         {
-
+            audioManager.JumpSound();
             body.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
         }
     }
