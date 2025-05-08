@@ -9,7 +9,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource audioSource;
 
     [SerializeField] AudioSource chipWalkingSound;
-    [SerializeField] AudioSource walkingSound;
+    [SerializeField] AudioSource chipJumpingSound;
     [SerializeField] AudioSource runningSound;
     [SerializeField] AudioSource jumpingSound;
     [SerializeField] AudioSource dashSound;
@@ -29,25 +29,28 @@ public class AudioManager : MonoBehaviour
     {
         chipWalkingSound.Play();
     }
-    public void WalkingSound()
+
+    public void ChipWalkingSoundStop()
     {
-        walkingSound.Play();
+        chipWalkingSound.Stop();
     }
+
+    public void ChipJumpingSound()
+    {
+        chipJumpingSound.Play();
+    }
+
     public void RunningSound()
     {
         runningSound.Play();
-        Debug.Log("Running");
     }
     public void RunningSoundStop()
     {
         runningSound.Stop();
-        Debug.Log("stop running");
     }
     public void JumpSound()
     {
-
         jumpingSound.Play();
-
     }
     public void DashSound()
     {

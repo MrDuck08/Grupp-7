@@ -855,6 +855,7 @@ MonoBehaviour:
   maxJumpStartupTime: 1
   maxTimeForJump: 1
   amIFinalBoss: 0
+  anticipateFeintCharge: 0
 --- !u!114 &8832996382395770815
 MonoBehaviour:
   m_ObjectHideFlags: 0

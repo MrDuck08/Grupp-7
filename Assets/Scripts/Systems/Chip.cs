@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem.XInput;
 using UnityEngine.Rendering;
 
 public class Chip : MonoBehaviour
@@ -61,13 +62,14 @@ public class Chip : MonoBehaviour
     bool startJumpUp = false;
     bool startJumpingDown = false;
     bool jumping = false;
-
+    bool playingSound = false;
     bool jumpDown = false;
 
     #endregion
 
     Rigidbody2D rb2D;
 
+    AudioManager audioManager;
 
 
     private void Start()
@@ -79,6 +81,8 @@ public class Chip : MonoBehaviour
 
         jumpSpeed = maxJumpSpeed;
         originalExtraJumpLenght = extraJumpLenght;
+
+        audioManager = FindObjectOfType<AudioManager>();
 
     }
 
@@ -168,6 +172,7 @@ public class Chip : MonoBehaviour
         }
 
         #endregion
+
     }
 
     private void Movement()
@@ -180,6 +185,22 @@ public class Chip : MonoBehaviour
             Vector2 MovePos = new Vector2(transform.position.x + 1 * (speed / distanceFromPlayer) * Time.deltaTime, transform.position.y);
 
             transform.position = MovePos;
+            if (!playingSound)
+            {
+                playingSound = true;
+                Debug.Log("Play Sound");
+                audioManager.ChipWalkingSound();
+            }
+        }
+        else
+        {
+
+            if (playingSound)
+            {
+                playingSound = false;
+                Debug.Log("Stop Playing Sound");
+                audioManager.ChipWalkingSoundStop();
+            }
 
         }
     }
@@ -343,6 +364,8 @@ public class Chip : MonoBehaviour
         maxTimeForJump = timeForJumpUp;
 
         jumpAcceration = -jumpSpeed / timeForJumpUp;
+
+        audioManager.ChipJumpingSound();
 
         startJumpUp = true;
 

@@ -266,7 +266,7 @@ public class PlayerMovement : MonoBehaviour
             playerPosOnSearch = transform.position;
 
             RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(direction, 0), maxDashSearchLenght, groundMask);
-
+            audioManager.DashSound();
             if (hit)
             {
 
