@@ -40,6 +40,7 @@ public class PlayerCollision : MonoBehaviour
 
             case "MinigameHinder":
 
+                Debug.Log(gameObject.transform.position);
                 gameManager.StartMinigame(transform.position, collision.gameObject.name);
 
                 break;

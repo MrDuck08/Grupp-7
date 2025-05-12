@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] Animator transitionAnim;
-    [SerializeField] Animator transitionAnim2;
     static GameManager instance;
     SceneLoader loader;
 
