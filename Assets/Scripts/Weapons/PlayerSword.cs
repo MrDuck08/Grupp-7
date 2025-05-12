@@ -92,7 +92,7 @@ public class PlayerSword : WeaponBase
                 attackDistance = attackRange + maxDisatnceBetweenPlayerAndSwordUnsheathed;
 
                 speed = attackDistance/ howFastAttack;
-                audioManager.SwordSound();
+                //audioManager.SwordSound();
 
                 // Aktivera Attack Hitbox
 

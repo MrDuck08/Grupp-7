@@ -110,8 +110,8 @@ public class EnemyAttack : MonoBehaviour
 
 
     bool anticipateJump = false;
-    bool jumpUp = false;
-    bool jumpDown = false;
+    public bool jumpUp = false;
+    public bool jumpDown = false;
 
     [Header("Jump Attack")]
 
@@ -398,6 +398,8 @@ public class EnemyAttack : MonoBehaviour
 
                 }
 
+                feintCharge = false;
+
             }
 
         }
@@ -416,7 +418,6 @@ public class EnemyAttack : MonoBehaviour
             if (chargeStartupTime < 0)
             {
 
-                Debug.Log("Charge");
                 attackObject.SetActive(true);
 
                 if (attackObject.GetComponent<BoxCollider2D>() != null)
@@ -435,6 +436,13 @@ public class EnemyAttack : MonoBehaviour
 
                 anticipateCharge = false;
                 startCharge = true;
+
+                if (feintCharge)
+                {
+
+                    anticipateFeintCharge = true;
+
+                }
             }
 
         }
@@ -450,7 +458,7 @@ public class EnemyAttack : MonoBehaviour
 
             if (chargeTime < 0)
             {
-                Debug.Log("Charge Done");
+
                 if (attackObject.GetComponent<BoxCollider2D>() != null)
                 {
                     attackObject.GetComponent<BoxCollider2D>().enabled = false;
@@ -476,8 +484,9 @@ public class EnemyAttack : MonoBehaviour
             if (chargeRecoveryTime < 0)
             {
                 feintJump = false;
+                feintCharge = false;
+                anticipateFeintCharge = false;
 
-                Debug.Log("Charge Recovery");
                 ResetAttack();
             }
 
@@ -521,7 +530,7 @@ public class EnemyAttack : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
 
         int whatAttack = Random.Range(0, allAttacksObjects.Count);
-        whatAttack = 1;
+
         if (feintCharge)
         {
 
@@ -635,10 +644,8 @@ public class EnemyAttack : MonoBehaviour
 
                 }
 
-                feintCharge = true;
-
                 anticipateCharge = true;
-                Debug.Log("Charge Attack");
+
                 #endregion
 
                 break;
@@ -651,29 +658,34 @@ public class EnemyAttack : MonoBehaviour
 
                 jumpStartupTime = maxJumpStartupTime;
 
-                //if (amIFinalBoss)
-                //{
+                if (amIFinalBoss && !feintCharge)
+                {
 
-                //    int feintOrNot = Random.Range(0, 2);
+                    int feintOrNot = Random.Range(0, 2);
 
-                //    switch (feintOrNot)
-                //    {
+                    switch (feintOrNot)
+                    {
 
-                //        case 0:
+                        case 0:
 
-                //            feintJump = false;
+                            feintJump = false;
 
-                //            break;
+                            break;
 
-                //        case 1:
+                        case 1:
 
-                //            feintJump = true;
+                            feintJump = true;
 
-                //            break;
+                            break;
 
-                //    }
+                    }
 
-                //}
+                }
+
+                if (feintCharge)
+                {
+                    jumpStartupTime = 0;
+                }
 
                 anticipateJump = true;
 

@@ -111,15 +111,11 @@ public class PlayerMovement : MonoBehaviour
         {
 
             myAnimator.SetBool("IsRunning", false);
-
-        if (xInput == 0)
-        {
             if (playingSOund)
             {
-                audioManager.RunningSoundStop();
+                //audioManager.RunningSoundStop();
                 playingSOund = false;
             }
-
         }
         else
         {
@@ -129,14 +125,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         #endregion
-
-            if (playingSOund == false)
-            {
-                audioManager.RunningSound();
-                playingSOund = true;
-            }
-
-        }
 
     }
     private void FixedUpdate()
@@ -181,7 +169,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && grounded)
         {
-            audioManager.JumpSound();
+            //audioManager.JumpSound();
             body.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
         }
     }

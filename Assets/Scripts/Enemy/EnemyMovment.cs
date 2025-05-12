@@ -18,12 +18,19 @@ public class EnemyFollowPlayer : MonoBehaviour
     public bool stop = false;
     bool facingRight = false;
 
+    #region Check For Ground
+
+    [Header("Check For Ground Stuff")]
+
+    [SerializeField] GameObject checkForGroundObject;
+    [SerializeField] LayerMask groundLayer;
+
+    #endregion
+
     EnemyAttack enemyAttack;
     FinalBoss finalBoss;
-    float mmk = 12;
     Rigidbody2D rigidbody2D;
 
-    [SerializeField]
 
     void Start()
     {
@@ -66,8 +73,10 @@ public class EnemyFollowPlayer : MonoBehaviour
                 rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
             }
 
-            if (enemyAttack.anticipateFeintCharge)
+            if (enemyAttack.anticipateFeintCharge && stop)
             {
+
+                enemyAttack.anticipateFeintCharge = false;
                 Debug.Log("Feint Charge");
                 enemyAttack.Attack();
 
@@ -100,6 +109,25 @@ public class EnemyFollowPlayer : MonoBehaviour
 
         #endregion
 
+        if(stop)
+        {
+
+            if(enemyAttack.jumpDown == true || enemyAttack.jumpUp == true)
+            {
+                return;
+            }
+
+            Vector2 GroundCheckPos = checkForGroundObject.transform.position;
+            bool GroundCheckBool = Physics2D.OverlapCircle(GroundCheckPos, 0.1f, groundLayer);
+
+            if (!GroundCheckBool)
+            {
+                Debug.Log("Go Down");
+                transform.position = new Vector2(transform.position.x, transform.position.y - 2f * Time.deltaTime);
+
+            }
+
+        }
 
     }
 
@@ -137,5 +165,8 @@ public class EnemyFollowPlayer : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, lineOfSite);
         Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(checkForGroundObject.transform.position, 0.1f);
     }
 }
