@@ -36,8 +36,6 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Dash")]
 
-    [SerializeField] GameObject dashCheck;
-
     float maxDashSearchLenght = 3;
 
     Vector2 playerPosOnSearch;
@@ -169,7 +167,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && grounded)
         {
-            //audioManager.JumpSound();
+            audioManager.JumpSound();
             body.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
         }
     }
@@ -254,7 +252,7 @@ public class PlayerMovement : MonoBehaviour
             playerPosOnSearch = transform.position;
 
             RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(direction, 0), maxDashSearchLenght, groundMask);
-
+            audioManager.DashSound();
             if (hit)
             {
 

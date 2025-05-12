@@ -101,7 +101,7 @@ public class PlayerAxe : WeaponBase
 
                 speed = attackDistance / howFastAttack;
 
-                //audioManager.AxeSound();
+                audioManager.AxeSound();
 
                 axeHeadCollider.enabled = true;
 
