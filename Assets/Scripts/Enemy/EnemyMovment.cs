@@ -77,7 +77,7 @@ public class EnemyFollowPlayer : MonoBehaviour
             {
 
                 enemyAttack.anticipateFeintCharge = false;
-                Debug.Log("Feint Charge");
+
                 enemyAttack.Attack();
 
             }
@@ -122,7 +122,7 @@ public class EnemyFollowPlayer : MonoBehaviour
 
             if (!GroundCheckBool)
             {
-                Debug.Log("Go Down");
+
                 transform.position = new Vector2(transform.position.x, transform.position.y - 2f * Time.deltaTime);
 
             }

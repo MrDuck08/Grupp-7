@@ -103,8 +103,6 @@ public class PlayerAxe : WeaponBase
 
                 audioManager.AxeSound();
 
-                axeHeadCollider.enabled = true;
-
 
             }
         }
@@ -121,6 +119,8 @@ public class PlayerAxe : WeaponBase
                 startSwingDown = true;
 
                 howFastAttack = maxHowFastAttack;
+
+                axeHeadCollider.enabled = true;
 
                 float distanceToSwingDown = maxDistanceToLookUpWhenAiming + maxDistanceToLookDownInSwing;
 

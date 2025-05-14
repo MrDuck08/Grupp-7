@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -147,6 +148,8 @@ public class EnemyAttack : MonoBehaviour
 
     #endregion
 
+    List<Animator> weakPointAnimation = new List<Animator>();
+
     Rigidbody2D rigidbody2D;
 
     void Start()
@@ -178,15 +181,19 @@ public class EnemyAttack : MonoBehaviour
 
             attackObject.transform.localScale += new Vector3(stretchSpeed * Time.deltaTime, 0, 0);
 
+            weakPointList[0].transform.localScale = new Vector3(weakPointList[0].transform.localScale.x/stretchSpeed * Time.deltaTime, 0, 0);
+
             foreach (GameObject weakPoints in weakPointList)
             {
+                Debug.Log(weakPoints.transform.localScale.x);
+                //weakPoints.transform.localScale = new Vector3(weakPoints.transform.localScale.x / attackObject.transform.localScale.x * Time.deltaTime, 0, 0);
+                //weakPoints.transform.localEulerAngles -= new Vector3(weakPoints.transform.localScale.x / (stretchSpeed * Time.deltaTime), weakPoints.transform.localScale.y, 1);
+                //foreach (Vector3 weakPointsVector in weakPointTransformList)
+                //{
+                //    Debug.Log(weakPointsVector);
+                   
 
-                foreach (Vector3 weakPointsVector in weakPointTransformList)
-                {
-
-                    weakPoints.transform.localScale -= new Vector3(weakPointsVector.x / attackObject.transform.localScale.x / weakPointTransformList.Count * Time.deltaTime, 0, 0);
-
-                }
+                //}
 
             }
 
@@ -260,6 +267,8 @@ public class EnemyAttack : MonoBehaviour
             {
 
                 attackObject.SetActive(true);
+
+                StartCoroutine(WeakPointAnimationStart());
 
                 if (attackObject.GetComponent<BoxCollider2D>() != null)
                 {
@@ -424,10 +433,6 @@ public class EnemyAttack : MonoBehaviour
                 {
                     attackObject.GetComponent<BoxCollider2D>().enabled = true;
                 }
-                if (attackObject.GetComponent<CapsuleCollider2D>() != null)
-                {
-                    attackObject.GetComponent<CapsuleCollider2D>().enabled = true;
-                }
 
                 distanceToPlayer = Vector3.Distance(player.transform.position, transform.position) + howMoreToRunAfterCharge;
                 
@@ -555,6 +560,7 @@ public class EnemyAttack : MonoBehaviour
             originalWeakPointScaleList.Add(child.localScale);
             weakPointTransformList.Add(child.localScale);
             weakPointList.Add(child.gameObject);
+            weakPointAnimation.Add(child.GetComponent<Animator>());
         }
 
         #endregion
@@ -575,7 +581,7 @@ public class EnemyAttack : MonoBehaviour
                 if (attackRayHit.collider != null)
                 {
 
-                    if(attackRayHit.distance/2 <= stretchAttackRange)
+                    if (attackRayHit.distance/2 <= stretchAttackRange)
                     {
 
                         attackObject.SetActive(true);
@@ -588,9 +594,10 @@ public class EnemyAttack : MonoBehaviour
                             attackObject.GetComponent<BoxCollider2D>().enabled = true;
                         }
 
+                        StartCoroutine(WeakPointAnimationStart());
+
                         startStretchAttack = true;
 
-                        
                     }
                     else
                     {
@@ -741,6 +748,8 @@ public class EnemyAttack : MonoBehaviour
         jumpUp = false;
         jumpDown = false;
 
+        StopWeakpointAnimation();
+
         originalWeakPointTransformList.Clear();
         originalWeakPointScaleList.Clear();
         weakPointList.Clear();
@@ -753,12 +762,6 @@ public class EnemyAttack : MonoBehaviour
             attackObject.transform.localScale = originalAttackScale;
 
             attackObject.SetActive(false);
-        }
-
-        if (!feintJump)
-        {
-
-
         }
 
     }
@@ -781,6 +784,45 @@ public class EnemyAttack : MonoBehaviour
             enemyMovment.stop = true;
 
         }
+    }
+
+    #endregion
+
+    #region Animations
+
+    IEnumerator WeakPointAnimationStart()
+    {
+
+        for (int i = 0; i < weakPointAnimation.Count; i++)
+        {
+
+            weakPointAnimation[i].SetBool("SpawnIn", true);
+            weakPointAnimation[i].SetBool("disappear", false);
+
+        }
+
+        yield return new WaitForSeconds(0.3f);
+
+        for (int i = 0; i < weakPointAnimation.Count; i++)
+        {
+            Debug.Log("animn");
+            weakPointAnimation[i].SetBool("SpawnIn", false);
+            weakPointAnimation[i].SetBool("Aktive", true);
+
+        }
+    }
+
+    void StopWeakpointAnimation()
+    {
+
+        for (int i = 0; i < weakPointAnimation.Count; i++)
+        {
+
+            weakPointAnimation[i].SetBool("Aktive", false);
+            weakPointAnimation[i].SetBool("disappear", true);
+
+        }
+
     }
 
     #endregion

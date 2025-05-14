@@ -71,7 +71,7 @@ public class EnemyHealth : MonoBehaviour
 
                 playerMovement.dashHasReset = true;
 
-                enemyMovment = FindObjectOfType<EnemyFollowPlayer>();
+                enemyMovment = GetComponent<EnemyFollowPlayer>();
 
                 StartCoroutine(enemyMovment.Knockback());
 
