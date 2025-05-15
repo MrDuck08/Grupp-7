@@ -24,6 +24,7 @@ public class RespawnScript : MonoBehaviour
     public void Respawn()
     {
         player.transform.position = respawnPoint.transform.position;
+        player.GetComponent<PlayerMovement>().dashHasReset = true;
 
         HealthManager.health = 3;
 

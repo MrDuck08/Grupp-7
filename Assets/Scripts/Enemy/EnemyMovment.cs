@@ -77,6 +77,7 @@ public class EnemyFollowPlayer : MonoBehaviour
             {
 
                 enemyAttack.anticipateFeintCharge = false;
+                enemyAttack.StopWeakpointAnimation();
 
                 enemyAttack.Attack();
 

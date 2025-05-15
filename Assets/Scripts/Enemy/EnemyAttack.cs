@@ -54,6 +54,9 @@ public class EnemyAttack : MonoBehaviour
     [Header("Stretch Attacks")]
 
     [SerializeField] float stretchSpeed;
+    [SerializeField] Transform posForWeakPoint;
+    [SerializeField] GameObject weakPointForStreetchAttack;
+    GameObject weakPointSrAt;
 
     [Header("Stretch Times")]
     [SerializeField] float maxHowFastStretchAttack = 0.2f;
@@ -181,21 +184,8 @@ public class EnemyAttack : MonoBehaviour
 
             attackObject.transform.localScale += new Vector3(stretchSpeed * Time.deltaTime, 0, 0);
 
-            weakPointList[0].transform.localScale = new Vector3(weakPointList[0].transform.localScale.x/stretchSpeed * Time.deltaTime, 0, 0);
+            weakPointSrAt.transform.position = posForWeakPoint.position;
 
-            foreach (GameObject weakPoints in weakPointList)
-            {
-                Debug.Log(weakPoints.transform.localScale.x);
-                //weakPoints.transform.localScale = new Vector3(weakPoints.transform.localScale.x / attackObject.transform.localScale.x * Time.deltaTime, 0, 0);
-                //weakPoints.transform.localEulerAngles -= new Vector3(weakPoints.transform.localScale.x / (stretchSpeed * Time.deltaTime), weakPoints.transform.localScale.y, 1);
-                //foreach (Vector3 weakPointsVector in weakPointTransformList)
-                //{
-                //    Debug.Log(weakPointsVector);
-                   
-
-                //}
-
-            }
 
             if (howFastAttack <= 0)
             {
@@ -234,6 +224,8 @@ public class EnemyAttack : MonoBehaviour
             attackObject.transform.position -= attackObject.transform.right * stretchSpeed * Time.deltaTime;
 
             attackObject.transform.localScale -= new Vector3(stretchSpeed * Time.deltaTime, 0);
+
+            weakPointSrAt.transform.position = posForWeakPoint.position;
 
             foreach (GameObject weakPoints in weakPointList)
             {
@@ -442,6 +434,8 @@ public class EnemyAttack : MonoBehaviour
                 anticipateCharge = false;
                 startCharge = true;
 
+                StartCoroutine(WeakPointAnimationStart());
+
                 if (feintCharge)
                 {
 
@@ -593,6 +587,12 @@ public class EnemyAttack : MonoBehaviour
                         {
                             attackObject.GetComponent<BoxCollider2D>().enabled = true;
                         }
+
+                        weakPointSrAt = Instantiate(weakPointForStreetchAttack);
+                        weakPointSrAt.transform.SetParent(transform.Find("EnemyAttackObjects"));
+
+                        weakPointAnimation.Add(weakPointSrAt.GetComponent<Animator>());
+
 
                         StartCoroutine(WeakPointAnimationStart());
 
@@ -754,6 +754,9 @@ public class EnemyAttack : MonoBehaviour
         originalWeakPointScaleList.Clear();
         weakPointList.Clear();
         weakPointTransformList.Clear();
+        weakPointAnimation.Clear();
+
+        Destroy(weakPointSrAt);
 
         if (attackObject != null)
         {
@@ -805,14 +808,14 @@ public class EnemyAttack : MonoBehaviour
 
         for (int i = 0; i < weakPointAnimation.Count; i++)
         {
-            Debug.Log("animn");
+
             weakPointAnimation[i].SetBool("SpawnIn", false);
             weakPointAnimation[i].SetBool("Aktive", true);
 
         }
     }
 
-    void StopWeakpointAnimation()
+    public void StopWeakpointAnimation()
     {
 
         for (int i = 0; i < weakPointAnimation.Count; i++)

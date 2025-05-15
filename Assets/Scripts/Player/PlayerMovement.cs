@@ -36,6 +36,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Dash")]
 
+    [SerializeField] GameObject DashVisuals;
+
     float maxDashSearchLenght = 3;
 
     Vector2 playerPosOnSearch;
@@ -111,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
             myAnimator.SetBool("IsRunning", false);
             if (playingSOund)
             {
-                //audioManager.RunningSoundStop();
+                audioManager.RunningSoundStop();
                 playingSOund = false;
             }
         }
@@ -123,6 +125,20 @@ public class PlayerMovement : MonoBehaviour
         }
 
         #endregion
+
+
+
+
+        if (dashHasReset == true)
+        {
+            DashVisuals.gameObject.SetActive(true);
+        }
+        else
+        {
+            DashVisuals.gameObject.SetActive(false);
+        }
+
+
 
     }
     private void FixedUpdate()

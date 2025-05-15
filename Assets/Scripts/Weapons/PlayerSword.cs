@@ -205,7 +205,14 @@ public class PlayerSword : WeaponBase
         if (collision.gameObject.tag == "WeakPoint")
         {
 
-            collision.transform.parent.transform.parent.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
+            if (collision.transform.parent.transform.parent.transform.parent.transform.parent != null)
+            {
+                collision.transform.parent.transform.parent.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
+            }
+            else // För om den träffar en weak point och den inte hittar EnemyHealth då betyder det att det är en streetch attack weak point och behöver söka på annat sät
+            {
+                collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
+            }
 
         }
         if (collision.gameObject.tag == "Enemy")

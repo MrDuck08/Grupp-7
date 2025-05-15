@@ -90,6 +90,7 @@ public class EnemyHealth : MonoBehaviour
         {
 
             currentHealth -= amount;
+            StartCoroutine(FlashRed());
             StartCoroutine(ActivateInvincibility());
 
             if (currentHealth <= 0)
@@ -99,4 +100,12 @@ public class EnemyHealth : MonoBehaviour
 
         }
     }
+
+    private IEnumerator FlashRed()
+    {
+        gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
 }

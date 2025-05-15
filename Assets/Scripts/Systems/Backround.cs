@@ -21,7 +21,17 @@ public class Backround : MonoBehaviour
 
         transform.position = new Vector3(startpos + dist, transform.position.y, transform.position.z);
 
-        if (temp > startpos + length) startpos += length;
-        else if (temp < startpos - length) startpos -= length;
+        // Gör så att positionen centrelas igen
+
+        //if (temp > startpos + length)
+        //{
+
+        //    startpos += length;
+        //}
+        //else if (temp < startpos - length)
+        //{
+
+        //    startpos -= length;
+        //}
     }
 }
