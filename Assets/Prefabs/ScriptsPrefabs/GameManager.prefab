@@ -176,7 +176,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transitionAnim: {fileID: 1823733831178051403}
-  transitionAnim2: {fileID: 0}
+  timeForMingame:
+  - 30
+  - 40
 --- !u!1 &7800754642117789150
 GameObject:
   m_ObjectHideFlags: 0

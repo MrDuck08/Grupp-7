@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +12,13 @@ public class GameManager : MonoBehaviour
     string whoToTurnOfAfterMinigame;
 
     Vector2 afterMinigamePos;
+
+    [Header("MiniGame")]
+
+    [SerializeField] List<float> timeForMingame = new List<float>();
+    int whatnumberMinigame = 0;
+
+    int whatSceneToReturnTo;
 
     PlayerMovement player;
     MiniGamehandler miniGamehandler;
@@ -55,23 +63,25 @@ public class GameManager : MonoBehaviour
         afterMinigamePos = whereToSpawnWhenGoBack;
         whoToTurnOfAfterMinigame = wallToTurnOff;
         loader = FindAnyObjectByType<SceneLoader>();
+        whatSceneToReturnTo = SceneManager.GetActiveScene().buildIndex;
         StartCoroutine(transitionAnimRoutine());
     }
 
     IEnumerator transitionAnimRoutine()
     {
 
-        //transitionAnim.SetBool("BlockUp", true);
         transitionAnim.SetTrigger("MiniGameStart");
 
         yield return new WaitForSeconds(1);
 
-        loader.ChangeScene(2);
+        loader.ChangeScene(1);
         yield return new WaitForSeconds(0.5f);
         miniGamehandler = FindAnyObjectByType<MiniGamehandler>();
         transitionAnim.SetBool("FadeOut", false);
         transitionAnim.SetBool("ShowMiniGame", true);
-        miniGamehandler.SettingsForMinigame(1);
+
+        miniGamehandler.SettingsForMinigame(timeForMingame[whatnumberMinigame]);
+        whatnumberMinigame++;
 
         yield return new WaitForSeconds(1);
         transitionAnim.SetBool("ShowMiniGame", false);
@@ -87,21 +97,23 @@ public class GameManager : MonoBehaviour
     {
         transitionAnim.SetBool("FadeIn", false);
         transitionAnim.SetBool("HideMiniGame", true);
-        // transitionAnim.SetBool("StartUp", true);
-        Debug.Log("Mini Game COmplete");
+
         yield return new WaitForSeconds(1f);
-        Debug.Log("New scene");
+
         transitionAnim.SetBool("HideMiniGame", false);
         loader = FindAnyObjectByType<SceneLoader>();
-        loader.ChangeScene(1);
+
+
+        loader.ChangeScene(whatSceneToReturnTo);
         StartCoroutine(RemoveBlockAfterSceneIsLoaded());
     }
 
     IEnumerator RemoveBlockAfterSceneIsLoaded()
     {
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.5f);
         transitionAnim.SetBool("ShowMiniGame", false);
         transitionAnim.SetBool("BlockDown", true);
+
         GameObject.Find(whoToTurnOfAfterMinigame).SetActive(false);
         Destroy(GameObject.Find(whoToTurnOfAfterMinigame));
 

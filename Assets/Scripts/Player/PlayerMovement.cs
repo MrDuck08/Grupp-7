@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     float knockbackTimer = 0f;
 
 
-    float direction;
+    float direction = 1;
 
     Animator myAnimator;
 

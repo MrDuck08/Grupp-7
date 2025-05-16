@@ -28,7 +28,6 @@ public class EnemyFollowPlayer : MonoBehaviour
     #endregion
 
     EnemyAttack enemyAttack;
-    FinalBoss finalBoss;
     Rigidbody2D rigidbody2D;
 
 
@@ -37,7 +36,6 @@ public class EnemyFollowPlayer : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
         enemyAttack = GetComponent<EnemyAttack>();
-        finalBoss = GetComponent<FinalBoss>();
         rigidbody2D = GetComponent<Rigidbody2D>();
 
         baseLineOfSite = lineOfSite;

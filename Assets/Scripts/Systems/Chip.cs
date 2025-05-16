@@ -188,7 +188,7 @@ public class Chip : MonoBehaviour
             if (!playingSound)
             {
                 playingSound = true;
-                Debug.Log("Play Sound");
+
                 audioManager.ChipWalkingSound();
             }
         }
@@ -198,7 +198,7 @@ public class Chip : MonoBehaviour
             if (playingSound)
             {
                 playingSound = false;
-                Debug.Log("Stop Playing Sound");
+
                 audioManager.ChipWalkingSoundStop();
             }
 

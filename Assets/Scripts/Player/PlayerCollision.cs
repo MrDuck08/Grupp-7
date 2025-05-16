@@ -11,6 +11,7 @@ public class PlayerCollision : MonoBehaviour
     RespawnScript respawnScript;
     PlayerMovement playerMovement;
     GameManager gameManager;
+    SceneLoader sceneLoader;
 
     private void Start()
     {
@@ -18,6 +19,7 @@ public class PlayerCollision : MonoBehaviour
         respawnScript = FindAnyObjectByType<RespawnScript>();
         playerMovement = FindAnyObjectByType<PlayerMovement>();
         gameManager = FindAnyObjectByType<GameManager>();
+        sceneLoader = FindAnyObjectByType<SceneLoader>();
 
     }
 
@@ -40,7 +42,8 @@ public class PlayerCollision : MonoBehaviour
 
             case "MinigameHinder":
 
-                Debug.Log(gameObject.transform.position);
+                gameManager = FindAnyObjectByType<GameManager>();
+
                 gameManager.StartMinigame(transform.position, collision.gameObject.name);
 
                 break;
@@ -51,14 +54,26 @@ public class PlayerCollision : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "EnemyAttack")
-        {
-            if (!isInvincible)
-            {
-                playerMovement.knockback(collision.transform.parent.gameObject.transform.parent.gameObject);
 
-            }
-            TakeDamage();
+        switch (collision.transform.tag)
+        {
+
+            case "EnemyAttack":
+
+                if (!isInvincible)
+                {
+                    playerMovement.knockback(collision.transform.parent.gameObject.transform.parent.gameObject);
+
+                }
+                TakeDamage();
+
+                break;
+
+            case "NextLevel":
+
+                sceneLoader.LoadNextScene();
+
+                break;
 
         }
 

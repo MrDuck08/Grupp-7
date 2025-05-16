@@ -11,6 +11,7 @@ TagManager:
   - ObsticleRespawn
   - MinigameHinder
   - WeakPoint
+  - NextLevel
   layers:
   - Default
   - TransparentFX
