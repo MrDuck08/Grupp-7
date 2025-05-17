@@ -17,6 +17,7 @@ public class CheckPointScript : MonoBehaviour
 
         if(other.gameObject.CompareTag("Player"))
         {
+            respawn = GameObject.FindGameObjectWithTag("RespawnManager").GetComponent<RespawnScript>();
 
             respawn.respawnPoint = this.gameObject;
             checkPointCollider.enabled = false;

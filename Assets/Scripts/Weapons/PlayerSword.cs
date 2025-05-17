@@ -15,7 +15,8 @@ public class PlayerSword : WeaponBase
     [SerializeField] Transform parentTransform;
 
     EnemyHealth enemyHealth;
-    AudioManager audioManager; 
+    AudioManager audioManager;
+    PlayerMovement playerMovement;
 
     #region Float
 
@@ -62,6 +63,7 @@ public class PlayerSword : WeaponBase
 
         enemyHealth = FindFirstObjectByType<EnemyHealth>();
         audioManager = FindFirstObjectByType<AudioManager>();
+        playerMovement = FindFirstObjectByType<PlayerMovement>();
 
         attackCollider.enabled = false;
 
@@ -202,8 +204,9 @@ public class PlayerSword : WeaponBase
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if (collision.gameObject.tag == "WeakPoint")
+        switch (collision.transform.tag)
         {
+            case "WeakPoint":
 
             if (collision.transform.parent.transform.parent.transform.parent.transform.parent != null)
             {
@@ -214,16 +217,26 @@ public class PlayerSword : WeaponBase
                 collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
             }
 
-        }
-        if (collision.gameObject.tag == "Enemy")
-        {
+            break;
+
+        case "Enemy":
 
             collision.GetComponent<EnemyHealth>().TakeDamageInfo(1);
 
-        }
-        if (collision.gameObject.tag == "EnemyAttack")
-        {
+            break;
+
+        case "EnemyAttack":
+
             collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(1);
+
+            break;
+
+        case "TutorialWeakPoint":
+
+            playerMovement.dashHasReset = true;
+
+            break;
+
         }
     }
 

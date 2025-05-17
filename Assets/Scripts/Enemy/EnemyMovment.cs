@@ -16,6 +16,7 @@ public class EnemyFollowPlayer : MonoBehaviour
     public Vector3 startTransform;
 
     public bool stop = false;
+    public bool attack = false;
     bool facingRight = false;
 
     #region Check For Ground
@@ -64,20 +65,26 @@ public class EnemyFollowPlayer : MonoBehaviour
         }
         else if (distanceFromPlayer <= attackRange)
         {
-            if (enemyAttack != null && !stop)
-            {
-                enemyAttack.Attack();
-
-                rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
-            }
 
             if (enemyAttack.anticipateFeintCharge && stop)
             {
+                Debug.Log("Attack 2");
 
                 enemyAttack.anticipateFeintCharge = false;
                 enemyAttack.StopWeakpointAnimation();
 
                 enemyAttack.Attack();
+
+            }
+
+            if (enemyAttack != null && !stop)
+            {
+                Debug.Log("Attack");
+
+                enemyAttack.Attack();
+
+                attack = true;
+                rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
 
             }
 

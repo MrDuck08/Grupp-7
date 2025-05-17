@@ -20,6 +20,10 @@ public class GameManager : MonoBehaviour
 
     int whatSceneToReturnTo;
 
+    public float currentTimeFroMiniGame;
+
+    public bool minigameHasStarted = false;
+
     PlayerMovement player;
     MiniGamehandler miniGamehandler;
 
@@ -40,6 +44,12 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+
+        GameObject tutorialWeakPoint = GameObject.Find("WeakPointTutorial");
+        if(tutorialWeakPoint != null)
+        {
+            tutorialWeakPoint.GetComponent<Animator>().SetBool("Tutorial", true);
+        }
 
         loader = FindAnyObjectByType<SceneLoader>();
         StartCoroutine(StartRoutine());
@@ -80,8 +90,10 @@ public class GameManager : MonoBehaviour
         transitionAnim.SetBool("FadeOut", false);
         transitionAnim.SetBool("ShowMiniGame", true);
 
+        minigameHasStarted = true;
+
+        currentTimeFroMiniGame = timeForMingame[whatnumberMinigame];
         miniGamehandler.SettingsForMinigame(timeForMingame[whatnumberMinigame]);
-        whatnumberMinigame++;
 
         yield return new WaitForSeconds(1);
         transitionAnim.SetBool("ShowMiniGame", false);
@@ -95,8 +107,11 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator MiniGameComplete()
     {
+
         transitionAnim.SetBool("FadeIn", false);
         transitionAnim.SetBool("HideMiniGame", true);
+        whatnumberMinigame++;
+        minigameHasStarted = false;
 
         yield return new WaitForSeconds(1f);
 

@@ -53,7 +53,13 @@ public class MiniGamehandler : MonoBehaviour
 
         manager = FindAnyObjectByType<GameManager>();
 
-        StartCoroutine(TimeUntilMinigameFinished());
+        if (manager.minigameHasStarted)
+        {
+            timeUntilMiniGameComplete = manager.currentTimeFroMiniGame;
+
+            StartCoroutine(TimeUntilMinigameFinished());
+
+        }
 
     }
 
@@ -62,7 +68,7 @@ public class MiniGamehandler : MonoBehaviour
 
         enemySpawnObject.transform.position = spawnGameobjectTransform.transform.position;
         enemySpawnObject.transform.rotation = spawnGameobjectTransform.transform.rotation;
-
+        
         #region Rotate Arena
 
         if (!rotatingArena)
@@ -255,9 +261,10 @@ public class MiniGamehandler : MonoBehaviour
 
     IEnumerator TimeUntilMinigameFinished()
     {
-        //Debug.Log(timeUntilMiniGameComplete + " TimeUntilComplete");
+ 
         yield return new WaitForSeconds(timeUntilMiniGameComplete);
 
+        rotatingArena = true;
 
         manager = FindAnyObjectByType<GameManager>();
 
@@ -269,7 +276,9 @@ public class MiniGamehandler : MonoBehaviour
     {
 
         timeUntilMiniGameComplete = timeForMinigame;
-        //Debug.Log("Run");
+
+        StartCoroutine(TimeUntilMinigameFinished());
+
     }
 
 }

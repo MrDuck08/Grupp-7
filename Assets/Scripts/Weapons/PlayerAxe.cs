@@ -8,6 +8,7 @@ public class PlayerAxe : WeaponBase
 
     PlayerWeaponBase playerWeaponBase;
     EnemyHealth enemyHealth;
+    PlayerMovement playerMovement;
 
     BoxCollider2D axeHeadCollider;
     AudioManager audioManager; 
@@ -66,6 +67,7 @@ public class PlayerAxe : WeaponBase
         playerWeaponBase = FindFirstObjectByType<PlayerWeaponBase>();
         audioManager = FindAnyObjectByType<AudioManager>();
         enemyHealth = FindFirstObjectByType<EnemyHealth>();
+        playerMovement = FindFirstObjectByType<PlayerMovement>();
 
         axeHeadCollider = GetComponentInChildren<BoxCollider2D>();
 
@@ -286,27 +288,41 @@ public class PlayerAxe : WeaponBase
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "WeakPoint")
-        {
-            if(collision.transform.parent.transform.parent.transform.parent.transform.parent != null)
-            {
-                collision.transform.parent.transform.parent.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
-            }
-            else // För om den träffar en weak point och den inte hittar EnemyHealth då betyder det att det är en streetch attack weak point och behöver söka på annat sät
-            {
-                collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
-            }
 
-        }
-        if (collision.gameObject.tag == "Enemy")
+        switch (collision.transform.tag)
         {
 
-            collision.GetComponent<EnemyHealth>().TakeDamageInfo(1);
+            case "WeakPoint":
 
-        }
-        if (collision.gameObject.tag == "EnemyAttack")
-        {
-            collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(1);
+                if (collision.transform.parent.transform.parent.transform.parent.transform.parent != null)
+                {
+                    collision.transform.parent.transform.parent.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
+                }
+                else // För om den träffar en weak point och den inte hittar EnemyHealth då betyder det att det är en streetch attack weak point och behöver söka på annat sät
+                {
+                    collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
+                }
+
+                break;
+
+            case "Enemy":
+
+                collision.GetComponent<EnemyHealth>().TakeDamageInfo(1);
+
+                break;
+
+            case "EnemyAttack":
+
+                collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(1);
+
+                break;
+
+            case "TutorialWeakPoint":
+
+                playerMovement.dashHasReset = true;
+
+                break;
+
         }
     }
 }

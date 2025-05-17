@@ -179,6 +179,9 @@ MonoBehaviour:
   timeForMingame:
   - 30
   - 40
+  - 50
+  currentTimeFroMiniGame: 0
+  minigameHasStarted: 0
 --- !u!1 &7800754642117789150
 GameObject:
   m_ObjectHideFlags: 0

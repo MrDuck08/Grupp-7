@@ -30,6 +30,7 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] int[] whatAttackInt;
 
     EnemyFollowPlayer enemyMovment;
+    AudioManager audioManager;
 
     [Header("Attacks")]
 
@@ -139,6 +140,8 @@ public class EnemyAttack : MonoBehaviour
 
     #endregion
 
+    int previusAttack = 1337;
+
     #endregion
 
     #region Boss
@@ -167,6 +170,7 @@ public class EnemyAttack : MonoBehaviour
 
         rigidbody2D = GetComponent<Rigidbody2D>();
         enemyMovment = GetComponent<EnemyFollowPlayer>();
+        audioManager = FindFirstObjectByType<AudioManager>();
 
     }
 
@@ -342,6 +346,12 @@ public class EnemyAttack : MonoBehaviour
                     jumpAcceration *= 5;
 
                 }
+                else
+                {
+
+                    audioManager.MonsterSound();
+
+                }
 
                 jumpSpeed = 0;
 
@@ -374,6 +384,7 @@ public class EnemyAttack : MonoBehaviour
                     anticipateCharge = true;
                     currentlyAttacking = true;
                     enemyMovment.stop = true;
+                    enemyMovment.attack = true;
 
                     chargeStartupTime = 0;
 
@@ -442,6 +453,8 @@ public class EnemyAttack : MonoBehaviour
                     anticipateFeintCharge = true;
 
                 }
+
+                audioManager.MonsterSound();
             }
 
         }
@@ -519,16 +532,30 @@ public class EnemyAttack : MonoBehaviour
 
         if (completeStop) // Knockback är aktiv
         {
-
+            enemyMovment.attack = false;
             return;
 
         }
+
+        enemyMovment.stop = true;
 
         #region General Info Gathering
 
         player = GameObject.FindGameObjectWithTag("Player");
 
         int whatAttack = Random.Range(0, allAttacksObjects.Count);
+
+        if (previusAttack == whatAttack)
+        {
+
+            whatAttack = Random.Range(0, allAttacksObjects.Count);
+
+            previusAttack = 1337;
+        }
+        else
+        {
+            previusAttack = whatAttack;
+        }
 
         if (feintCharge)
         {
@@ -541,7 +568,7 @@ public class EnemyAttack : MonoBehaviour
         }
 
         currentlyAttacking = true;
-        enemyMovment.stop = true;
+
 
         attackObject = allAttacksObjects[whatAttack];
         originalAttackPos = attackObject.transform.localPosition;
@@ -554,6 +581,7 @@ public class EnemyAttack : MonoBehaviour
             originalWeakPointScaleList.Add(child.localScale);
             weakPointTransformList.Add(child.localScale);
             weakPointList.Add(child.gameObject);
+
             weakPointAnimation.Add(child.GetComponent<Animator>());
         }
 
@@ -620,7 +648,7 @@ public class EnemyAttack : MonoBehaviour
                 break;
 
             case 1: // Charge Attack
-
+                
                 #region Charge Attack
 
                 playerDirection = Mathf.Sign(player.transform.position.x - transform.position.x); // Får Om Den Position i korrelation med fiendes position och sen ger 1 eller -1
@@ -720,6 +748,7 @@ public class EnemyAttack : MonoBehaviour
         if (!completeStop) // Om completeStop är sann då körs knockback och då ska stop vara true
         {
             enemyMovment.stop = false;
+            enemyMovment.attack = false;
         }
 
         rigidbody2D.gravityScale = 1;
@@ -796,11 +825,16 @@ public class EnemyAttack : MonoBehaviour
     IEnumerator WeakPointAnimationStart()
     {
 
+
         for (int i = 0; i < weakPointAnimation.Count; i++)
         {
+            if (weakPointAnimation[i] != null)
+            {
 
-            weakPointAnimation[i].SetBool("SpawnIn", true);
-            weakPointAnimation[i].SetBool("disappear", false);
+                weakPointAnimation[i].SetBool("SpawnIn", true);
+                weakPointAnimation[i].SetBool("disappear", false);
+
+            }
 
         }
 
@@ -825,6 +859,8 @@ public class EnemyAttack : MonoBehaviour
             weakPointAnimation[i].SetBool("disappear", true);
 
         }
+
+        weakPointAnimation.Clear();
 
     }
 

@@ -821,12 +821,12 @@ MonoBehaviour:
   maxStunTime: 2
   completeStop: 0
   stretchSpeed: 2
-  posForWeakPoint: {fileID: 0}
-  weakPointForStreetchAttack: {fileID: 0}
+  posForWeakPoint: {fileID: 1780563190219462751}
+  weakPointForStreetchAttack: {fileID: 2383150860969047678, guid: 430becb0620d40f41923ae3af46674ac, type: 3}
   maxHowFastStretchAttack: 0.2
   maxHowLongStayAfterStretchAttack: 1
   maxHowFastGoBack: 0.3
-  stretchAttackRange: 4
+  stretchAttackRange: 20
   stopLayers:
     serializedVersion: 2
     m_Bits: 8
@@ -862,6 +862,7 @@ MonoBehaviour:
   knockBackForce: 6
   startTransform: {x: 0, y: 0, z: 0}
   stop: 0
+  attack: 0
   checkForGroundObject: {fileID: 5099738928484255914}
   groundLayer:
     serializedVersion: 2
@@ -1363,7 +1364,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: WeakPoint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 873132474840211396, guid: 430becb0620d40f41923ae3af46674ac, type: 3}
+    - {fileID: 1596428983816887850, guid: 430becb0620d40f41923ae3af46674ac, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
