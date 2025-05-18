@@ -70,6 +70,8 @@ public class GameManager : MonoBehaviour
 
     public void StartMinigame(Vector2 whereToSpawnWhenGoBack, string wallToTurnOff)
     {
+        if(whoToTurnOfAfterMinigame == wallToTurnOff) { return; }
+
         afterMinigamePos = whereToSpawnWhenGoBack;
         whoToTurnOfAfterMinigame = wallToTurnOff;
         loader = FindAnyObjectByType<SceneLoader>();
@@ -125,11 +127,10 @@ public class GameManager : MonoBehaviour
 
     IEnumerator RemoveBlockAfterSceneIsLoaded()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
         transitionAnim.SetBool("ShowMiniGame", false);
         transitionAnim.SetBool("BlockDown", true);
 
-        GameObject.Find(whoToTurnOfAfterMinigame).SetActive(false);
         Destroy(GameObject.Find(whoToTurnOfAfterMinigame));
 
 

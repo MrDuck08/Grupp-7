@@ -17,7 +17,7 @@ public class MiniGamehandler : MonoBehaviour
 
     #region Rotating Arena
 
-    float timeUntilArenaFlip = 20;
+    float timeUntilArenaFlip = 19;
     float timeForPreRotation;
     float maxTimeForPreRotation = 2;
     float timeForFinalRotation;
@@ -200,8 +200,9 @@ public class MiniGamehandler : MonoBehaviour
             spawnObjectsPos += new Vector2(Random.Range(-enemySpawnObject.transform.localScale.x / 2, enemySpawnObject.transform.localScale.x / 2), Random.Range(enemySpawnObject.transform.localScale.y / 2, -enemySpawnObject.transform.localScale.y / 2)); // Random Pos Spawn
 
             bool somethingWasSpawned = false;
+            int NotToManyTimes = 0;
 
-            while (true)
+            while (NotToManyTimes < 12)
             {
 
                 int whoToSpawn = Random.Range(0, 10);
@@ -229,6 +230,8 @@ public class MiniGamehandler : MonoBehaviour
                 {
                     break;
                 }
+
+                NotToManyTimes++;
 
 
             }

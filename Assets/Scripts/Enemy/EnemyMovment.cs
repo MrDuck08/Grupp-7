@@ -16,7 +16,7 @@ public class EnemyFollowPlayer : MonoBehaviour
     public Vector3 startTransform;
 
     public bool stop = false;
-    public bool attack = false;
+
     bool facingRight = false;
 
     #region Check For Ground
@@ -66,25 +66,22 @@ public class EnemyFollowPlayer : MonoBehaviour
         else if (distanceFromPlayer <= attackRange)
         {
 
-            if (enemyAttack.anticipateFeintCharge && stop)
+            if (enemyAttack != null && !stop && enemyAttack.anticipateFeintCharge == false)
             {
-                Debug.Log("Attack 2");
-
-                enemyAttack.anticipateFeintCharge = false;
-                enemyAttack.StopWeakpointAnimation();
 
                 enemyAttack.Attack();
+
+                rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
 
             }
 
-            if (enemyAttack != null && !stop)
+            if (enemyAttack.anticipateFeintCharge && stop)
             {
-                Debug.Log("Attack");
+
+
+                enemyAttack.StopWeakpointAnimation();
 
                 enemyAttack.Attack();
-
-                attack = true;
-                rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
 
             }
 
@@ -148,11 +145,13 @@ public class EnemyFollowPlayer : MonoBehaviour
             enemyAttack.ResetAttack();
         }
 
+        float Direktion = whereToLook;
+
         stop = true;
 
         rigidbody2D.constraints = RigidbodyConstraints2D.None;
 
-        rigidbody2D.linearVelocity = new Vector2(knockBackForce * -whereToLook, knockBackForce/2);
+        rigidbody2D.linearVelocity = new Vector2(knockBackForce * -Direktion, knockBackForce/2);
 
         yield return new WaitForSeconds(0.5f);
 

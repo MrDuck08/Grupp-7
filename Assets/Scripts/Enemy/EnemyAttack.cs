@@ -384,7 +384,6 @@ public class EnemyAttack : MonoBehaviour
                     anticipateCharge = true;
                     currentlyAttacking = true;
                     enemyMovment.stop = true;
-                    enemyMovment.attack = true;
 
                     chargeStartupTime = 0;
 
@@ -410,6 +409,7 @@ public class EnemyAttack : MonoBehaviour
 
                 }
 
+                anticipateFeintCharge = false;
                 feintCharge = false;
 
             }
@@ -532,7 +532,7 @@ public class EnemyAttack : MonoBehaviour
 
         if (completeStop) // Knockback är aktiv
         {
-            enemyMovment.attack = false;
+
             return;
 
         }
@@ -556,6 +556,7 @@ public class EnemyAttack : MonoBehaviour
         {
             previusAttack = whatAttack;
         }
+
 
         if (feintCharge)
         {
@@ -748,7 +749,7 @@ public class EnemyAttack : MonoBehaviour
         if (!completeStop) // Om completeStop är sann då körs knockback och då ska stop vara true
         {
             enemyMovment.stop = false;
-            enemyMovment.attack = false;
+
         }
 
         rigidbody2D.gravityScale = 1;

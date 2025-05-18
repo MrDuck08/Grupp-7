@@ -862,7 +862,6 @@ MonoBehaviour:
   knockBackForce: 6
   startTransform: {x: 0, y: 0, z: 0}
   stop: 0
-  attack: 0
   checkForGroundObject: {fileID: 5099738928484255914}
   groundLayer:
     serializedVersion: 2
