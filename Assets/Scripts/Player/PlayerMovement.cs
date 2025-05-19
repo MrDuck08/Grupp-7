@@ -7,6 +7,10 @@ public class PlayerMovement : MonoBehaviour
 
     public float groundSpeed;
     public float jumpSpeed;
+    float coyoteTimer;
+    float coyoteTime = 0.15f;
+
+    bool jumped = false;
     [Range(0f, 1f)]
 
     public float groundDecay;
@@ -31,6 +35,16 @@ public class PlayerMovement : MonoBehaviour
     float direction = 1;
 
     Animator myAnimator;
+
+    #region Animation For Next Scene
+
+    bool animationForNextScene = false;
+
+    float walkSpeedForAnimation = 5f;
+    float accerationForAnimation;
+    float timeForAnimation = 5f;
+
+    #endregion
 
     #region Dash
 
@@ -58,6 +72,23 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+
+        if (animationForNextScene) 
+        {
+
+            walkSpeedForAnimation += accerationForAnimation * Time.deltaTime;
+
+            transform.position += new Vector3(walkSpeedForAnimation * direction * Time.deltaTime, 0);
+
+            if(walkSpeedForAnimation <= 0)
+            {
+
+                animationForNextScene = false;
+
+            }
+
+            return; 
+        }
 
         GetInput();
 
@@ -96,6 +127,18 @@ public class PlayerMovement : MonoBehaviour
         #endregion
 
         body.linearVelocity = new Vector2(inputDirection.x * groundSpeed, body.linearVelocityY);
+
+        if (grounded)
+        {
+            if (!jumped)
+            {
+                coyoteTimer = coyoteTime;
+            }
+        }
+        else
+        {
+            coyoteTimer -= Time.deltaTime;
+        }
 
         #region Handle Stuff
 
@@ -181,11 +224,35 @@ public class PlayerMovement : MonoBehaviour
     void HandleJump()
     {
 
-        if (Input.GetButtonDown("Jump") && grounded)
+        if (Input.GetButtonDown("Jump") && !jumped)
         {
-            audioManager.JumpSound();
-            body.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
+            if (grounded)
+            {
+                audioManager.JumpSound();
+                body.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
+                StartCoroutine(ResetJump());
+            }
+            else if(coyoteTimer > 0)
+            {
+
+                audioManager.JumpSound();
+                body.linearVelocity = new Vector2(body.linearVelocity.x, 0);
+                body.AddForce(new Vector2(0, jumpSpeed), ForceMode2D.Impulse);
+                StartCoroutine(ResetJump());
+
+            }
+
         }
+    }
+
+    IEnumerator ResetJump()
+    {
+        jumped = true;
+
+        yield return new WaitForSeconds(0.2f);
+
+        jumped = false;
+
     }
 
     void Flip()
@@ -254,6 +321,16 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         isDeadCheck = 1;
+
+    }
+
+    public void NextScene()
+    {
+        body.linearVelocity = Vector2.zero;
+        myAnimator.SetTrigger("NextScene");
+        animationForNextScene = true;
+
+        accerationForAnimation = -walkSpeedForAnimation / timeForAnimation;
 
     }
 

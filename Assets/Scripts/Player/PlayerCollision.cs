@@ -71,7 +71,7 @@ public class PlayerCollision : MonoBehaviour
 
             case "NextLevel":
 
-                sceneLoader.LoadNextScene();
+                playerMovement.NextScene();
 
                 break;
 
