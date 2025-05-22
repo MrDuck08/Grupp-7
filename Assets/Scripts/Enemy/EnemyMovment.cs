@@ -29,6 +29,7 @@ public class EnemyFollowPlayer : MonoBehaviour
     #endregion
 
     EnemyAttack enemyAttack;
+    EnemyHealth enemyHealth;
     Rigidbody2D rigidbody2D;
 
 
@@ -38,6 +39,7 @@ public class EnemyFollowPlayer : MonoBehaviour
 
         enemyAttack = GetComponent<EnemyAttack>();
         rigidbody2D = GetComponent<Rigidbody2D>();
+        enemyHealth = GetComponent<EnemyHealth>();
 
         baseLineOfSite = lineOfSite;
 
@@ -47,11 +49,18 @@ public class EnemyFollowPlayer : MonoBehaviour
     private void FixedUpdate()
     {
 
+        if (enemyHealth.dead)
+        {
+            return;
+        }
+
         #region Move & Detect
 
         float distanceFromPlayer = Vector2.Distance(player.position, transform.position);
         if (distanceFromPlayer < lineOfSite && distanceFromPlayer > attackRange && !stop)
         {
+            enemyHealth.animator.SetBool("Walk", true);
+
             lineOfSite = baseLineOfSite * 2;
 
             float Direction = Mathf.Sign(player.position.x - transform.position.x);
@@ -61,6 +70,7 @@ public class EnemyFollowPlayer : MonoBehaviour
             transform.position = MovePos;
 
             rigidbody2D.constraints = RigidbodyConstraints2D.None;
+            rigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         }
         else if (distanceFromPlayer <= attackRange)
@@ -68,7 +78,7 @@ public class EnemyFollowPlayer : MonoBehaviour
 
             if (enemyAttack != null && !stop && enemyAttack.anticipateFeintCharge == false)
             {
-
+                enemyHealth.animator.SetBool("Walk", false);
                 enemyAttack.Attack();
 
                 rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
@@ -77,7 +87,7 @@ public class EnemyFollowPlayer : MonoBehaviour
 
             if (enemyAttack.anticipateFeintCharge && stop)
             {
-
+                enemyHealth.animator.SetBool("Walk", false);
 
                 enemyAttack.StopWeakpointAnimation();
 
@@ -121,7 +131,7 @@ public class EnemyFollowPlayer : MonoBehaviour
             }
 
             Vector2 GroundCheckPos = checkForGroundObject.transform.position;
-            bool GroundCheckBool = Physics2D.OverlapCircle(GroundCheckPos, 0.1f, groundLayer);
+            bool GroundCheckBool = Physics2D.OverlapCircle(GroundCheckPos, 0.4f, groundLayer);
 
             if (!GroundCheckBool)
             {
@@ -150,6 +160,7 @@ public class EnemyFollowPlayer : MonoBehaviour
         stop = true;
 
         rigidbody2D.constraints = RigidbodyConstraints2D.None;
+        rigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         rigidbody2D.linearVelocity = new Vector2(knockBackForce * -Direktion, knockBackForce/2);
 
@@ -172,6 +183,6 @@ public class EnemyFollowPlayer : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRange);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(checkForGroundObject.transform.position, 0.1f);
+        Gizmos.DrawWireSphere(checkForGroundObject.transform.position, 0.4f);
     }
 }

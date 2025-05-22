@@ -35,6 +35,7 @@ public class RespawnScript : MonoBehaviour
             enemys.GetComponent<EnemyFollowPlayer>().lineOfSite = enemys.GetComponent<EnemyFollowPlayer>().baseLineOfSite;
             enemys.transform.position = enemys.GetComponent<EnemyFollowPlayer>().startTransform;
             enemys.GetComponent<EnemyAttack>().ResetAttack();
+            enemys.GetComponent<EnemyHealth>().currentHealth = enemys.GetComponent<EnemyHealth>().maxhealth;
 
         }
 

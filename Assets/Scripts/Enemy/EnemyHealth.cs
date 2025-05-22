@@ -1,7 +1,7 @@
-using UnityEngine;
-using System.Collections;
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
@@ -14,13 +14,60 @@ public class EnemyHealth : MonoBehaviour
     bool invincibility = false;
     bool arleadyLooking;
 
+    public bool dead = false;
+
+    List<GameObject> children = new List<GameObject>();
+    List<GameObject> checkChildren = new List<GameObject>();
+
     PlayerMovement playerMovement;
     EnemyFollowPlayer enemyMovment;
+    EnemyAttack enemyAttack;
+    public Animator animator;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         currentHealth = maxhealth;
+
+        enemyAttack = GetComponent<EnemyAttack>();
+
+        Transform visualls = gameObject.transform.GetChild(2);
+        animator = visualls.GetComponent<Animator>();
+
+        if(visualls.GetComponent<SpriteRenderer>() != null )
+        {
+
+            children.Add(visualls.gameObject);
+
+        }
+
+        foreach (Transform child in visualls.transform)
+        {
+
+            children.Add(child.gameObject);
+            checkChildren.Add(child.gameObject);
+
+        }
+
+        for (int i = 0; i < checkChildren.Count; i++)
+        {
+
+            if(checkChildren[i].transform.childCount != 0)
+            {
+
+                for (int j = 0; j < checkChildren[i].transform.childCount; j++)
+                {
+
+                    checkChildren.Add(checkChildren[i].transform.GetChild(j).gameObject);
+                    children.Add(checkChildren[i].transform.GetChild(j).gameObject);
+
+
+                }
+
+            }
+
+        }
+
     }
 
     IEnumerator ActivateInvincibility()
@@ -95,17 +142,73 @@ public class EnemyHealth : MonoBehaviour
 
             if (currentHealth <= 0)
             {
-                Destroy(gameObject);
+                StartCoroutine(DeathAnimation());
             }
 
         }
     }
 
+    IEnumerator DeathAnimation()
+    {
+
+        animator.SetTrigger("Death");
+
+        dead = true;
+
+        yield return new WaitForSeconds(1.2f);
+
+        if (enemyAttack.amIFinalBoss)
+        {
+
+            SceneLoader loader = FindObjectOfType<SceneLoader>();
+
+            loader.LoadNextScene();
+
+        }
+
+        Destroy(gameObject);
+
+    }
+
+    #region Take Damage Red
+
     private IEnumerator FlashRed()
     {
-        gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+        if(gameObject.GetComponent<SpriteRenderer>() != null)
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+        }
+
+        foreach(GameObject visualls in children)
+        {
+
+            if(visualls.GetComponent<SpriteRenderer>() != null)
+            {
+                visualls.GetComponent<SpriteRenderer>().color = Color.red;
+
+            }
+
+        }
+
         yield return new WaitForSeconds(0.1f);
-        gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+
+        if (gameObject.GetComponent<SpriteRenderer>() != null)
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+
+        foreach (GameObject visualls in children)
+        {
+
+            if (visualls.GetComponent<SpriteRenderer>() != null)
+            {
+                visualls.GetComponent<SpriteRenderer>().color = Color.white;
+
+            }
+
+        }
     }
+
+    #endregion
 
 }

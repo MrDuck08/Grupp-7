@@ -30,6 +30,7 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] int[] whatAttackInt;
 
     EnemyFollowPlayer enemyMovment;
+    EnemyHealth enemyHealth;
     AudioManager audioManager;
 
     [Header("Attacks")]
@@ -146,7 +147,7 @@ public class EnemyAttack : MonoBehaviour
 
     #region Boss
 
-    [SerializeField] bool amIFinalBoss = false;
+    public bool amIFinalBoss = false;
 
     bool feintCharge = false;
     public bool anticipateFeintCharge = false;
@@ -170,12 +171,24 @@ public class EnemyAttack : MonoBehaviour
 
         rigidbody2D = GetComponent<Rigidbody2D>();
         enemyMovment = GetComponent<EnemyFollowPlayer>();
+        enemyHealth = GetComponent<EnemyHealth>();
         audioManager = FindFirstObjectByType<AudioManager>();
 
     }
 
     void Update()
     {
+
+        if (enemyHealth.dead)
+        {
+            rigidbody2D.constraints = RigidbodyConstraints2D.None;
+            rigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+            attackObject.SetActive(false);
+
+            return;
+
+        }
 
         #region Stretch Attack
 
@@ -186,7 +199,7 @@ public class EnemyAttack : MonoBehaviour
 
             attackObject.transform.position += attackObject.transform.right * stretchSpeed * Time.deltaTime;
 
-            attackObject.transform.localScale += new Vector3(stretchSpeed * Time.deltaTime, 0, 0);
+            attackObject.transform.localScale += new Vector3(stretchSpeed * 2 * Time.deltaTime, 0, 0);
 
             weakPointSrAt.transform.position = posForWeakPoint.position;
 
@@ -227,7 +240,7 @@ public class EnemyAttack : MonoBehaviour
 
             attackObject.transform.position -= attackObject.transform.right * stretchSpeed * Time.deltaTime;
 
-            attackObject.transform.localScale -= new Vector3(stretchSpeed * Time.deltaTime, 0);
+            attackObject.transform.localScale -= new Vector3(stretchSpeed * 2 * Time.deltaTime, 0);
 
             weakPointSrAt.transform.position = posForWeakPoint.position;
 
@@ -273,7 +286,7 @@ public class EnemyAttack : MonoBehaviour
 
                 anticipateJump = false;
 
-                jumpPos = player.transform.position;
+                jumpPos = new Vector2(player.transform.position.x, gameObject.transform.position.y);
 
                 distanceToPlayer = Vector2.Distance(player.transform.position, transform.position);
 
@@ -392,7 +405,7 @@ public class EnemyAttack : MonoBehaviour
                     weakPointTransformList.Clear();
                     weakPointList.Clear();
 
-                    attackObject = gameObject.transform.GetChild(1).transform.Find("Charge Attack").gameObject;
+                    attackObject = gameObject.transform.GetChild(0).transform.Find("Charge Attack").gameObject;
                     originalAttackPos = attackObject.transform.localPosition;
                     originalAttackScale = attackObject.transform.localScale;
 
@@ -454,6 +467,9 @@ public class EnemyAttack : MonoBehaviour
 
                 }
 
+                enemyHealth.animator.SetBool("Walk", true);
+                enemyHealth.animator.SetTrigger("Charge");
+
                 audioManager.MonsterSound();
             }
 
@@ -485,6 +501,8 @@ public class EnemyAttack : MonoBehaviour
                 startCharge = false;
                 startChargeRecovery = true;
 
+                enemyHealth.animator.SetBool("Walk", false);
+
             }
         }
 
@@ -495,6 +513,7 @@ public class EnemyAttack : MonoBehaviour
 
             if (chargeRecoveryTime < 0)
             {
+
                 feintJump = false;
                 feintCharge = false;
                 anticipateFeintCharge = false;
@@ -561,7 +580,7 @@ public class EnemyAttack : MonoBehaviour
         if (feintCharge)
         {
 
-            whatAttack = 0;
+            whatAttack = 2;
             feintJump = false;
 
             ResetAttack();
@@ -624,6 +643,8 @@ public class EnemyAttack : MonoBehaviour
 
 
                         StartCoroutine(WeakPointAnimationStart());
+
+                        enemyHealth.animator.SetTrigger("StretchAttack");
 
                         startStretchAttack = true;
 

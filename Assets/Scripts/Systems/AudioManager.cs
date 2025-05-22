@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 
@@ -8,6 +9,7 @@ public class AudioManager : MonoBehaviour
     private static AudioManager instance;
     private AudioSource audioSource;
 
+    [Header("Sound Effects")]
     [SerializeField] AudioSource chipWalkingSound;
     [SerializeField] AudioSource chipJumpingSound;
     [SerializeField] AudioSource runningSound;
@@ -18,12 +20,48 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioSource monsterSound;
     [SerializeField] AudioSource clickSound;
     [SerializeField] AudioSource ambienceSound;
+    [Header("Music")]
+
+    [SerializeField] AudioSource happySong;
+    [SerializeField] AudioSource sadSong;
+    [SerializeField] AudioSource Shitsofrenia;
+
+    GameManager gameManager;
+
 
 
     private void Awake()
     {
         instance = this;
     }
+
+    private void Start()
+    {
+        StartCoroutine(StartSong());
+    }
+
+     IEnumerator StartSong()
+    {
+
+        yield return new WaitForSeconds(0.2f);
+
+        gameManager = FindAnyObjectByType<GameManager>();
+
+        if (gameManager.onWhatLevel == 0 || gameManager.onWhatLevel == 1)
+        {
+
+            happySong.Play();
+
+        }
+        else
+        {
+
+            sadSong.Play();
+
+        }
+
+    }
+
 
     public void ChipWalkingSound()
     {
@@ -76,5 +114,13 @@ public class AudioManager : MonoBehaviour
     public void AmbienceSound()
     {
         ambienceSound.Play();
+    }
+
+    public void ShitsofreniaSound()
+    {
+
+        Shitsofrenia.Play();
+        happySong.Stop();
+
     }
 }

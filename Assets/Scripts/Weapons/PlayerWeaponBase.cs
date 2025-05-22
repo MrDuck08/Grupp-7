@@ -91,10 +91,12 @@ public class PlayerWeaponBase : MonoBehaviour
             axeActive = false;
         }
 
+        int CurrenWeaponIndex = (int)currentWeapon.weaponType;
+
         if (Input.GetKeyDown(KeyCode.F))
         {
 
-            int CurrenWeaponIndex = (int)currentWeapon.weaponType;
+
             CurrenWeaponIndex += 1;
 
             if (CurrenWeaponIndex < 0)
@@ -111,17 +113,11 @@ public class PlayerWeaponBase : MonoBehaviour
             WeaponSwapAnimation(CurrenWeaponIndex);
 
         }
-    }
-
-    private void FixedUpdate()
-    {
-
-        int CurrenWeaponIndex = (int)currentWeapon.weaponType;
 
         Vector2 lookDirection = mousePos - rb.position;
         float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
 
-        if((angle > 90 && angle < 180 || angle < -90 && angle > -180) && CurrenWeaponIndex == (int)WeaponState.Axe) // Kollar Om Yxan Är På Höger Sida
+        if ((angle > 90 && angle < 180 || angle < -90 && angle > -180) && CurrenWeaponIndex == (int)WeaponState.Axe) // Kollar Om Yxan Är På Höger Sida
         {
             playerAxe.rightSideAxe = false;
             playerAxe.SideSwitch();
@@ -132,12 +128,17 @@ public class PlayerWeaponBase : MonoBehaviour
             playerAxe.SideSwitch();
         }
 
-        if(CurrenWeaponIndex == (int)WeaponState.Sword)
+        if (CurrenWeaponIndex == (int)WeaponState.Sword)
         {
             WhereToLookOfset = 0;
         }
 
         transform.rotation = Quaternion.Euler(0f, 0f, angle + WhereToLookOfset);
+    }
+
+    private void FixedUpdate()
+    {
+
     }
 
     #region Change Scenes

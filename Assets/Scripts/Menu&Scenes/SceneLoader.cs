@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
+    GameManager gameManager;
+
     public void ChangeScene(int buildIndex)
     {
         SceneManager.LoadScene(buildIndex);
@@ -12,6 +14,7 @@ public class SceneLoader : MonoBehaviour
 
     public void ReloadScene()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 

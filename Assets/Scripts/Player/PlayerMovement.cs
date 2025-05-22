@@ -39,6 +39,8 @@ public class PlayerMovement : MonoBehaviour
     #region Animation For Next Scene
 
     bool animationForNextScene = false;
+    bool standStillAnimation = false;
+    bool calledOnce = false;
 
     float walkSpeedForAnimation = 5f;
     float accerationForAnimation;
@@ -63,11 +65,13 @@ public class PlayerMovement : MonoBehaviour
     bool playingSOund;
 
     AudioManager audioManager;
+    GameManager gameManager;
 
     private void Start()
     {
         myAnimator = GetComponentInChildren<Animator>();
         audioManager = FindObjectOfType<AudioManager>();
+        gameManager = FindAnyObjectByType<GameManager>();
     }
 
     void Update()
@@ -82,12 +86,37 @@ public class PlayerMovement : MonoBehaviour
 
             if(walkSpeedForAnimation <= 0)
             {
-
                 animationForNextScene = false;
+                standStillAnimation = true;
+                timeForAnimation = 11.5f;
 
             }
 
             return; 
+        }
+
+        if (standStillAnimation)
+        {
+
+            timeForAnimation -= Time.deltaTime;
+            body.linearVelocity = Vector3.zero;
+
+            if (timeForAnimation <= 0)
+            {
+
+                if (!calledOnce)
+                {
+                    calledOnce = true;
+
+                    gameManager = FindAnyObjectByType<GameManager>();
+
+                    StartCoroutine(gameManager.NextSceneAnim());
+                }
+
+            }
+
+            return;
+
         }
 
         GetInput();
@@ -329,6 +358,12 @@ public class PlayerMovement : MonoBehaviour
         body.linearVelocity = Vector2.zero;
         myAnimator.SetTrigger("NextScene");
         animationForNextScene = true;
+
+        audioManager = FindObjectOfType<AudioManager>();
+
+        audioManager.ShitsofreniaSound();
+
+        transform.GetChild(0).gameObject.SetActive(false);
 
         accerationForAnimation = -walkSpeedForAnimation / timeForAnimation;
 

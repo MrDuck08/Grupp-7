@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] List<float> timeForMingame = new List<float>();
     int whatnumberMinigame = 0;
 
+    public int onWhatLevel = 0;
+
     int whatSceneToReturnTo;
 
     public float currentTimeFroMiniGame;
@@ -26,6 +28,7 @@ public class GameManager : MonoBehaviour
 
     PlayerMovement player;
     MiniGamehandler miniGamehandler;
+    AudioManager audioManager;
 
     private void Awake()
     {
@@ -53,6 +56,10 @@ public class GameManager : MonoBehaviour
 
         loader = FindAnyObjectByType<SceneLoader>();
         StartCoroutine(StartRoutine());
+
+        audioManager = FindObjectOfType<AudioManager>();
+
+
     }
 
     IEnumerator StartRoutine()
@@ -64,6 +71,25 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         transitionAnim.SetBool("FadeIn", false);
+    }
+
+    public IEnumerator NextSceneAnim()
+    {
+
+        transitionAnim.SetBool("FadeOut", true);
+        transitionAnim.SetBool("FadeIn", false);
+
+        onWhatLevel++;
+
+        yield return new WaitForSeconds(2);
+
+        loader.LoadNextScene();
+
+        audioManager = FindObjectOfType<AudioManager>();
+
+        transitionAnim.SetBool("FadeOut", false);
+        transitionAnim.SetBool("FadeIn", true);
+
     }
 
     #region Go back and forth minigame
@@ -93,6 +119,10 @@ public class GameManager : MonoBehaviour
         transitionAnim.SetBool("ShowMiniGame", true);
 
         minigameHasStarted = true;
+
+        audioManager = FindObjectOfType<AudioManager>();
+
+
 
         currentTimeFroMiniGame = timeForMingame[whatnumberMinigame];
         miniGamehandler.SettingsForMinigame(timeForMingame[whatnumberMinigame]);
@@ -131,6 +161,10 @@ public class GameManager : MonoBehaviour
         transitionAnim.SetBool("ShowMiniGame", false);
         transitionAnim.SetBool("BlockDown", true);
 
+        audioManager = FindObjectOfType<AudioManager>();
+
+
+
         Destroy(GameObject.Find(whoToTurnOfAfterMinigame));
 
 
@@ -146,4 +180,5 @@ public class GameManager : MonoBehaviour
     }
 
     #endregion
+
 }

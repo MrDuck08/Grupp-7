@@ -81,7 +81,7 @@ public class MiniGamehandler : MonoBehaviour
 
                 rotatingArena = true;
 
-                timeUntilArenaFlip = Random.Range(25, 35);
+                timeUntilArenaFlip = Random.Range(17, 25);
 
                 speedForRotation = 10 / timeForPreRotation;
 

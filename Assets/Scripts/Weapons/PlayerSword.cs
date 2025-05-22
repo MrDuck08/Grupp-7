@@ -35,6 +35,7 @@ public class PlayerSword : WeaponBase
     [SerializeField] float maxHowFastGoBack = 0.3f;
 
     [SerializeField] float maxDisatnceBetweenPlayerAndSwordUnsheathed = 1.3f;
+    [SerializeField] float disToAttack = 0.35f;
 
     #endregion
 
@@ -91,7 +92,7 @@ public class PlayerSword : WeaponBase
                 attacking = true;
                 timeUntilAttack = maxtTimeUntilAttack;
 
-                attackDistance = attackRange + maxDisatnceBetweenPlayerAndSwordUnsheathed;
+                attackDistance = attackRange + (maxDisatnceBetweenPlayerAndSwordUnsheathed - disToAttack);
 
                 speed = attackDistance/ howFastAttack;
                 audioManager.SwordSound();
@@ -150,11 +151,7 @@ public class PlayerSword : WeaponBase
             Attack();
 
         }
-    }
 
-    public override void FixedUpdate()
-    {
-        base.FixedUpdate();
 
         float dis = Vector3.Distance(transform.position, parentTransform.position);
 
@@ -165,21 +162,32 @@ public class PlayerSword : WeaponBase
             ResetAttack();
         }
 
-        if(stayUnsheathed && !attacking)
+        if (stayUnsheathed && !attacking)
         {
             maxDisatnceBetweenPlayerAndSword = maxDisatnceBetweenPlayerAndSwordUnsheathed;
+            Debug.Log("Distance = MaxDistance");
         }
+
+        Debug.Log(stayUnsheathed + " StayYncheated " + attacking + " Are Attacking " + dis + " dis " + (transform.position - parentTransform.position).normalized + " What dis?");
 
         if (dis != maxDisatnceBetweenPlayerAndSword)
         {
             dis = maxDisatnceBetweenPlayerAndSword;
             transform.position = (transform.position - parentTransform.position).normalized * dis + parentTransform.position;
         }
+
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+
     }
 
     void Attack()
     {
-        speed = maxDisatnceBetweenPlayerAndSwordUnsheathed / timeUntilAttack;
+        speed = (maxDisatnceBetweenPlayerAndSwordUnsheathed - disToAttack) / timeUntilAttack;
         attacking = true;
         startCharge = true;
 
@@ -192,6 +200,7 @@ public class PlayerSword : WeaponBase
         startAttack = false;
         startCharge = false;
         attacking = false;
+        stayUnsheathed = true;
 
 
 
@@ -208,16 +217,21 @@ public class PlayerSword : WeaponBase
         {
             case "WeakPoint":
 
-            if (collision.transform.parent.transform.parent.transform.parent.transform.parent != null)
-            {
-                collision.transform.parent.transform.parent.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
-            }
-            else // För om den träffar en weak point och den inte hittar EnemyHealth då betyder det att det är en streetch attack weak point och behöver söka på annat sät
-            {
-                collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
-            }
+                if (collision.transform.parent.transform.parent.transform.parent.transform.parent.gameObject != null)
+                {
+                    collision.transform.parent.transform.parent.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
+                }
 
-            break;
+                break;
+
+            case "Weakpoint2":
+
+                if (collision.transform.parent.transform.parent != null) 
+                {
+                    collision.transform.parent.transform.parent.GetComponent<EnemyHealth>().TakeDamageInfo(2);
+                }
+
+                break;
 
         case "Enemy":
 

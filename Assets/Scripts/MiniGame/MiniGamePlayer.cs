@@ -10,6 +10,7 @@ public class MiniGamePlayer : MonoBehaviour
     Rigidbody2D rb2D;
 
     SceneLoader loader;
+    GameManager gameManager;
 
     int health = 3;
 

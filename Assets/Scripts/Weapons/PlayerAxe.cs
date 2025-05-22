@@ -34,6 +34,7 @@ public class PlayerAxe : WeaponBase
     [SerializeField] float maxHowFastGoBack = 0.3f;
 
     [SerializeField] float maxDisatnceBetweenPlayerAndSwordUnsheathed = 1.3f;
+    [SerializeField] float disToAttack = 0.35f;
 
     [SerializeField] float maxDistanceToLookUpWhenAiming = 10f;
     [SerializeField] float maxDistanceToLookDownInSwing = 10f;
@@ -99,7 +100,7 @@ public class PlayerAxe : WeaponBase
 
                 timeUntilAttack = maxtTimeUntilAttack;
 
-                attackDistance = attackRange + maxDisatnceBetweenPlayerAndSwordUnsheathed;
+                attackDistance = attackRange + (maxDisatnceBetweenPlayerAndSwordUnsheathed - disToAttack);
 
                 speed = attackDistance / howFastAttack;
 
@@ -209,7 +210,7 @@ public class PlayerAxe : WeaponBase
 
     void Attack()
     {
-        speed = maxDisatnceBetweenPlayerAndSwordUnsheathed / timeUntilAttack;
+        speed = (maxDisatnceBetweenPlayerAndSwordUnsheathed - disToAttack) / timeUntilAttack;
         attacking = true;
         startCharge = true;
 
@@ -271,6 +272,7 @@ public class PlayerAxe : WeaponBase
         startSwingDown = false;
         startCharge = false;
         attacking = false;
+        stayUnsheathed = true;
 
 
 

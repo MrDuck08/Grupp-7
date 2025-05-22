@@ -19,6 +19,8 @@ public class Chip : MonoBehaviour
     [SerializeField] float speed = 3;
     [SerializeField] float walkRange = 3;
 
+    [SerializeField] GameObject gravityPos;
+
     #region Search
 
     bool stop = false;
@@ -70,12 +72,14 @@ public class Chip : MonoBehaviour
     Rigidbody2D rb2D;
 
     AudioManager audioManager;
+    Animator animator;
 
 
     private void Start()
     {
 
         rb2D = GetComponent<Rigidbody2D>();
+        animator = transform.GetChild(0).GetComponent<Animator>();
 
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
@@ -143,6 +147,10 @@ public class Chip : MonoBehaviour
 
                 jumpSpeed = 0;
 
+                animator.SetBool("Jump", false);
+                animator.SetBool("Fall", true);
+
+
             }
 
         }
@@ -167,6 +175,9 @@ public class Chip : MonoBehaviour
                 rb2D.gravityScale = 1;
 
                 jumpSpeed = maxJumpSpeed;
+
+                animator.SetBool("fall", false);
+                animator.SetBool("Still", true);
             }
 
         }
@@ -185,6 +196,10 @@ public class Chip : MonoBehaviour
             Vector2 MovePos = new Vector2(transform.position.x + 1 * (speed / distanceFromPlayer) * Time.deltaTime, transform.position.y);
 
             transform.position = MovePos;
+
+            animator.SetBool("Run", true);
+            animator.SetBool("Still", false);
+
             if (!playingSound)
             {
                 playingSound = true;
@@ -199,8 +214,21 @@ public class Chip : MonoBehaviour
             {
                 playingSound = false;
 
+                animator.SetBool("Run", false);
+                animator.SetBool("Still", true);
+
                 audioManager.ChipWalkingSoundStop();
             }
+
+        }
+
+        Vector2 GroundCheckPos = gravityPos.transform.position;
+        bool GroundCheckBool = Physics2D.OverlapCircle(GroundCheckPos, 0.3f, groundLayer);
+
+        if (!GroundCheckBool)
+        {
+
+            transform.position = new Vector2(transform.position.x, transform.position.y - 2f * Time.deltaTime);
 
         }
     }
@@ -367,6 +395,10 @@ public class Chip : MonoBehaviour
 
         audioManager.ChipJumpingSound();
 
+        animator.SetBool("Run", false);
+        animator.SetBool("Still", true);
+        animator.SetBool("Jump", true);
+
         startJumpUp = true;
 
     }
@@ -394,6 +426,7 @@ public class Chip : MonoBehaviour
 
         Gizmos.DrawWireSphere((Vector2)transform.position + wallCheckPosition, checkRadius);
         Gizmos.DrawWireSphere((Vector2)transform.position + groundCheckPosition, checkRadius);
+        Gizmos.DrawWireSphere(gravityPos.transform.position, 0.3f);
 
         Gizmos.color = Color.blue;
 

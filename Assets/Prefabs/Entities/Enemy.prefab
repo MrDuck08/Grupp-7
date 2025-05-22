@@ -826,7 +826,7 @@ MonoBehaviour:
   maxHowFastStretchAttack: 0.2
   maxHowLongStayAfterStretchAttack: 1
   maxHowFastGoBack: 0.3
-  stretchAttackRange: 20
+  stretchAttackRange: 5
   stopLayers:
     serializedVersion: 2
     m_Bits: 8
@@ -907,6 +907,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxhealth: 7
   currentHealth: 0
+  dead: 0
+  animator: {fileID: 0}
 --- !u!1 &5099738928484255914
 GameObject:
   m_ObjectHideFlags: 0
