@@ -24,17 +24,22 @@ public class EnemyHealth : MonoBehaviour
     EnemyAttack enemyAttack;
     public Animator animator;
 
+    Color myColor;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
         currentHealth = maxhealth;
 
         enemyAttack = GetComponent<EnemyAttack>();
 
         Transform visualls = gameObject.transform.GetChild(2);
         animator = visualls.GetComponent<Animator>();
+        
+        myColor = visualls.GetComponent<SpriteRenderer>().color;
 
-        if(visualls.GetComponent<SpriteRenderer>() != null )
+        if (visualls.GetComponent<SpriteRenderer>() != null )
         {
 
             children.Add(visualls.gameObject);
@@ -194,7 +199,7 @@ public class EnemyHealth : MonoBehaviour
 
         if (gameObject.GetComponent<SpriteRenderer>() != null)
         {
-            gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            gameObject.GetComponent<SpriteRenderer>().color = myColor;
         }
 
         foreach (GameObject visualls in children)
@@ -202,7 +207,7 @@ public class EnemyHealth : MonoBehaviour
 
             if (visualls.GetComponent<SpriteRenderer>() != null)
             {
-                visualls.GetComponent<SpriteRenderer>().color = Color.white;
+                visualls.GetComponent<SpriteRenderer>().color = myColor;
 
             }
 
