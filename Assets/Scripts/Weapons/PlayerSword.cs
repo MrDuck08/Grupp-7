@@ -165,10 +165,8 @@ public class PlayerSword : WeaponBase
         if (stayUnsheathed && !attacking)
         {
             maxDisatnceBetweenPlayerAndSword = maxDisatnceBetweenPlayerAndSwordUnsheathed;
-            Debug.Log("Distance = MaxDistance");
-        }
 
-        Debug.Log(stayUnsheathed + " StayYncheated " + attacking + " Are Attacking " + dis + " dis " + (transform.position - parentTransform.position).normalized + " What dis?");
+        }
 
         if (dis != maxDisatnceBetweenPlayerAndSword)
         {

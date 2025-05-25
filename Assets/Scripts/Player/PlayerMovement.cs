@@ -196,6 +196,19 @@ public class PlayerMovement : MonoBehaviour
 
         }
 
+        if(body.linearVelocity.y < -0.1F)
+        {
+
+            myAnimator.SetBool("Falling", true);
+
+        }
+        else
+        {
+
+            myAnimator.SetBool("Falling", false);
+
+        }
+
         #endregion
 
 
